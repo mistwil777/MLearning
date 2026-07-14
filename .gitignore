@@ -1,4 +1,5 @@
 *.md
+!CLAUDE.md
 generate_html.py
 .claude/
 __pycache__/
