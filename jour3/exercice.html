@@ -1,0 +1,547 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 3Jour 3 — Exercices : Diagnostiquer et prévoirExercicesCas clientsAuto-éval</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 3</div><h1>Jour 3 — <em>Exercices : Diagnostiquer et prévoir</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<blockquote>
+  <p><strong>Méthode</strong> : Avant de consulter les réponses, traite chaque exercice seul. L'objectif n'est pas d'obtenir le résultat exact — c'est de construire le raisonnement.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="exercice-1-identifier-le-type-de-série-20-min">Exercice 1 — Identifier le type de série (20 min)</h2>
+
+<p>Pour chacune des quatre séries décrites ci-dessous, identifie les composantes présentes (tendance, saisonnalité, anomalie) et propose le type de modèle le plus adapté.</p>
+
+<hr />
+
+<h3 id="série-a-tickets-de-caisse-dune-boulangerie">Série A — Tickets de caisse d'une boulangerie</h3>
+
+<p><strong>Description</strong> : Données journalières sur 2 ans. Le nombre de tickets oscille fortement entre 80 et 220. Les valeurs sont systématiquement basses le lundi (les gens font leurs courses le samedi), élevées le dimanche et en fin de semaine. La moyenne globale reste constante autour de 140 sur toute la période. En août, les valeurs chutent de 30% pendant 3 semaines puis remontent.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Composantes identifiées :
+  Tendance    : ___________
+  Saisonnalité: ___________
+  Anomalie    : ___________
+
+Modèle recommandé : ___________
+Justification (2 lignes) :
+</code></pre></div>
+
+<p><details>
+<summary>Réponse commentée</summary></p>
+
+<p><strong>Tendance</strong> : Absente. La moyenne reste stable autour de 140 sur 2 ans.</p>
+
+<p><strong>Saisonnalité</strong> : Oui, hebdomadaire (cycle de 7 jours bien marqué avec creux le lundi et pic le dimanche). Pas de saisonnalité annuelle apparente sauf l'anomalie d'août.</p>
+
+<p><strong>Anomalie</strong> : Oui, la fermeture partielle d'août constitue un événement ponctuel. Ce n'est pas une saisonnalité vraie car elle dure 3 semaines et peut varier d'une année à l'autre.</p>
+
+<p><strong>Modèle recommandé</strong> : Prophet avec <code>weekly_seasonality=True</code> et l'anomalie d'août modélisée comme un "holiday" (période de fermeture). SARIMA(0,0,0)(1,0,1,7) serait aussi adapté.</p>
+
+<p><strong>Ce qu'il ne faut pas faire</strong> : Un modèle additif avec saisonnalité annuelle — la série n'a pas de cycle annuel fort (hors l'anomalie ponctuelle).</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="série-b-nombre-dabonnés-à-un-service-saas">Série B — Nombre d'abonnés à un service SaaS</h3>
+
+<p><strong>Description</strong> : Données mensuelles sur 3 ans. La série passe de 5 000 à 42 000 abonnés. La croissance est régulière mais pas linéaire : elle s'accélère de mois en mois. Les variations mensuelles autour de la tendance sont de ±200 au début et de ±1 800 à la fin. Aucun cycle saisonnier visible.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Composantes identifiées :
+  Tendance    : ___________
+  Saisonnalité: ___________
+  Anomalie    : ___________
+
+Modèle recommandé : ___________
+Décomposition adaptée : additive ou multiplicative ?
+</code></pre></div>
+
+<p><details>
+<summary>Réponse commentée</summary></p>
+
+<p><strong>Tendance</strong> : Forte, croissance exponentielle (ou logistique si le marché est fini).</p>
+
+<p><strong>Saisonnalité</strong> : Absente. Pas de cycle régulier identifié.</p>
+
+<p><strong>Anomalie</strong> : Aucune décrite.</p>
+
+<p><strong>Décomposition</strong> : <strong>Multiplicative</strong>. L'amplitude des variations (±200 puis ±1800) croît proportionnellement au niveau de la série. C'est le signal classique d'un modèle multiplicatif.</p>
+
+<p><strong>Modèle recommandé</strong> : Prophet avec <code>growth="logistic"</code> si le marché est borné (définir un <code>cap</code>), ou <code>growth="linear"</code> si on n'a pas d'hypothèse sur un plafond. On désactive les saisonnalités (<code>yearly_seasonality=False</code>, <code>weekly_seasonality=False</code>).</p>
+
+<div class="callout warning"><div class="callout-head">&#x26a1; Piège</div><p>Utiliser une décomposition additive forcerait des résidus structurés (les variations en fin de série seraient systématiquement sous-estimées).</p>
+
+<p></details></p></div>
+
+<hr />
+
+<h3 id="série-c-consommation-de-gaz-naturel-dun-immeuble-résidentiel">Série C — Consommation de gaz naturel d'un immeuble résidentiel</h3>
+
+<p><strong>Description</strong> : Données journalières sur 4 ans. La série présente un cycle très fort : quasi-nulle en été (&lt; 5 unités/jour), avec des pics atteignant 150 unités/jour en hiver. Les pics hivernaux sont nettement plus élevés lors des années froides. En 2022, un pic anormal de 200 unités apparaît en juillet (anomalie non expliquée). La tendance générale est légèrement décroissante (isolation progressivement améliorée).</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Composantes identifiées :
+  Tendance    : ___________
+  Saisonnalité: ___________
+  Anomalie    : ___________
+
+Problème avec le MAPE sur cette série : ___________
+Modèle recommandé : ___________
+</code></pre></div>
+
+<p><details>
+<summary>Réponse commentée</summary></p>
+
+<p><strong>Tendance</strong> : Légèrement décroissante (amélioration de l'isolation).</p>
+
+<p><strong>Saisonnalité</strong> : Forte, annuelle (cycle chaud/froid). La saisonnalité est <strong>multiplicative</strong> : les pics hivernaux sont plus élevés les années froides, proportionnellement au niveau ambiant.</p>
+
+<p><strong>Anomalie</strong> : Oui, le pic de juillet 2022 est une anomalie à isoler avant de modéliser.</p>
+
+<p><strong>Problème avec le MAPE</strong> : La série contient des valeurs proches de zéro en été (&lt; 5 unités). Le MAPE explose quand le réel est proche de zéro : une erreur de 2 unités sur une valeur réelle de 1 donne MAPE = 200%. Il faut utiliser le MAE ou le RMSE sur cette série.</p>
+
+<p><strong>Modèle recommandé</strong> : SARIMA(p,1,q)(P,1,Q,365) avec différenciation saisonnière annuelle, ou Prophet avec saisonnalité annuelle et le pic de juillet 2022 modélisé comme outlier à traiter en amont (le retirer du training ou l'annoter comme holiday).</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="série-d-chiffre-daffaires-dun-e-commerce-mode">Série D — Chiffre d'affaires d'un e-commerce mode</h3>
+
+<p><strong>Description</strong> : Données hebdomadaires sur 2 ans. La série présente un pic en décembre (fêtes) 3× supérieur à la moyenne annuelle, un autre pic en juin/juillet (soldes), et une légère tendance haussière. Le pic de décembre 2022 est 4× la moyenne (contre 3× en 2021). La série ne descend jamais à zéro.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Composantes identifiées :
+  Tendance    : ___________
+  Saisonnalité: ___________
+
+Décomposition adaptée : additive ou multiplicative ?
+Justification (1 ligne) :
+
+Quel split train/test utiliseriez-vous sur 2 ans de données hebdomadaires ?
+</code></pre></div>
+
+<p><details>
+<summary>Réponse commentée</summary></p>
+
+<p><strong>Tendance</strong> : Légèrement haussière.</p>
+
+<p><strong>Saisonnalité</strong> : Annuelle, avec deux pics (Noël + soldes).</p>
+
+<p><strong>Décomposition</strong> : <strong>Multiplicative</strong>. Le pic de décembre passe de 3× à 4× la moyenne — il grandit avec la tendance haussière. L'amplitude est proportionnelle au niveau.</p>
+
+<p><strong>Split train/test</strong> : Avec 2 ans × 52 semaines = 104 semaines, on garde les 52 dernières semaines (1 an complet) pour le test, afin d'évaluer le modèle sur une saisonnalité annuelle complète. Ne jamais prendre moins d'un cycle saisonnier complet dans le jeu de test.</p>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-2-code-prophet-à-compléter-35-min">Exercice 2 — Code Prophet à compléter (35 min)</h2>
+
+<p>Le squelette suivant est presque fonctionnel. Remplis les blancs <code>___</code> pour obtenir une prévision Prophet correcte de ventes de vélos avec prise en compte de la météo.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">___</span>  <span class="c1"># (1) quel objet pour la CV temporelle ?</span>
+
+<span class="c1"># Données : ventes journalières de vélos + température moyenne (°C)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">730</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+<span class="n">ventes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">50</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">730</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">ventes</span><span class="p">,</span>
+    <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="n">temperature</span>
+<span class="p">})</span>
+
+<span class="c1"># ─── Étape 1 : Initialiser le modèle ───────────────────────────────────────</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span>
+    <span class="n">yearly_seasonality</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>   <span class="c1"># (2) vrai ou faux ? La série a-t-elle une saisonnalité annuelle ?</span>
+    <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">daily_seasonality</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># ─── Étape 2 : Ajouter le régresseur température ───────────────────────────</span>
+<span class="n">m</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">___</span><span class="p">)</span> <span class="c1"># (3) quelle méthode Prophet pour ajouter une variable externe ?</span>
+
+<span class="c1"># ─── Étape 3 : Séparer train et test (temporellement !) ────────────────────</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">___</span><span class="p">]</span>  <span class="c1"># (4) combien de lignes pour garder 6 mois en test ?</span>
+<span class="n">test</span>  <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">___</span><span class="p">:]</span>  <span class="c1"># (5) idem, indice de début du test</span>
+
+<span class="c1"># ─── Étape 4 : Entraîner ───────────────────────────────────────────────────</span>
+<span class="n">m</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>  <span class="c1"># (6) quelle méthode pour entraîner Prophet ?</span>
+
+<span class="c1"># ─── Étape 5 : Construire le DataFrame futur (inclure le régresseur) ────────</span>
+<span class="n">futur</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="n">___</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>  <span class="c1"># (7) combien de jours à prévoir ?</span>
+<span class="n">futur</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># les températures futures sont connues (météo)</span>
+
+<span class="c1"># ─── Étape 6 : Prévoir ─────────────────────────────────────────────────────</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># (8) quel argument ?</span>
+
+<span class="c1"># ─── Étape 7 : Calculer le MAE sur le jeu de test ─────────────────────────</span>
+<span class="n">pred_test</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;ds&quot;</span><span class="p">],</span> <span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">___</span><span class="p">))</span>  <span class="c1"># (9) compléter</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE sur 6 mois de test : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ventes/jour&quot;</span><span class="p">)</span>
+
+<span class="c1"># ─── Étape 8 : Visualiser les composantes ─────────────────────────────────</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">plot_components</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># (10) quel argument ?</span>
+</code></pre>
+</div>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Réponses :
+(1)  ___________
+(2)  ___________
+(3)  ___________
+(4)  ___________
+(5)  ___________
+(6)  ___________
+(7)  ___________
+(8)  ___________
+(9)  ___________
+(10) ___________
+</code></pre></div>
+
+<p><details>
+<summary>Correction complète</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeriesSplit</span>  <span class="c1"># (1)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">730</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+<span class="n">ventes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">50</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">730</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">ventes</span><span class="p">,</span>
+    <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="n">temperature</span>
+<span class="p">})</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span>
+    <span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>     <span class="c1"># (2) — la série fait 2 ans, un cycle annuel est visible</span>
+    <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">daily_seasonality</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">add_regressor</span><span class="p">(</span><span class="s2">&quot;temp&quot;</span><span class="p">)</span>          <span class="c1"># (3) — add_regressor()</span>
+
+<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">547</span><span class="p">]</span>            <span class="c1"># (4) — 730 - 183 jours ≈ 6 mois = 182 jours → 730-182=548 ou 547</span>
+<span class="n">test</span>  <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">547</span><span class="p">:]</span>            <span class="c1"># (5)</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>                     <span class="c1"># (6) — fit()</span>
+
+<span class="n">futur</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">183</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>  <span class="c1"># (7) — 6 mois ≈ 183 jours</span>
+<span class="n">futur</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">futur</span><span class="p">)]</span>
+
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span>      <span class="c1"># (8) — futur</span>
+
+<span class="n">pred_test</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;ds&quot;</span><span class="p">],</span> <span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">pred_test</span><span class="p">))</span>  <span class="c1"># (9) — pred_test</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE sur 6 mois de test : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ventes/jour&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">plot_components</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>  <span class="c1"># (10) — forecast</span>
+</code></pre>
+</div>
+
+<p><strong>Points clés</strong> :
+- <code>add_regressor("temp")</code> doit être appelé <strong>avant</strong> <code>fit()</code>, pas après.
+- Le DataFrame <code>futur</code> doit contenir la colonne <code>temp</code> (le régresseur) — sinon Prophet lève une erreur à la prédiction.
+- Le split est temporel : les 547 premières lignes (environ 18 mois) entraînent, les 183 dernières (6 mois) testent.
+- <code>TimeSeriesSplit</code> est importé mais utilisé pour une cross-validation multi-folds, pas pour ce split simple. Dans un contexte production, on l'utiliserait pour évaluer sur plusieurs périodes glissantes.</p>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-3-cas-piège-data-leakage-temporel-25-min">Exercice 3 — Cas piège : data leakage temporel (25 min)</h2>
+
+<p>Le code suivant contient une erreur grave de validation. Identifie le problème et corrige-le.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># CODE AVEC ERREUR — à corriger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># Série temporelle : consommation d&#39;eau mensuelle sur 5 ans (60 mois)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2019-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">consommation</span> <span class="o">=</span> <span class="mi">200</span> <span class="o">+</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">consommation</span><span class="p">})</span>
+
+<span class="c1"># ─── Split aléatoire (problématique) ───────────────────────────────────────</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="c1"># train : 48 lignes aléatoires parmi 60</span>
+<span class="c1"># test  : 12 lignes aléatoires parmi 60</span>
+
+<span class="c1"># Entraînement</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="c1"># Prévision sur les dates de test</span>
+<span class="n">futur</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">test</span><span class="p">[</span><span class="s2">&quot;ds&quot;</span><span class="p">]})</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span>
+
+<span class="c1"># Évaluation</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Affiche 4.2 — semble excellent !</span>
+</code></pre>
+</div>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">1. Identifie le problème précis :
+   ___________
+
+2. Explique pourquoi la MAE de 4.2 est trompeuse :
+   ___________
+
+3. Réécris le split correctement (code) :
+   ___________
+
+4. Quelle MAE obtiendrais-tu probablement après correction, et pourquoi ?
+   ___________
+</code></pre></div>
+
+<p><details>
+<summary>Correction et explication</summary></p>
+
+<p><strong>1. Le problème précis</strong></p>
+
+<p><code>train_test_split</code> avec <code>shuffle=True</code> (comportement par défaut) mélange aléatoirement les 60 lignes. Le jeu de test contient donc des mois de 2019, 2020, 2021, 2022, 2023 mélangés — et le jeu d'entraînement aussi. Prophet est entraîné sur des données de <strong>tout le cycle temporel</strong>, y compris des données plus récentes que certaines données de test.</p>
+
+<p>Par exemple, le mois test <code>2023-06</code> (le plus récent) est prédit par un modèle qui a vu <code>2023-07</code>, <code>2023-08</code>, etc. pendant l'entraînement. C'est du <strong>data leakage temporel</strong> : le modèle a accès à des informations du futur.</p>
+
+<p><strong>2. Pourquoi la MAE de 4.2 est trompeuse</strong></p>
+
+<p>La série est une sinusoïde propre avec peu de bruit. Un modèle qui a vu des points de toute la période apprend exactement la forme du cycle. Les points de test, disséminés dans le cycle, sont quasi-interpolés entre des points d'entraînement voisins dans le temps. La vraie question est : si le modèle n'avait vu que les 48 premiers mois, arriverait-il à prédire les 12 derniers aussi bien ?</p>
+
+<p><strong>3. Correction</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Split temporel correct</span>
+<span class="c1"># On garde les 48 premiers mois pour l&#39;entraînement,</span>
+<span class="c1"># et les 12 derniers (1 an complet) pour le test</span>
+
+<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">48</span><span class="p">]</span>   <span class="c1"># 2019-01 à 2022-12</span>
+<span class="n">test</span>  <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">48</span><span class="p">:]</span>   <span class="c1"># 2023-01 à 2023-12</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="n">futur</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE corrigée : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>4. MAE après correction</strong></p>
+
+<p>Elle sera probablement similaire ici (4-7) car la série est propre et régulière. Mais sur des séries réelles avec tendance non-stationnaire ou événements imprévus, la MAE après correction temporelle est systématiquement plus élevée — parfois 3 à 5 fois — que la MAE du split aléatoire. C'est cette MAE corrigée qui reflète la performance réelle en production.</p>
+
+<p><strong>Règle à retenir</strong> : sur une série temporelle, ne jamais utiliser <code>train_test_split</code> sans <code>shuffle=False</code> et sans ordonner les données chronologiquement. Préférer un découpage manuel ou <code>TimeSeriesSplit</code>.</p>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-4-checkpoint-jour-3">Exercice 4 — Checkpoint Jour 3</h2>
+
+<p>Réponds sans code, en 2-3 phrases par question.</p>
+
+<hr />
+
+<p><strong>Q1</strong> — Un collègue te montre un modèle Prophet avec un MAPE de 1.8% sur le backtesting. Il te dit "c'est excellent, on peut le déployer". Quelle question cruciale tu lui poses ?</p>
+
+<p><details>
+<summary>Réponse</summary></p>
+
+<p>La question cruciale est : "Ce MAPE est-il mesuré in-sample (sur les données d'entraînement) ou par walk-forward validation sur un jeu de test strictement postérieur ?" Un MAPE in-sample peut résulter de l'overfitting — le modèle a mémorisé les données plutôt que d'en apprendre les patterns. Il faut également demander sur quel horizon de prévision ce MAPE est calculé.</p>
+
+<p></details></p>
+
+<hr />
+
+<p><strong>Q2</strong> — Un client te dit "j'ai des données de ventes de 50 magasins sur 3 ans, chaque vente est influencée par la météo locale et par les promotions nationales. Je veux prévoir à 4 semaines." Lequel choisirais-tu parmi statsmodels, Prophet ou darts, et pourquoi ?</p>
+
+<p><details>
+<summary>Réponse</summary></p>
+
+<p><strong>Prophet</strong> est le bon choix ici. Il gère nativement plusieurs saisonnalités (hebdomadaire + annuelle), les régresseurs externes (météo via <code>add_regressor</code>, promotions via un indicateur binaire), et peut être entraîné indépendamment pour chacun des 50 magasins sans configuration ARIMA manuelle. darts serait justifié si on voulait capturer des <strong>interactions entre magasins</strong> (modèle multivarié) ou si on avait besoin d'intervalles de confiance calibrés pour des décisions d'approvisionnement critiques. statsmodels serait trop manuel à configurer pour 50 séries parallèles.</p>
+
+<p></details></p>
+
+<hr />
+
+<p><strong>Q3</strong> — Explique en une phrase ce qu'est l'autocorrélation, comme si tu devais l'expliquer à un responsable métier non-technique.</p>
+
+<p><details>
+<summary>Réponse</summary></p>
+
+<p>"L'autocorrélation mesure à quel point les ventes d'un lundi ressemblent à celles du lundi précédent — si la réponse est 'beaucoup', on dit que la série a une autocorrélation forte à 7 jours, et les algorithmes peuvent exploiter ce pattern pour prévoir."</p>
+
+<p></details></p>
+
+<hr />
+
+<p><strong>Q4</strong> — Quelle est la différence entre une anomalie et une saisonnalité dans une série temporelle ?</p>
+
+<p><details>
+<summary>Réponse</summary></p>
+
+<p>Une <strong>saisonnalité</strong> est un cycle régulier, prévisible et récurrent : les ventes remontent chaque décembre, les pics de trafic reviennent chaque lundi matin. Une <strong>anomalie</strong> est un événement ponctuel non récurrent : une panne système, une grève, une vague de chaleur exceptionnelle. La saisonnalité enrichit le modèle (elle doit être capturée). L'anomalie doit être identifiée et traitée avant l'entraînement (suppression ou annotation explicite) pour ne pas biaiser les paramètres du modèle.</p>
+
+<p></details></p>
+
+<hr />
+
+<p><strong>Q5</strong> — Quel est le risque de choisir <code>model="additive"</code> dans <code>seasonal_decompose</code> sur une série de ventes d'e-commerce qui a doublé en 2 ans ?</p>
+
+<p><details>
+<summary>Réponse</summary></p>
+
+<p>Si les ventes ont doublé, l'amplitude des pics saisonniers (Noël, soldes) a probablement aussi doublé — c'est le signe d'une décomposition multiplicative. Forcer le modèle additif revient à supposer que les pics gardent une amplitude constante de, disons, +500 ventes, alors qu'ils sont passés de +500 à +1000. Les résidus contiendront une structure systématique (sous-estimation des récents pics, sur-estimation des anciens), ce qui signifie que le modèle rate une information exploitable et que ses prévisions de pics seront biaisées.</p>
+
+<p></details></p>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

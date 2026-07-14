@@ -1,0 +1,1296 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 2Jour 2 — ML Classique : Les algorithmes fondamentauxCoursThéorieExemples r</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 2</div><h1>Jour 2 — <em>ML Classique : Les algorithmes fondamentaux</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!--
+    Layout (tous les centres calculés) :
+    L0  y=45   ROOT              cx=550
+    L1  y=150  LINÉAIRES cx=140  ARBRES cx=390  BOOSTING cx=640  PIPELINE cx=860  MÉTRIQUES cx=1020
+    L2  y=260  Reg.Log cx=80  Ridge cx=200  RF cx=330  XGBoost cx=530  Imputation cx=760  Encoder cx=960  AUC cx=1020
+    L3  y=360  Sigmoïde cx=80  Coef. cx=200  Overfitting cx=330  Résidus cx=530  StandardScaler cx=760
+    L4  y=445  Biais/Var. cx=200  Learning Rate cx=530
+  -->
+
+  <!-- ─── Connecteurs Root → L1 ─── -->
+  <path d="M550,66 C550,108 140,108 140,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 390,108 390,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 640,108 640,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 860,108 860,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 1020,108 1020,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- ─── Connecteurs L1 → L2 ─── -->
+  <path d="M140,172 C140,215 80,215 80,242"   fill="none" stroke="#3987e5" stroke-width="1.3"/>
+  <path d="M140,172 C140,215 200,215 200,242"  fill="none" stroke="#3987e5" stroke-width="1.3"/>
+  <path d="M390,172 C390,215 330,215 330,242"  fill="none" stroke="#e8a600" stroke-width="1.3"/>
+  <path d="M640,172 C640,215 530,215 530,242"  fill="none" stroke="#e66767" stroke-width="1.3"/>
+  <path d="M860,172 C860,215 760,215 760,242"  fill="none" stroke="#9085e9" stroke-width="1.3"/>
+  <path d="M860,172 C860,215 960,215 960,242"  fill="none" stroke="#9085e9" stroke-width="1.3"/>
+  <path d="M1020,172 L1020,242"               fill="none" stroke="#1baf7a" stroke-width="1.3"/>
+
+  <!-- ─── Connecteurs L2 → L3 ─── -->
+  <path d="M80,278 L80,342"   fill="none" stroke="#3987e5" stroke-width="1.1" stroke-dasharray="4,3"/>
+  <path d="M200,278 L200,342" fill="none" stroke="#3987e5" stroke-width="1.1" stroke-dasharray="4,3"/>
+  <path d="M330,278 L330,342" fill="none" stroke="#e8a600" stroke-width="1.1" stroke-dasharray="4,3"/>
+  <path d="M530,278 L530,342" fill="none" stroke="#e66767" stroke-width="1.1" stroke-dasharray="4,3"/>
+  <path d="M760,278 L760,342" fill="none" stroke="#9085e9" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- ─── Connecteurs L3 → L4 ─── -->
+  <path d="M200,378 L200,427" fill="none" stroke="#3987e5" stroke-width="1" stroke-dasharray="4,3"/>
+  <path d="M530,378 L530,427" fill="none" stroke="#e66767" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- ─── L0 — ROOT cx=550, cy=45 ─── -->
+  <rect x="370" y="24" width="360" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">ML CLASSIQUE — ALGORITHMES</text>
+
+  <!-- ─── L1 — LINÉAIRES cx=140 ─── -->
+  <rect x="42" y="130" width="196" height="42" rx="12" fill="rgba(57,135,229,.13)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="140" y="151" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="800">MODÈLES LINÉAIRES</text>
+  <text x="140" y="165" text-anchor="middle" fill="#9e95b5" font-size="10">(relations simples)</text>
+
+  <!-- ─── L1 — ARBRES cx=390 ─── -->
+  <rect x="292" y="130" width="196" height="42" rx="12" fill="rgba(232,166,0,.13)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="390" y="151" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="800">ARBRES / ENSEMBLES</text>
+  <text x="390" y="165" text-anchor="middle" fill="#9e95b5" font-size="10">(relations complexes)</text>
+
+  <!-- ─── L1 — BOOSTING cx=640 ─── -->
+  <rect x="542" y="130" width="196" height="42" rx="12" fill="rgba(230,103,103,.13)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="640" y="151" text-anchor="middle" fill="#e66767" font-size="12" font-weight="800">GRADIENT BOOSTING</text>
+  <text x="640" y="165" text-anchor="middle" fill="#9e95b5" font-size="10">(XGBoost, séquentiel)</text>
+
+  <!-- ─── L1 — PIPELINE cx=860 ─── -->
+  <rect x="762" y="130" width="196" height="42" rx="12" fill="rgba(144,133,233,.13)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="860" y="151" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="800">PIPELINE SKLEARN</text>
+  <text x="860" y="165" text-anchor="middle" fill="#9e95b5" font-size="10">(données brutes → prod)</text>
+
+  <!-- ─── L1 — MÉTRIQUES cx=1020 ─── -->
+  <rect x="930" y="130" width="180" height="42" rx="12" fill="rgba(27,175,122,.13)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="1020" y="151" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">ÉVALUATION</text>
+  <text x="1020" y="165" text-anchor="middle" fill="#9e95b5" font-size="10">(choisir la bonne métrique)</text>
+
+  <!-- ─── L2 ─── -->
+  <rect x="28" y="242" width="104" height="36" rx="8" fill="rgba(57,135,229,.09)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="80" y="265" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="700">Régr. Logistique</text>
+
+  <rect x="148" y="242" width="104" height="36" rx="8" fill="rgba(57,135,229,.09)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="200" y="265" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="700">Ridge / Lasso</text>
+
+  <rect x="278" y="242" width="104" height="36" rx="8" fill="rgba(232,166,0,.09)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="330" y="265" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="700">Random Forest</text>
+
+  <rect x="478" y="242" width="104" height="36" rx="8" fill="rgba(230,103,103,.09)" stroke="#e66767" stroke-width="1.2"/>
+  <text x="530" y="265" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">XGBoost</text>
+
+  <rect x="708" y="242" width="104" height="36" rx="8" fill="rgba(144,133,233,.09)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="760" y="265" text-anchor="middle" fill="#9085e9" font-size="11" font-weight="700">Imputation</text>
+
+  <rect x="908" y="242" width="104" height="36" rx="8" fill="rgba(144,133,233,.09)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="960" y="265" text-anchor="middle" fill="#9085e9" font-size="11" font-weight="700">Encodage</text>
+
+  <rect x="968" y="242" width="104" height="36" rx="8" fill="rgba(27,175,122,.09)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="1020" y="265" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="700">AUC-ROC / F1</text>
+
+  <!-- ─── L3 ─── -->
+  <rect x="28" y="342" width="104" height="36" rx="7" fill="rgba(57,135,229,.06)" stroke="#3987e5" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="80" y="365" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Sigmoïde</text>
+
+  <rect x="148" y="342" width="104" height="36" rx="7" fill="rgba(57,135,229,.06)" stroke="#3987e5" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="200" y="365" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Biais / Variance</text>
+
+  <rect x="278" y="342" width="104" height="36" rx="7" fill="rgba(232,166,0,.06)" stroke="#e8a600" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="330" y="365" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Overfitting</text>
+
+  <rect x="478" y="342" width="104" height="36" rx="7" fill="rgba(230,103,103,.06)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="530" y="365" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Résidus</text>
+
+  <rect x="708" y="342" width="104" height="36" rx="7" fill="rgba(144,133,233,.06)" stroke="#9085e9" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="760" y="365" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">StandardScaler</text>
+
+  <!-- ─── L4 ─── -->
+  <rect x="148" y="427" width="104" height="30" rx="7" fill="rgba(57,135,229,.04)" stroke="#3987e5" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="200" y="447" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Régularisation</text>
+
+  <rect x="478" y="427" width="104" height="30" rx="7" fill="rgba(230,103,103,.04)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="530" y="447" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Learning Rate</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-les-trois-familles-dalgorithmes-classiques"><span class="h2-num">2</span>1. Les trois familles d'algorithmes classiques<span class="h2-line"></span></h2>
+
+<p><strong>Définition</strong> : En ML classique (données tabulaires), les algorithmes se regroupent en trois grandes familles selon la façon dont ils modélisent la relation entre les données d'entrée et la réponse à prédire.</p>
+
+<table>
+<thead>
+<tr>
+  <th>Famille</th>
+  <th>Algorithmes</th>
+  <th>Hypothèse centrale</th>
+  <th>Quand l'utiliser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Modèles linéaires</strong></td>
+  <td>Régression logistique, régression linéaire, Ridge, Lasso</td>
+  <td>La frontière entre les classes (ou la valeur à prédire) est une combinaison linéaire des features</td>
+  <td>Relations simples, peu de données, explicabilité réglementaire requise</td>
+</tr>
+<tr>
+  <td><strong>Arbres / Ensembles</strong></td>
+  <td>Arbre de décision, Random Forest</td>
+  <td>La relation peut s'exprimer par une série de règles if/else imbriquées — pas besoin d'être linéaire</td>
+  <td>Relations non-linéaires complexes, features de natures très différentes (montant, catégorie, booléen)</td>
+</tr>
+<tr>
+  <td><strong>Gradient boosting</strong></td>
+  <td>XGBoost, LightGBM, CatBoost</td>
+  <td>Des centaines d'arbres faibles construits séquentiellement, chacun corrigeant les erreurs du précédent</td>
+  <td>Le meilleur choix par défaut sur données tabulaires structurées, volume important</td>
+</tr>
+</tbody>
+</table>
+
+<p>Deux termes à clarifier immédiatement :</p>
+
+<ul>
+<li><strong>Feature</strong> : une colonne dans ton tableau de données — une caractéristique observable de chaque exemple. Pour un dossier de crédit : l'âge, le revenu mensuel, le nombre d'incidents passés sont des features.</li>
+<li><strong>Hyperparamètre</strong> : un réglage que l'on fixe avant l'entraînement (contrairement aux paramètres appris automatiquement). Pour une Random Forest, le nombre d'arbres à construire est un hyperparamètre. On ne l'apprend pas — on le choisit.</li>
+</ul>
+
+<h3 id="situation-réelle-société-générale-scoring-crédit">Situation réelle : Société Générale, scoring crédit</h3>
+
+<p>La direction des risques de la Société Générale évalue des milliers de demandes de crédit par jour. Selon le profil du dossier, trois situations se présentent :</p>
+
+<ul>
+<li><strong>Dossier standard</strong> (salarié CDI, sans incident) → la régression logistique suffit. Elle est transparente, les coefficients s'expliquent à un régulateur, et elle tourne en moins d'une milliseconde par dossier.</li>
+<li><strong>Dossier mixte</strong> (indépendant, revenus variables, historique partiel) → les relations sont non-linéaires. XGBoost capture des interactions que la régression logistique rate.</li>
+<li><strong>Décision contestée par le client</strong> → la réglementation européenne (RGPD, article 22) exige d'expliquer le refus. Les SHAP values (disponibles pour XGBoost) attribuent une contribution chiffrée à chaque feature pour chaque décision.</li>
+</ul>
+
+<p>:::rule
+<strong>Règle pratique</strong> : toujours commencer par la régression logistique. Si ses performances sont insuffisantes sur les données de validation, passer à XGBoost. Ne jamais partir directement sur le modèle le plus complexe.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une feature ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une feature est une colonne dans le tableau de données — une caractéristique observable de chaque exemple. Pour un dossier de crédit : âge, revenu, nombre d'incidents passés sont des features.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle différence entre un paramètre appris et un hyperparamètre ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un <strong>paramètre</strong> est appris automatiquement pendant l'entraînement (les coefficients d'une régression, les seuils d'un arbre). Un <strong>hyperparamètre</strong> est fixé avant l'entraînement par le data scientist (nombre d'arbres, profondeur max). On choisit les hyperparamètres, on apprend les paramètres.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi la Société Générale utilise-t-elle la régression logistique plutôt que XGBoost sur les dossiers standards ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Explicabilité réglementaire. La régression logistique a des coefficients directement interprétables. Le RGPD (article 22) exige d'expliquer tout refus automatisé — un modèle boîte noire est plus difficile à justifier devant un régulateur.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la règle pratique sur le choix d'algorithme ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Commencer par la régression logistique (baseline simple). Si insuffisante sur les données de validation, passer à XGBoost. Ne jamais partir directement sur le modèle le plus complexe.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="2-régression-logistique-le-modèle-de-référence"><span class="h2-num">3</span>2. Régression logistique : le modèle de référence<span class="h2-line"></span></h2>
+
+<h3 id="ce-quelle-est-et-ce-quelle-nest-pas">Ce qu'elle est — et ce qu'elle n'est pas</h3>
+
+<p><strong>Définition</strong> : La régression logistique est un algorithme de <strong>classification</strong>, malgré son nom. Elle ne prédit pas un nombre continu (ce serait de la régression) — elle prédit la <strong>probabilité qu'un exemple appartienne à une classe</strong>.</p>
+
+<p>Le nom "logistique" vient de la fonction mathématique qu'elle utilise, pas de la nature du problème. Cette confusion est classique : un data scientist qui dit "je fais une régression logistique" travaille bien sur un problème de classification binaire (oui/non, fraude/non-fraude, churné/resté).</p>
+
+<h3 id="la-fonction-sigmoïde-transformer-un-score-en-probabilité">La fonction sigmoïde : transformer un score en probabilité</h3>
+
+<p>Voici le mécanisme interne. La régression logistique calcule d'abord un <strong>score</strong> (une somme pondérée des features) :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">score = w₁ × revenu + w₂ × âge + w₃ × nb_incidents + biais
+</code></pre></div>
+
+<p>Ce score peut être n'importe quel nombre réel (-∞ à +∞). Pour obtenir une <strong>probabilité</strong> (entre 0 et 1), on lui applique la <strong>fonction sigmoïde</strong> :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">probabilité = 1 / (1 + e^(-score))
+</code></pre></div>
+
+<p>En pratique, la sigmoïde fait ceci : un score très négatif → probabilité proche de 0. Un score très positif → probabilité proche de 1. Un score de 0 → probabilité de 0.5. C'est une courbe en S qui "écrase" n'importe quel nombre dans l'intervalle [0, 1].</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
+
+<span class="c1"># Illustration de la sigmoïde</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">probas</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">scores</span><span class="p">))</span>
+
+<span class="c1"># score = -4 → probabilité ≈ 0.018 (très probablement classe 0)</span>
+<span class="c1"># score =  0 → probabilité = 0.5   (incertain)</span>
+<span class="c1"># score = +4 → probabilité ≈ 0.982 (très probablement classe 1)</span>
+</code></pre>
+</div>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Axes -->
+  <!-- Y axis -->
+  <line x1="60" y1="20" x2="60" y2="270" stroke="#2e2b3a" stroke-width="1.5"/>
+  <!-- X axis -->
+  <line x1="60" y1="270" x2="580" y2="270" stroke="#2e2b3a" stroke-width="1.5"/>
+
+  <!-- Grille horizontale -->
+  <line x1="60" y1="270" x2="580" y2="270" stroke="#26232f" stroke-width="1"/>
+  <line x1="60" y1="150" x2="580" y2="150" stroke="#26232f" stroke-width="1"/>
+  <line x1="60" y1="30" x2="580" y2="30" stroke="#26232f" stroke-width="1"/>
+
+  <!-- Labels Y -->
+  <text x="50" y="274" text-anchor="end" fill="#716989" font-size="10">0</text>
+  <text x="50" y="154" text-anchor="end" fill="#716989" font-size="10">0.5</text>
+  <text x="50" y="34" text-anchor="end" fill="#716989" font-size="10">1</text>
+  <text x="18" y="155" text-anchor="middle" fill="#9e95b5" font-size="11" transform="rotate(-90,18,155)">Probabilité</text>
+
+  <!-- Labels X : x in [-6..6], svgX = (x+6)/12*500+65 -->
+  <!-- x=-6 → 65, x=0 → 315, x=6 → 565 -->
+  <text x="65" y="285" text-anchor="middle" fill="#716989" font-size="10">−6</text>
+  <text x="148" y="285" text-anchor="middle" fill="#716989" font-size="10">−4</text>
+  <text x="232" y="285" text-anchor="middle" fill="#716989" font-size="10">−2</text>
+  <text x="315" y="285" text-anchor="middle" fill="#716989" font-size="10">0</text>
+  <text x="398" y="285" text-anchor="middle" fill="#716989" font-size="10">2</text>
+  <text x="481" y="285" text-anchor="middle" fill="#716989" font-size="10">4</text>
+  <text x="565" y="285" text-anchor="middle" fill="#716989" font-size="10">6</text>
+  <text x="320" y="298" text-anchor="middle" fill="#9e95b5" font-size="11">Score brut</text>
+
+  <!-- Ligne pointillée seuil 0.5 -->
+  <line x1="60" y1="150" x2="580" y2="150" stroke="#e8a600" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="582" y="154" fill="#e8a600" font-size="10">seuil 0.5</text>
+
+  <!-- Courbe sigmoïde — calcul : svgX=(x+6)/12*500+65, svgY=(1-f(x))*240+30
+    x=-6: f=0.00247 → y=269.4 → (65, 269)
+    x=-5: f=0.00669 → y=267.4 → (107, 267)
+    x=-4: f=0.01799 → y=265.7 → (148, 266) (corr: 263.3)
+    x=-3: f=0.04743 → y=258.6 → (190, 259)
+    x=-2: f=0.11920 → y=241.4 → (232, 241)
+    x=-1: f=0.26894 → y=205.5 → (273, 205)
+    x= 0: f=0.50000 → y=150   → (315, 150)
+    x= 1: f=0.73106 → y= 94.5 → (357, 95)
+    x= 2: f=0.88080 → y= 58.6 → (398, 59)
+    x= 3: f=0.95257 → y= 41.4 → (440, 41)
+    x= 4: f=0.98201 → y= 36.7 → (481, 37) (corr: 34.9)
+    x= 5: f=0.99331 → y= 32.6 → (523, 33)
+    x= 6: f=0.99753 → y= 30.6 → (565, 31)
+  -->
+  <polyline points="65,269 107,267 148,263 190,259 232,241 273,205 315,150 357,95 398,59 440,41 481,35 523,33 565,31" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Annotations -->
+  <!-- Score très négatif → prob ≈ 0 -->
+  <circle cx="107" cy="267" r="3" fill="#e66767"/>
+  <text x="80" y="256" fill="#e66767" font-size="9">score très négatif</text>
+  <text x="80" y="267" fill="#e66767" font-size="9">→ prob ≈ 0</text>
+
+  <!-- Score ≈ 0 → prob = 0.5 -->
+  <circle cx="315" cy="150" r="4" fill="#e8a600"/>
+  <text x="325" y="140" fill="#e8a600" font-size="9">score ≈ 0</text>
+  <text x="325" y="152" fill="#e8a600" font-size="9">→ prob = 0.5</text>
+
+  <!-- Score très positif → prob ≈ 1 -->
+  <circle cx="523" cy="33" r="3" fill="#3987e5"/>
+  <text x="460" y="22" fill="#3987e5" font-size="9">score très positif</text>
+  <text x="460" y="34" fill="#3987e5" font-size="9">→ prob ≈ 1</text>
+
+  <!-- Titre -->
+  <text x="300" y="14" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Fonction sigmoïde : σ(x) = 1 / (1 + e⁻ˣ)</text>
+</svg>
+</div>
+
+<h3 id="pourquoi-cest-le-baseline-à-battre">Pourquoi c'est le baseline à battre</h3>
+
+<p>Avant d'entraîner un XGBoost ou une Random Forest, on entraîne toujours une régression logistique. Deux raisons :</p>
+
+<ol>
+<li><strong>Référence de performance</strong> : si XGBoost fait 78% et la régression logistique fait 77%, le gain ne justifie pas la complexité ajoutée.</li>
+<li><strong>Détection de problèmes</strong> : si la régression logistique est mauvaise, c'est souvent un signal que les données ou le problème sont mal construits — pas que l'algorithme est insuffisant.</li>
+</ol>
+
+<h3 id="code-sklearn-complet">Code sklearn complet</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Données de crédit (exemple)</span>
+<span class="c1"># X contient les features, y contient le label (1=défaut, 0=remboursé)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Entraîner le modèle</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># max_iter = nombre max de pas d&#39;optimisation</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Prédire des probabilités (pas juste 0/1)</span>
+<span class="n">probas</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># colonne 1 = probabilité de défaut</span>
+
+<span class="c1"># Inspecter les coefficients : ce que le modèle a appris</span>
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">feature_names</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">25s</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># revenu_mensuel           : -0.412  ← revenu élevé diminue le risque</span>
+<span class="c1"># nb_incidents_24mois      : +0.887  ← incidents augmentent le risque</span>
+
+<span class="c1"># Évaluer</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)))</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>Crédit Agricole — exigence d'explicabilité réglementaire</strong></p>
+
+<p>Le Crédit Agricole utilise la régression logistique sur ses dossiers grand public parce que ses auditeurs internes et la Banque de France peuvent lire directement les coefficients : "un incident de paiement dans les 24 derniers mois augmente le score de risque de 0.887 — ce qui correspond à une multiplication du risque par e^0.887 ≈ 2.4". C'est intraduisible en langage humain pour un réseau de neurones. Un XGBoost avec SHAP values est une alternative acceptable, mais la régression logistique reste la valeur sûre pour l'audit simple.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">La régression logistique est-elle un algorithme de classification ou de régression ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">De <strong>classification</strong> — malgré son nom. Elle prédit la probabilité d'appartenir à une classe (entre 0 et 1), pas un nombre continu. Le nom "logistique" désigne la fonction sigmoïde utilisée en interne, pas la nature du problème.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la fonction sigmoïde et pourquoi en a-t-on besoin ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La sigmoïde transforme un score quelconque (−∞ à +∞) en une probabilité (entre 0 et 1) via la formule 1/(1+e^(-score)). Sans elle, la somme pondérée des features pourrait donner n'importe quel nombre — pas utilisable comme probabilité.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi entraîner une régression logistique avant XGBoost ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Pour deux raisons : <strong>1. Baseline</strong> — si XGBoost ne fait que +1%, la complexité ajoutée ne vaut pas le coût. <strong>2. Diagnostic</strong> — si la régression logistique est très mauvaise, le problème vient souvent des données ou de leur formulation, pas de l'algorithme.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment lire les coefficients d'une régression logistique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un coefficient positif signifie que cette feature augmente la probabilité d'appartenir à la classe 1. Un coefficient négatif la diminue. La magnitude indique l'importance (après normalisation des features). Ex : coef +0.887 sur nb_incidents → chaque incident supplémentaire multiplie le risque par e^0.887 ≈ 2.4.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="3-arbres-de-décision-et-random-forest"><span class="h2-num">4</span>3. Arbres de décision et Random Forest<span class="h2-line"></span></h2>
+
+<h3 id="larbre-de-décision-une-série-de-questions-ifelse-apprise-automatiquement">L'arbre de décision : une série de questions if/else apprise automatiquement</h3>
+
+<p><strong>Définition</strong> : Un arbre de décision est un modèle qui prend des décisions en posant une série de questions sur les features, une à la fois. Chaque question divise les données en deux groupes. L'arbre apprend automatiquement — depuis les données — quelles questions poser et dans quel ordre pour séparer au mieux les classes.</p>
+
+<p>Visuellement, ça ressemble à un organigramme :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">                     revenu_mensuel &gt; 2500 €?
+                    /                         \
+                  OUI                         NON
+                   |                           |
+     nb_incidents == 0?              → REFUS (probabilité défaut : 72%)
+        /          \
+      OUI           NON
+       |             |
+  → ACCORD        ancienneté_emploi &gt; 2 ans?
+  (prob. défaut:  /          \
+      8%)       OUI          NON
+                 |            |
+            → ACCORD      → REFUS
+</code></pre></div>
+
+<p>L'algorithme construit cet arbre en cherchant, à chaque nœud, la question qui sépare le mieux les exemples (la plus "informative"). Le critère de séparation s'appelle l'<strong>impureté de Gini</strong> ou l'<strong>entropie</strong> — des mesures de la mixité des classes dans chaque sous-groupe.</p>
+
+<h3 id="le-problème-de-loverfitting-expliqué-depuis-zéro">Le problème de l'overfitting — expliqué depuis zéro</h3>
+
+<p><strong>Définition de l'overfitting</strong> : L'overfitting (sur-apprentissage en français) est le phénomène où un modèle a appris les données d'entraînement par cœur au lieu d'apprendre les patterns généraux. Il performe parfaitement sur les données qu'il a vues, mais échoue sur de nouvelles données.</p>
+
+<p>L'analogie : un étudiant qui mémorise les réponses exactes des annales plutôt que de comprendre le cours. Il réussit l'examen si les questions sont identiques, échoue si elles changent légèrement.</p>
+
+<p>Pour les arbres, c'est particulièrement aigu : un arbre autorisé à croître sans limite va créer une feuille pour chaque exemple individuel — il "mémorise" chaque dossier. Sa performance sur les données d'entraînement est 100%. Sur de nouvelles données : catastrophique.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Arbre sans contrainte — overfitting garanti</span>
+<span class="n">arbre_illimite</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>  <span class="c1"># max_depth=None par défaut</span>
+<span class="n">arbre_illimite</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train accuracy : </span><span class="si">{</span><span class="n">arbre_illimite</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="w"> </span><span class="n">y_train</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># → 1.000 (mémorisé)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy  : </span><span class="si">{</span><span class="n">arbre_illimite</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>    <span class="c1"># → 0.712 (inutilisable)</span>
+
+<span class="c1"># Arbre avec contrainte de profondeur</span>
+<span class="n">arbre_contraint</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># max 5 niveaux de questions</span>
+<span class="n">arbre_contraint</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train accuracy : </span><span class="si">{</span><span class="n">arbre_contraint</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="w"> </span><span class="n">y_train</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># → 0.831</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy  : </span><span class="si">{</span><span class="n">arbre_contraint</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>   <span class="c1"># → 0.814 (acceptable)</span>
+</code></pre>
+</div>
+
+<h3 id="random-forest-500-arbres-indépendants-qui-votent">Random Forest : 500 arbres indépendants qui votent</h3>
+
+<p><strong>Définition</strong> : Une Random Forest est un <strong>ensemble</strong> de centaines d'arbres de décision, chacun entraîné sur un sous-échantillon différent des données (technique dite de <strong>bagging</strong> — Bootstrap AGGregating). Pour prédire, chaque arbre vote, et la classe majoritaire gagne.</p>
+
+<p>Pourquoi ça marche ? Deux mécanismes distincts réduisent l'overfitting :</p>
+
+<ol>
+<li><strong>Sous-échantillonnage des données</strong> : chaque arbre ne voit qu'une portion aléatoire des exemples → il ne peut pas mémoriser tout le dataset.</li>
+<li><strong>Sous-échantillonnage des features</strong> : à chaque nœud, seul un sous-ensemble aléatoire de features est considéré → les arbres sont différents entre eux, leurs erreurs ne se corrèlent pas, la moyenne les annule.</li>
+</ol>
+
+<p>:::callout-insight
+<strong>L'intuition centrale du bagging</strong> : si chaque arbre fait des erreurs aléatoires et indépendantes, la moyenne de leurs prédictions converge vers la vraie valeur. C'est comme demander à 500 experts qui ne se sont pas concertés — leurs biais individuels s'annulent.
+:::</p>
+
+<p><strong>Avant / Après — arbre seul vs Random Forest :</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># AVANT — arbre de décision seul</span>
+<span class="n">arbre</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">scores_arbre</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">arbre</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Arbre seul    — AUC moyen : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores_arbre</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">scores_arbre</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># → AUC moyen : 0.741 ± 0.038   (variance élevée : instable selon le découpage)</span>
+
+<span class="c1"># APRÈS — Random Forest (500 arbres)</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">scores_rf</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Random Forest — AUC moyen : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores_rf</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">scores_rf</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># → AUC moyen : 0.829 ± 0.011   (variance faible : robuste, peu sensible au découpage)</span>
+</code></pre>
+</div>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre global -->
+  <text x="300" y="16" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Arbre unique vs Random Forest — frontières de décision</text>
+
+  <!-- === GAUCHE : Arbre unique (overfitting) === -->
+  <text x="150" y="36" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">1 Arbre — Overfitting</text>
+
+  <!-- Zone de fond gauche -->
+  <rect x="20" y="42" width="260" height="210" rx="6" fill="#1e1c24" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- Points de données classe A (bleu) - zone gauche -->
+  <circle cx="50" cy="70" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="80" cy="90" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="60" cy="120" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="100" cy="65" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="70" cy="150" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="110" cy="110" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="45" cy="180" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="90" cy="200" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="130" cy="80" r="4" fill="#3987e5" opacity="0.9"/>
+
+  <!-- Points classe B (violet) - zone gauche -->
+  <circle cx="160" cy="75" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="190" cy="100" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="220" cy="70" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="200" cy="140" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="240" cy="110" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="170" cy="180" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="250" cy="170" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="140" cy="200" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="210" cy="210" r="4" fill="#9085e9" opacity="0.9"/>
+
+  <!-- Frontière complexe zigzag (overfitting) -->
+  <polyline points="135,42 135,65 120,65 120,85 145,85 145,100 115,100 115,125 140,125 140,145 110,145 110,165 145,165 145,185 120,185 120,210 145,210 145,252" fill="none" stroke="#e66767" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="150" y="265" text-anchor="middle" fill="#e66767" font-size="9">Frontière irrégulière = mémorisation</text>
+
+  <!-- === DROITE : Random Forest === -->
+  <text x="450" y="36" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="700">Random Forest — Généralisée</text>
+
+  <!-- Zone de fond droite -->
+  <rect x="320" y="42" width="260" height="210" rx="6" fill="#1e1c24" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- Mêmes points classe A -->
+  <circle cx="350" cy="70" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="380" cy="90" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="360" cy="120" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="400" cy="65" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="370" cy="150" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="410" cy="110" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="345" cy="180" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="390" cy="200" r="4" fill="#3987e5" opacity="0.9"/>
+  <circle cx="430" cy="80" r="4" fill="#3987e5" opacity="0.9"/>
+
+  <!-- Mêmes points classe B -->
+  <circle cx="460" cy="75" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="490" cy="100" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="520" cy="70" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="500" cy="140" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="540" cy="110" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="470" cy="180" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="550" cy="170" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="440" cy="200" r="4" fill="#9085e9" opacity="0.9"/>
+  <circle cx="510" cy="210" r="4" fill="#9085e9" opacity="0.9"/>
+
+  <!-- Frontière lissée (courbe douce) -->
+  <path d="M 435,42 Q 440,100 445,130 Q 448,160 440,200 Q 436,225 435,252" fill="none" stroke="#1baf7a" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="450" y="265" text-anchor="middle" fill="#1baf7a" font-size="9">Frontière lissée = généralisation</text>
+
+  <!-- Séparateur centre -->
+  <line x1="300" y1="30" x2="300" y2="270" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+</svg>
+</div>
+
+<p>Les paramètres clés d'une Random Forest :</p>
+
+<table>
+<thead>
+<tr>
+  <th>Paramètre</th>
+  <th>Rôle</th>
+  <th>Valeur de départ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_estimators</code></td>
+  <td>Nombre d'arbres</td>
+  <td>500 (plus = mieux jusqu'à un plateau)</td>
+</tr>
+<tr>
+  <td><code>max_depth</code></td>
+  <td>Profondeur max de chaque arbre</td>
+  <td>None (les arbres poussent librement — le bagging s'en charge)</td>
+</tr>
+<tr>
+  <td><code>max_features</code></td>
+  <td>Features considérées à chaque nœud</td>
+  <td><code>"sqrt"</code> (racine carrée du nombre total)</td>
+</tr>
+<tr>
+  <td><code>n_jobs</code></td>
+  <td>Cœurs CPU utilisés</td>
+  <td><code>-1</code> (tous les cœurs disponibles)</td>
+</tr>
+</tbody>
+</table>
+
+<p>:::situation
+<strong>MAIF — détection de fraudes assurance</strong></p>
+
+<p>La MAIF reçoit des milliers de déclarations de sinistre par an. Détecter les fraudes (fausses déclarations) est un problème de classification déséquilibré : moins de 2% des déclarations sont frauduleuses. Une Random Forest avec des poids de classe ajustés (<code>class_weight='balanced'</code>) capture les patterns non-linéaires : une combinaison spécifique de facteurs (type de sinistre + délai de déclaration + historique du client) qui aucun seul ne serait discriminant. Un arbre seul surapprendrait sur ces rares cas. La Random Forest avec 500 arbres stabilise la prédiction.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un arbre de décision sans contrainte overfitte-t-il systématiquement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Sans contrainte de profondeur, l'arbre crée une feuille pour chaque exemple individuel (accuracy train = 100%). Il mémorise les données au lieu d'apprendre les patterns. Sur de nouvelles données, ses décisions sont arbitraires.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le bagging et pourquoi réduit-il l'overfitting ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le bagging (Bootstrap AGGregating) entraîne chaque arbre sur un sous-échantillon aléatoire des données <strong>et</strong> des features. Chaque arbre fait des erreurs différentes et indépendantes. La moyenne (ou le vote) annule ces erreurs individuelles, comme demander à 500 experts indépendants dont les biais s'annulent.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle différence fondamentale entre Random Forest et un seul arbre profond ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un arbre profond mémorise → variance élevée, instable. Une Random Forest fait la moyenne de 500 arbres entraînés sur des sous-échantillons différents → variance faible, robuste. Exemple : AUC 0.741 ± 0.038 (arbre) vs 0.829 ± 0.011 (Random Forest).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quel paramètre Random Forest utiliser pour exploiter tous les cœurs CPU ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">`n_jobs=-1` — utilise tous les cœurs disponibles. Essentiel pour entraîner 500 arbres rapidement.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="4-xgboost-le-gradient-boosting-expliqué"><span class="h2-num">5</span>4. XGBoost : le gradient boosting expliqué<span class="h2-line"></span></h2>
+
+<h3 id="bagging-vs-boosting-deux-philosophies-opposées">Bagging vs boosting — deux philosophies opposées</h3>
+
+<p><strong>Définition du bagging</strong> : les arbres sont construits en <strong>parallèle</strong>, chacun indépendamment sur un sous-échantillon. La prédiction finale est la moyenne. C'est le principe de la Random Forest.</p>
+
+<p><strong>Définition du boosting</strong> : les arbres sont construits en <strong>séquence</strong>. Chaque nouvel arbre ne repart pas de zéro — il apprend spécifiquement à corriger les erreurs que les arbres précédents ont commises.</p>
+
+<div class="mindmap">Bagging (Random Forest)           Boosting (XGBoost)
+─────────────────────────         ──────────────────────────────
+Arbre 1 ──┐                       Arbre 1 → erreurs → Arbre 2
+Arbre 2 ──┼──→ Moyenne            Arbre 2 → erreurs → Arbre 3
+Arbre 3 ──┘                       Arbre 3 → erreurs → Arbre 4
+                                  ...
+(arbres indépendants)             (chaque arbre apprend les erreurs du précédent)
+</div>
+
+<h3 id="les-résidus-ce-que-le-prochain-arbre-doit-apprendre">Les résidus : ce que le prochain arbre doit apprendre</h3>
+
+<p><strong>Définition d'un résidu</strong> : un résidu est la différence entre la valeur réelle et la valeur prédite par le modèle actuel. C'est l'erreur que le modèle n'a pas encore réussi à expliquer.</p>
+
+<p>Dans XGBoost, après chaque arbre, on calcule les résidus. Le prochain arbre est entraîné <strong>sur ces résidus</strong> — il apprend à les réduire. La prédiction finale est la somme de toutes les prédictions de tous les arbres.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Itération 1 : Arbre 1 prédit 0.6, réalité 1.0 → résidu = 0.4
+Itération 2 : Arbre 2 apprend à prédire ces 0.4 → prédit 0.35 → résidu = 0.05
+Itération 3 : Arbre 3 apprend à prédire ces 0.05 → prédit 0.04 → résidu = 0.01
+...
+Prédiction finale = 0.6 + 0.35 + 0.04 + ... ≈ 1.0
+</code></pre></div>
+
+<h3 id="le-learning-rate-pourquoi-apprendre-lentement-est-mieux">Le learning rate : pourquoi apprendre lentement est mieux</h3>
+
+<p><strong>Définition du learning rate</strong> (taux d'apprentissage) : un facteur entre 0 et 1 qui multiplie la contribution de chaque arbre à la prédiction finale. Au lieu d'utiliser 100% de la correction calculée, on n'en utilise que 5% ou 10%.</p>
+
+<p>Pourquoi ? Un arbre qui corrige trop vite une erreur risque de créer des oscillations — il surcompense, le suivant surcompense dans l'autre sens, etc. Un learning rate faible (0.05) force le modèle à converger lentement et prudemment. Contrepartie : il faut plus d'arbres pour atteindre la même performance.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">learning_rate = 1.0 → chaque arbre corrige à 100% → risque d'oscillation, overfitting rapide
+learning_rate = 0.1 → chaque arbre corrige à 10%  → convergence stable, mais 500 arbres minimum
+learning_rate = 0.01→ très lent → 5000 arbres nécessaires (lent à entraîner)
+Compromis standard : learning_rate=0.05, n_estimators=500
+</code></pre></div>
+
+<h3 id="code-avec-paramètres-clés-commentés">Code avec paramètres clés commentés</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>        <span class="c1"># nombre d&#39;arbres dans la séquence</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>      <span class="c1"># contribution de chaque arbre (0.05 = 5%)</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>             <span class="c1"># profondeur max de chaque arbre (6 est un bon défaut)</span>
+    <span class="n">subsample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>           <span class="c1"># 80% des données pour chaque arbre (régularisation)</span>
+    <span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>    <span class="c1"># 80% des features pour chaque arbre (régularisation)</span>
+    <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span>       <span class="c1"># métrique suivie pendant l&#39;entraînement</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>                <span class="c1"># tous les cœurs CPU</span>
+<span class="p">)</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XGBoost — AUC : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Deux paramètres ici sont de la <strong>régularisation</strong> — une technique pour limiter l'overfitting en introduisant du hasard :
+- <code>subsample=0.8</code> : chaque arbre ne voit que 80% des exemples (tirage aléatoire)
+- <code>colsample_bytree=0.8</code> : chaque arbre n'utilise que 80% des features</p>
+
+<p><strong>Définition de la régularisation</strong> : ensemble de techniques qui pénalisent la complexité d'un modèle pour éviter qu'il mémorise les données d'entraînement. L'idée : rendre le modèle intentionnellement "moins parfait" sur les données d'entraînement pour qu'il généralise mieux sur de nouvelles données.</p>
+
+<h3 id="comparaison-directe-random-forest-vs-xgboost">Comparaison directe Random Forest vs XGBoost</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">xgb_model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">nom</span><span class="p">,</span> <span class="n">modele</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;Random Forest&quot;</span><span class="p">,</span> <span class="n">rf</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;XGBoost&quot;</span><span class="p">,</span> <span class="n">xgb_model</span><span class="p">)]:</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">modele</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nom</span><span class="si">:</span><span class="s2">15s</span><span class="si">}</span><span class="s2"> AUC=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Résultats typiques sur un dataset de crédit (1M lignes) :</span>
+<span class="c1"># Random Forest   AUC=0.829 ± 0.011</span>
+<span class="c1"># XGBoost         AUC=0.871 ± 0.008</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>BNP Paribas — scoring de millions de dossiers</strong></p>
+
+<p>BNP Paribas renouvelle chaque nuit les scores de risque sur des millions de dossiers actifs. XGBoost est le choix standard pour trois raisons : il gère nativement les valeurs manquantes (les dossiers incomplets ne plantent pas le modèle), il est parallélisé sur CPU, et il offre les meilleures performances sur les datasets tabulaires larges. La Random Forest prend 8h pour le même dataset — XGBoost tourne en 45 minutes avec +4 points d'AUC.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence fondamentale entre bagging et boosting ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Bagging</strong> (Random Forest) : arbres en parallèle, chacun indépendant, résultat = moyenne. <strong>Boosting</strong> (XGBoost) : arbres en séquence, chaque arbre apprend les erreurs du précédent. Le boosting est généralement plus précis, mais plus lent à entraîner et plus sensible à l'overfitting.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un résidu dans XGBoost ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un résidu est la différence entre la valeur réelle et la prédiction du modèle actuel. Chaque nouvel arbre XGBoost est entraîné sur les résidus du modèle précédent — il apprend uniquement les erreurs restantes.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un learning rate faible est-il généralement meilleur ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un learning rate élevé corrige trop vite → oscillations, overfitting rapide. Un learning rate faible (0.05) force une convergence progressive. Contrepartie : il faut plus d'arbres (n_estimators plus élevé), donc un entraînement plus long.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la régularisation dans XGBoost ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Des techniques qui introduisent du hasard pour éviter l'overfitting : `subsample` (chaque arbre ne voit que 80% des exemples) et `colsample_bytree` (chaque arbre n'utilise que 80% des features). Le modèle est intentionnellement moins parfait sur les données d'entraînement pour mieux généraliser.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="5-le-pipeline-sklearn-complet-de-la-donnée-brute-au-modèle-en-production"><span class="h2-num">6</span>5. Le pipeline sklearn complet : de la donnée brute au modèle en production<span class="h2-line"></span></h2>
+
+<h3 id="le-problème-les-données-réelles-ne-sont-jamais-propres">Le problème : les données réelles ne sont jamais propres</h3>
+
+<p>Un modèle ML ne peut pas travailler directement sur un CSV brut. Trois obstacles systématiques apparaissent sur tout projet réel :</p>
+
+<ol>
+<li><p><strong>Valeurs manquantes</strong> : une case vide dans le tableau. <code>NaN</code> en Python. XGBoost les gère nativement, mais pas tous les modèles. Et même XGBoost a besoin d'un traitement cohérent entre l'entraînement et la production.</p></li>
+<li><p><strong>Variables catégorielles</strong> : des colonnes contenant du texte ou des catégories ("Paris", "Lyon", "CDI", "CDD"). Aucun algorithme ne comprend du texte — il faut les convertir en nombres.</p></li>
+<li><p><strong>Échelles très différentes</strong> : une colonne "âge" varie entre 18 et 90, une colonne "revenu" entre 0 et 100 000. Pour les algorithmes qui calculent des distances (SVM, KNN) ou des gradients (régression logistique), la colonne revenu dominera artificiellement juste parce que ses valeurs sont numériquement plus grandes.</p></li>
+</ol>
+
+<h3 id="étape-1-imputation-des-valeurs-manquantes">Étape 1 — Imputation des valeurs manquantes</h3>
+
+<p><strong>Définition de l'imputation</strong> : remplacer les valeurs manquantes par une valeur calculée (la médiane, la moyenne, ou une valeur spécifique). On ne supprime pas les lignes avec des manquants — sur un dataset de 100k lignes, 5% de manquants sur une feature supprimerait 5000 lignes d'information.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.impute</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleImputer</span>
+
+<span class="c1"># Imputation par la médiane (plus robuste que la moyenne sur les données skewed)</span>
+<span class="n">imputer</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)</span>
+<span class="n">X_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Pourquoi la médiane et pas la moyenne ?</span>
+<span class="c1"># Revenu : 80% gagnent entre 1500€ et 4000€, 5 personnes gagnent 500 000€.</span>
+<span class="c1"># Moyenne : tirée vers le haut par les 5 cas extrêmes → valeur irréaliste pour la plupart.</span>
+<span class="c1"># Médiane : le centre de la distribution → valeur représentative.</span>
+</code></pre>
+</div>
+
+<h3 id="étape-2-encodage-des-variables-catégorielles">Étape 2 — Encodage des variables catégorielles</h3>
+
+<p><strong>Définition de l'encodage</strong> : convertir des catégories textuelles en représentation numérique compréhensible par un algorithme.</p>
+
+<p>Deux stratégies selon la nature de la variable :</p>
+
+<p><strong>OneHotEncoder</strong> — pour les variables sans ordre naturel (ville, profession, type de contrat) :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">"CDI" → [1, 0, 0]
+"CDD" → [0, 1, 0]
+"Indépendant" → [0, 0, 1]
+</code></pre></div>
+
+<p>Chaque catégorie devient une colonne binaire. Problème si beaucoup de catégories (une ville parmi 5000) → explosion du nombre de colonnes.</p>
+
+<p><strong>OrdinalEncoder</strong> — pour les variables avec un ordre naturel (niveau d'études, note de satisfaction) :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">"Bac" → 1
+"Bac+3" → 2
+"Bac+5" → 3
+"Doctorat" → 4
+</code></pre></div>
+
+<p>Préserve l'ordre. À n'utiliser que si l'ordre est réel — encoder "Paris=1, Lyon=2, Marseille=3" impliquerait que Marseille est "plus" que Paris, ce qui est absurde.</p>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège classique</strong> : utiliser OrdinalEncoder sur des variables sans ordre (villes, couleurs) introduit des relations arithmétiques artificielles dans le modèle. Toujours OneHotEncoder pour les variables nominales sans ordre.
+:::</p>
+
+<h3 id="étape-3-normalisation-avec-standardscaler">Étape 3 — Normalisation avec StandardScaler</h3>
+
+<p><strong>Définition de la normalisation</strong> : transformer chaque feature pour qu'elle ait une moyenne de 0 et un écart-type de 1. Après normalisation, l'âge et le revenu sont sur la même échelle.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">valeur_normalisée = (valeur - moyenne) / écart-type
+</code></pre></div>
+
+<p>Conséquence : une valeur à 0 signifie "dans la moyenne". Une valeur à +2 signifie "2 écarts-types au-dessus de la moyenne" (cas atypique).</p>
+
+<p><strong>Quand c'est vital, quand c'est inutile :</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Algorithme</th>
+  <th>Normalisation nécessaire ?</th>
+  <th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Régression logistique</td>
+  <td><strong>Oui</strong></td>
+  <td>Le gradient descent converge mal si les features ont des échelles très différentes</td>
+</tr>
+<tr>
+  <td>SVM</td>
+  <td><strong>Oui</strong></td>
+  <td>Calcule des distances — les grandes échelles dominent</td>
+</tr>
+<tr>
+  <td>KNN</td>
+  <td><strong>Oui</strong></td>
+  <td>Calcule des distances — idem</td>
+</tr>
+<tr>
+  <td>Random Forest</td>
+  <td>Non</td>
+  <td>Les arbres font des comparaisons (&gt; seuil) — l'échelle ne compte pas</td>
+</tr>
+<tr>
+  <td>XGBoost</td>
+  <td>Non</td>
+  <td>Idem — comparaisons de seuils, pas de distances</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="étape-4-le-pipeline-sklearn-chaîner-les-étapes-sans-erreur">Étape 4 — Le Pipeline sklearn : chaîner les étapes sans erreur</h3>
+
+<p><strong>Définition d'un pipeline sklearn</strong> : une séquence ordonnée d'étapes de transformation suivie d'un modèle final, encapsulée en un seul objet. L'appel <code>.fit()</code> déclenche toutes les étapes dans l'ordre.</p>
+
+<p>L'intérêt critique : le pipeline garantit que les <strong>mêmes transformations</strong> calculées sur les données d'entraînement (la médiane pour l'imputation, la moyenne pour la normalisation) sont appliquées <strong>identiquement</strong> sur les nouvelles données en production. Sans pipeline, on oublie de réappliquer la normalisation en prod → le modèle reçoit des données dans un format différent de ce pour quoi il a été entraîné → résultats catastrophiques.</p>
+
+<h3 id="étape-5-traintestsplit-et-cross-validation">Étape 5 — train<em>test</em>split et cross-validation</h3>
+
+<p><strong>Définition du train<em>test</em>split</strong> : diviser le dataset en deux parties — une pour entraîner le modèle (train, typiquement 80%) et une pour mesurer sa performance sur des données jamais vues (test, 20%). Sans cette séparation, la performance mesurée est celle sur les données d'entraînement — le modèle connaît les réponses, c'est tricher.</p>
+
+<p><strong>Définition de la cross-validation</strong> : au lieu d'un seul découpage train/test, on fait 5 (ou 10) découpages différents et on fait la moyenne des performances. Ça donne une mesure plus fiable et détecte si le modèle est sensible au découpage particulier des données.</p>
+
+<div class="mindmap">Cross-validation à 5 folds :
+
+|  Fold 1  |  Fold 2  |  Fold 3  |  Fold 4  |  Fold 5  |
+| ─────────────────────────────────────────────────── |
+| TEST     |  TRAIN   |  TRAIN   |  TRAIN   |  TRAIN   | → score 1
+| TRAIN    |  TEST    |  TRAIN   |  TRAIN   |  TRAIN   | → score 2
+| TRAIN    |  TRAIN   |  TEST    |  TRAIN   |  TRAIN   | → score 3
+| TRAIN    |  TRAIN   |  TRAIN   |  TEST    |  TRAIN   | → score 4
+| TRAIN    |  TRAIN   |  TRAIN   |  TRAIN   |  TEST    | → score 5
+                                                          ─────────
+                                                          Moyenne ± std
+</div>
+
+<p><strong>Définition du biais et de la variance</strong> : deux types d'erreurs distincts.
+- <strong>Biais</strong> : erreur systématique due à un modèle trop simple. Une droite pour approximer une courbe — elle sera toujours à côté, peu importe les données. Aussi appelé underfitting.
+- <strong>Variance</strong> : sensibilité excessive aux données d'entraînement. Un modèle trop complexe qui change complètement ses prédictions si on change quelques exemples. Aussi appelé overfitting.</p>
+
+<p>Un bon modèle minimise les deux. La cross-validation mesure la variance (l'écart-type des scores entre les folds).</p>
+
+<h3 id="code-complet-dun-pipeline-réel-avec-xgboost">Code complet d'un pipeline réel avec XGBoost</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.compose</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnTransformer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.impute</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">OneHotEncoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">train_test_split</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+
+<span class="c1"># Définition des types de colonnes (à adapter à chaque dataset)</span>
+<span class="n">features_numeriques</span>    <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;revenu_mensuel&#39;</span><span class="p">,</span> <span class="s1">&#39;anciennete_emploi_ans&#39;</span><span class="p">,</span> <span class="s1">&#39;nb_credits_actifs&#39;</span><span class="p">]</span>
+<span class="n">features_categoriques</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type_contrat&#39;</span><span class="p">,</span> <span class="s1">&#39;situation_familiale&#39;</span><span class="p">,</span> <span class="s1">&#39;region&#39;</span><span class="p">]</span>
+
+<span class="c1"># Pipeline pour les features numériques : imputer puis normaliser</span>
+<span class="n">preprocesseur_num</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># Pipeline pour les features catégorielles : imputer puis encoder</span>
+<span class="n">preprocesseur_cat</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;most_frequent&#39;</span><span class="p">)),</span>  <span class="c1"># remplacer les manquants par la valeur la plus fréquente</span>
+    <span class="p">(</span><span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">))</span>    <span class="c1"># handle_unknown=&#39;ignore&#39; : si une catégorie inconnue apparaît en prod, on l&#39;ignore</span>
+<span class="p">])</span>
+
+<span class="c1"># Combiner les deux preprocesseurs en un seul</span>
+<span class="n">preprocesseur</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span> <span class="n">preprocesseur_num</span><span class="p">,</span> <span class="n">features_numeriques</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">preprocesseur_cat</span><span class="p">,</span> <span class="n">features_categoriques</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Pipeline final : preprocessing + modèle</span>
+<span class="n">pipeline_complet</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;preprocessing&#39;</span><span class="p">,</span> <span class="n">preprocesseur</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;modele&#39;</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span>
+        <span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">subsample</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># Évaluation par cross-validation (5 folds)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline_complet</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC moyen  : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Std        : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># faible std = modèle stable</span>
+
+<span class="c1"># Entraînement final sur toutes les données</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">pipeline_complet</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># En production : une seule ligne, même résultat garanti</span>
+<span class="n">nouvelle_demande</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([{</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span> <span class="s1">&#39;revenu_mensuel&#39;</span><span class="p">:</span> <span class="mi">2800</span><span class="p">,</span> <span class="s1">&#39;anciennete_emploi_ans&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>
+    <span class="s1">&#39;nb_credits_actifs&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;type_contrat&#39;</span><span class="p">:</span> <span class="s1">&#39;CDI&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;situation_familiale&#39;</span><span class="p">:</span> <span class="s1">&#39;couple&#39;</span><span class="p">,</span> <span class="s1">&#39;region&#39;</span><span class="p">:</span> <span class="s1">&#39;Île-de-France&#39;</span>
+<span class="p">}])</span>
+<span class="n">probabilite_defaut</span> <span class="o">=</span> <span class="n">pipeline_complet</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">nouvelle_demande</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probabilité de défaut : </span><span class="si">{</span><span class="n">probabilite_defaut</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>AXA — préparation de données de sinistres</strong></p>
+
+<p>Un data scientist AXA reçoit un export de 300k sinistres sur 5 ans. Le dataset a : 12% de valeurs manquantes sur le montant du sinistre (dossiers en cours au moment de l'export), des catégories pour le type de sinistre et la garantie activée, et des montants allant de 50€ à 2M€. Sans pipeline, les étapes de preprocessing sont réécrites en prod à la main — et oubliées ou mal répliquées. Le pipeline sklearn garantit que le même SimpleImputer (médiane calculée sur les données 2019-2023) est appliqué en 2024 sur les nouveaux sinistres, sans recalcul accidentel.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utiliser un pipeline plutôt qu'appliquer les transformations à la main ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le pipeline garantit que la <strong>même transformation</strong> calculée sur les données d'entraînement (ex. : médiane = 2800€) est appliquée identiquement en production. Sans pipeline, on risque de recalculer la médiane sur les nouvelles données — valeur différente → résultats corrompus.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">OneHotEncoder ou OrdinalEncoder pour "type de contrat" (CDI, CDD, Indépendant) ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>OneHotEncoder</strong> — ces catégories n'ont pas d'ordre naturel. OrdinalEncoder introduirait une relation arithmétique artificielle (CDI=1, CDD=2 impliquerait CDD "deux fois plus" que CDI — absurde).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pour quels algorithmes la normalisation est-elle obligatoire ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Régression logistique, SVM, KNN — tous ceux qui calculent des distances ou des gradients. Pour Random Forest et XGBoost, la normalisation est inutile car ils comparent des seuils, pas des distances.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la cross-validation à 5 folds apporte par rapport à un seul train/test split ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">5 découpages différents → 5 scores → moyenne et écart-type. La moyenne est plus fiable qu'un score unique (moins sensible au hasard du découpage). L'écart-type mesure la <strong>variance</strong> du modèle : un std élevé signale que le modèle est instable selon les données vues.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="6-évaluer-un-modèle-choisir-la-bonne-métrique"><span class="h2-num">7</span>6. Évaluer un modèle : choisir la bonne métrique<span class="h2-line"></span></h2>
+
+<h3 id="pourquoi-les-métriques-sont-cruciales-et-pourquoi-laccuracy-ment">Pourquoi les métriques sont cruciales — et pourquoi l'accuracy ment</h3>
+
+<p><strong>Définition de l'accuracy</strong> (précision globale) : la proportion d'exemples correctement classifiés. C'est la métrique la plus intuitive.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">accuracy = (exemples correctement classifiés) / (total d'exemples)
+</code></pre></div>
+
+<p>Le problème : l'accuracy est trompeuse dès que les classes sont déséquilibrées. Si 98% des transactions bancaires sont normales et 2% sont frauduleuses, un modèle qui dit "normal" à chaque fois obtient 98% d'accuracy — en ne détectant aucune fraude.</p>
+
+<p>Ce phénomène s'appelle le <strong>paradoxe des classes déséquilibrées</strong> et il touche tous les problèmes de détection (fraude, maladie, panne, spam) où les cas positifs sont rares.</p>
+
+<h3 id="les-quatre-cases-de-la-réalité-la-matrice-de-confusion">Les quatre cases de la réalité : la matrice de confusion</h3>
+
+<p><strong>Définition de la matrice de confusion</strong> : un tableau 2×2 qui récapitule les quatre résultats possibles d'une prédiction binaire.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">                        Réalité
+                   FRAUDE    NORMAL
+Prédiction  FRAUDE   VP        FP    ← le modèle dit "fraude"
+            NORMAL   FN        VN    ← le modèle dit "normal"
+
+VP = Vrai Positif  : fraude réelle, détectée comme fraude       ← on veut maximiser
+FP = Faux Positif  : normal, déclaré fraude par erreur          ← coûteux (client innocent bloqué)
+FN = Faux Négatif  : fraude réelle, manquée par le modèle       ← dangereux (perte d'argent)
+VN = Vrai Négatif  : normal, correctement identifié comme normal
+</code></pre></div>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="250" y="18" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Matrice de confusion</text>
+
+  <!-- En-têtes colonnes (Réalité) -->
+  <text x="250" y="38" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Réalité</text>
+  <text x="190" y="56" text-anchor="middle" fill="#c8c0d8" font-size="11">Positif (Fraude)</text>
+  <text x="360" y="56" text-anchor="middle" fill="#c8c0d8" font-size="11">Négatif (Normal)</text>
+
+  <!-- En-têtes lignes (Prédiction) -->
+  <text x="50" y="145" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600" transform="rotate(-90,50,145)">Prédiction</text>
+  <text x="75" y="120" text-anchor="middle" fill="#c8c0d8" font-size="10" transform="rotate(-90,75,120)">Positif (Fraude)</text>
+  <text x="75" y="220" text-anchor="middle" fill="#c8c0d8" font-size="10" transform="rotate(-90,75,220)">Négatif (Normal)</text>
+
+  <!-- Case VP (Vrai Positif) - vert -->
+  <rect x="100" y="62" width="170" height="95" rx="8" fill="rgba(27,175,122,0.2)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="185" y="95" text-anchor="middle" fill="#1baf7a" font-size="18" font-weight="800">VP</text>
+  <text x="185" y="113" text-anchor="middle" fill="#1baf7a" font-size="10" font-weight="700">Vrai Positif</text>
+  <text x="185" y="127" text-anchor="middle" fill="#9e95b5" font-size="9">Fraude détectée ✓</text>
+  <text x="185" y="141" text-anchor="middle" fill="#9e95b5" font-size="9">→ à maximiser</text>
+
+  <!-- Case FP (Faux Positif) - rouge/orange -->
+  <rect x="280" y="62" width="180" height="95" rx="8" fill="rgba(230,103,103,0.2)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="370" y="95" text-anchor="middle" fill="#e66767" font-size="18" font-weight="800">FP</text>
+  <text x="370" y="113" text-anchor="middle" fill="#e66767" font-size="10" font-weight="700">Faux Positif</text>
+  <text x="370" y="127" text-anchor="middle" fill="#9e95b5" font-size="9">Normal → dit fraude ✗</text>
+  <text x="370" y="141" text-anchor="middle" fill="#9e95b5" font-size="9">Client innocent bloqué</text>
+
+  <!-- Case FN (Faux Négatif) - orange -->
+  <rect x="100" y="165" width="170" height="95" rx="8" fill="rgba(232,166,0,0.18)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="185" y="198" text-anchor="middle" fill="#e8a600" font-size="18" font-weight="800">FN</text>
+  <text x="185" y="216" text-anchor="middle" fill="#e8a600" font-size="10" font-weight="700">Faux Négatif</text>
+  <text x="185" y="230" text-anchor="middle" fill="#9e95b5" font-size="9">Fraude manquée ✗</text>
+  <text x="185" y="244" text-anchor="middle" fill="#9e95b5" font-size="9">Dangereux !</text>
+
+  <!-- Case VN (Vrai Négatif) - vert foncé -->
+  <rect x="280" y="165" width="180" height="95" rx="8" fill="rgba(27,175,122,0.1)" stroke="#1baf7a" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+  <text x="370" y="198" text-anchor="middle" fill="#1baf7a" font-size="18" font-weight="800" opacity="0.8">VN</text>
+  <text x="370" y="216" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="700">Vrai Négatif</text>
+  <text x="370" y="230" text-anchor="middle" fill="#716989" font-size="9">Normal → dit normal ✓</text>
+  <text x="370" y="244" text-anchor="middle" fill="#716989" font-size="9">Correct, moins critique</text>
+
+  <!-- Formules en bas -->
+  <text x="250" y="280" text-anchor="middle" fill="#716989" font-size="10">Précision = VP/(VP+FP)   ·   Rappel = VP/(VP+FN)   ·   F1 = 2×Précision×Rappel/(Précision+Rappel)</text>
+</svg>
+</div>
+
+<h3 id="précision-et-rappel-le-dilemme-fondamental">Précision et Rappel : le dilemme fondamental</h3>
+
+<p><strong>Définition de la précision</strong> (Precision) : parmi toutes les alertes levées par le modèle, quelle proportion est réellement une fraude ?</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Précision = VP / (VP + FP)
+</code></pre></div>
+
+<p><strong>Définition du rappel</strong> (Recall, aussi appelé sensibilité) : parmi toutes les vraies fraudes, quelle proportion le modèle a-t-il détectée ?</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Rappel = VP / (VP + FN)
+</code></pre></div>
+
+<p><strong>Le dilemme</strong> : augmenter l'un diminue l'autre. Si le modèle est très prudent (lève une alerte sur le moindre doute), il détecte plus de fraudes (rappel élevé) mais lève aussi plus de fausses alertes (précision basse). Si le modèle est très sélectif (n'alerte que quand il est très sûr), il a peu de fausses alertes (précision élevée) mais rate des fraudes (rappel bas).</p>
+
+<p><strong>La question à poser au métier</strong> : "Qu'est-ce qui coûte le plus cher — bloquer un client innocent ou rater une fraude ?"</p>
+
+<table>
+<thead>
+<tr>
+  <th>Cas</th>
+  <th>Priorité</th>
+  <th>Métrique à maximiser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Détection de cancer</td>
+  <td>Ne pas manquer un cas → rappel élevé</td>
+  <td>Rappel (un faux négatif = patient non traité)</td>
+</tr>
+<tr>
+  <td>Filtre anti-spam</td>
+  <td>Ne pas bloquer les vrais emails → précision élevée</td>
+  <td>Précision (un faux positif = email légitime perdu)</td>
+</tr>
+<tr>
+  <td>Fraude bancaire</td>
+  <td>Équilibre</td>
+  <td>F1-score</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="f1-score-la-moyenne-harmonique-expliquée">F1-score : la moyenne harmonique expliquée</h3>
+
+<p><strong>Définition du F1-score</strong> : la moyenne harmonique de la précision et du rappel. Elle donne une note unique qui pénalise fortement si l'une des deux métriques est nulle.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">F1 = 2 × (Précision × Rappel) / (Précision + Rappel)
+</code></pre></div>
+
+<p>Pourquoi la moyenne harmonique et pas la moyenne arithmétique ? Si un modèle a précision=1.0 et rappel=0.0 (il ne prédit jamais "fraude"), la moyenne arithmétique serait 0.5 — trompeur. La moyenne harmonique donne 0.0 — ce modèle est inutile. La moyenne harmonique punit sévèrement les déséquilibres extrêmes.</p>
+
+<h3 id="auc-roc-intuition-géométrique">AUC-ROC : intuition géométrique</h3>
+
+<p><strong>Définition de l'AUC-ROC</strong> : l'Aire Sous la Courbe ROC (Receiver Operating Characteristic). La courbe ROC trace le taux de vrais positifs (rappel) en fonction du taux de faux positifs, pour tous les seuils de décision possibles. L'AUC est l'aire sous cette courbe.</p>
+
+<p>Intuition : l'AUC mesure <strong>la capacité du modèle à ordonner correctement les exemples</strong> — à mettre les fraudes en tête de liste et les transactions normales à la fin. Elle ne dépend pas d'un seuil fixe.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">AUC = 0.5 → modèle aléatoire (inutile — pire que de lancer une pièce)
+AUC = 0.7 → acceptable en production
+AUC = 0.8 → bon modèle
+AUC = 0.9 → excellent modèle
+AUC = 1.0 → modèle parfait (suspect — probablement du data leakage)
+</code></pre></div>
+
+<p><strong>Définition du data leakage</strong> : une information du futur qui s'est glissée dans les features d'entraînement. Exemple : inclure le "montant remboursé" comme feature pour prédire si le crédit sera remboursé — le modèle "sait" déjà la réponse. AUC proche de 1.0 sans raison évidente → chercher un leakage.</p>
+
+<h3 id="rmse-et-mae-pour-la-régression">RMSE et MAE pour la régression</h3>
+
+<p>Pour les problèmes de régression (prédire un nombre), les métriques sont différentes :</p>
+
+<p><strong>Définition du RMSE</strong> (Root Mean Squared Error) : la racine carrée de la moyenne des erreurs au carré. Pénalise fortement les grosses erreurs.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">RMSE = √( (1/n) × Σ(réel - prédit)² )
+</code></pre></div>
+
+<p><strong>Définition du MAE</strong> (Mean Absolute Error) : la moyenne des valeurs absolues des erreurs. Traite toutes les erreurs également.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">MAE = (1/n) × Σ|réel - prédit|
+</code></pre></div>
+
+<p>Le RMSE pénalise plus les grosses erreurs que les petites. Si une prédiction à 100 000€ d'écart est catastrophique (valeur d'une maison), utiliser le RMSE. Si toutes les erreurs ont le même impact (prédiction de consommation électrique heure par heure), utiliser le MAE.</p>
+
+<h3 id="tableau-de-décision-quel-problème-quelle-métrique">Tableau de décision : quel problème → quelle métrique</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Problème</th>
+  <th>Métrique recommandée</th>
+  <th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Fraude bancaire (2% positifs)</td>
+  <td>AUC-ROC, F1, Rappel</td>
+  <td>Classes très déséquilibrées — accuracy inutile</td>
+</tr>
+<tr>
+  <td>Scoring crédit (probabilité)</td>
+  <td>AUC-ROC</td>
+  <td>On veut ordonner les risques, pas juste classer</td>
+</tr>
+<tr>
+  <td>Spam / pas spam</td>
+  <td>Précision (ou F1)</td>
+  <td>Faux positifs coûteux (email légitime bloqué)</td>
+</tr>
+<tr>
+  <td>Diagnostic médical</td>
+  <td>Rappel</td>
+  <td>Faux négatifs catastrophiques (maladie non détectée)</td>
+</tr>
+<tr>
+  <td>Prévision de prix</td>
+  <td>RMSE (grosses erreurs coûteuses) ou MAE</td>
+  <td>Selon le coût métier des grandes erreurs</td>
+</tr>
+<tr>
+  <td>Classification multi-classes équilibrées</td>
+  <td>Accuracy, F1 macro</td>
+  <td>Classes équilibrées → accuracy fiable</td>
+</tr>
+</tbody>
+</table>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span>
+    <span class="n">f1_score</span><span class="p">,</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">classification_report</span><span class="p">,</span>
+    <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Pour un problème de classification</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline_complet</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_proba</span> <span class="o">=</span> <span class="n">pipeline_complet</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy  : </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision : </span><span class="si">{</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    : </span><span class="si">{</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F1-score  : </span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC-ROC   : </span><span class="si">{</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_proba</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Rapport complet ---&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">target_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="s1">&#39;Fraude&#39;</span><span class="p">]))</span>
+
+<span class="c1"># Pour un problème de régression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test_reg</span><span class="p">,</span> <span class="n">y_pred_reg</span><span class="p">))</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test_reg</span><span class="p">,</span> <span class="n">y_pred_reg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE : </span><span class="si">{</span><span class="n">rmse</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un modèle de détection de fraude affiche 99% d'accuracy sur un dataset où 1% des transactions sont frauduleuses. Est-ce un bon modèle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Non — paradoxe des classes déséquilibrées. Un modèle qui dit "normal" à chaque fois obtient 99% d'accuracy sans détecter une seule fraude. Les métriques pertinentes sont le <strong>rappel</strong> (fraudes détectées / total vraies fraudes) et l'<strong>AUC-ROC</strong>.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">La précision est à 0.95 et le rappel à 0.30. Que signifient ces chiffres pour un détecteur de fraude ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">95% des alertes levées sont de vraies fraudes (peu de fausses alarmes — bonne précision), mais le modèle ne détecte que 30% des fraudes réelles (70% passent inaperçues — rappel catastrophique). Ce modèle est inutile en pratique : il rate 7 fraudes sur 10.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi la moyenne harmonique (F1) plutôt que la moyenne arithmétique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Si précision=1.0 et rappel=0.0, la moyenne arithmétique donne 0.5 (trompeur). La moyenne harmonique donne 0.0 (correct — ce modèle ne prédit jamais la classe positive). La F1 punit fortement les déséquilibres extrêmes entre précision et rappel.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un modèle de prédiction de prix de maison a RMSE=15 000€ et MAE=8 000€. Que signifie l'écart RMSE > MAE ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">L'écart signifie qu'il existe quelques <strong>grosses erreurs</strong> qui tirent le RMSE vers le haut (le RMSE pénalise les écarts au carré). La plupart des prédictions ont une erreur ≈ 8 000€ (MAE), mais certaines ont des erreurs bien supérieures — des cas atypiques mal prédits.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="résumé-du-jour-2"><span class="h2-num">8</span>Résumé du Jour 2<span class="h2-line"></span></h2>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Ce que tu sais maintenant :
+
+1. 3 familles : linéaires (explicable) / arbres-ensembles (non-linéaire)
+   / gradient boosting (XGBoost, le meilleur par défaut sur tabulaire)
+
+2. Régression logistique = baseline obligatoire avant tout modèle complexe
+   — sigmoïde transforme un score en probabilité — coefficients lisibles
+
+3. Random Forest = 500 arbres indépendants (bagging)
+   XGBoost = 500 arbres séquentiels corrigeant les erreurs (boosting)
+   → XGBoost gagne presque toujours sur données tabulaires
+
+4. Pipeline sklearn obligatoire : imputation → encodage → normalisation
+   → modèle. Garantit la reproductibilité train/prod.
+
+5. Normalisation (StandardScaler) : obligatoire pour régression
+   logistique / SVM / KNN — inutile pour Random Forest / XGBoost
+
+6. Accuracy = métrique trompeuse sur classes déséquilibrées.
+   Fraude/médecine → AUC + rappel. Équilibre → F1. Régression → RMSE/MAE.
+</code></pre></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

@@ -1,0 +1,1238 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 6Jour 6 — Architecture hybride : ML classique + GenAICoursThéorieExemples r</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 6</div><h1>Jour 6 — <em>Architecture hybride : ML classique + GenAI</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!--
+    Layout calculé :
+    L0  y=45   ROOT              cx=550
+    L1  y=145  ML CLASSIQUE cx=160   HYBRIDE cx=550   LLM/GenAI cx=940
+    L2  y=245  RAG cx=380   AGENTS cx=550   EMBEDDINGS cx=720
+    L3  y=340  Pipeline cx=260  Patterns cx=440  Tool Use cx=630  Monitoring cx=820
+    L4  y=430  Pré-filtre cx=180  Post-valid cx=340  Ragas cx=640  Coût/Latence cx=820
+  -->
+
+  <!-- Root → L1 -->
+  <path d="M550,66 C550,106 160,106 160,127" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 L550,127"                 fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,106 940,106 940,127" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- HYBRIDE → L2 -->
+  <path d="M550,167 C550,206 380,206 380,227" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,167 L550,227"                 fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,167 C550,206 720,206 720,227" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- L2 → L3 -->
+  <path d="M380,263 C380,302 260,302 260,322" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M380,263 C380,302 440,302 440,322" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,263 C550,302 630,302 630,322" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M720,263 C720,302 820,302 820,322" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- L3 → L4 -->
+  <path d="M260,358 C260,395 180,395 180,412" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M260,358 C260,395 340,395 340,412" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M820,358 C820,395 640,395 640,412" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M820,358 L820,412"                 fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- L0 ROOT -->
+  <rect x="360" y="24" width="380" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".07em">ARCHITECTURE HYBRIDE</text>
+
+  <!-- L1 ML CLASSIQUE -->
+  <rect x="48" y="127" width="224" height="40" rx="12" fill="rgba(57,135,229,.14)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="160" y="144" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="800">ML CLASSIQUE</text>
+  <text x="160" y="160" text-anchor="middle" fill="#9e95b5" font-size="10">rapide · explicable · déterministe</text>
+
+  <!-- L1 HYBRIDE -->
+  <rect x="458" y="127" width="184" height="40" rx="12" fill="rgba(230,103,103,.14)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="550" y="144" text-anchor="middle" fill="#e66767" font-size="12" font-weight="800">HYBRIDE</text>
+  <text x="550" y="160" text-anchor="middle" fill="#9e95b5" font-size="10">le meilleur des deux mondes</text>
+
+  <!-- L1 LLM/GenAI -->
+  <rect x="826" y="127" width="228" height="40" rx="12" fill="rgba(144,133,233,.15)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="940" y="144" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="800">LLM / GenAI</text>
+  <text x="940" y="160" text-anchor="middle" fill="#9e95b5" font-size="10">flexible · génératif · coûteux</text>
+
+  <!-- L2 RAG -->
+  <rect x="286" y="227" width="188" height="36" rx="10" fill="rgba(27,175,122,.14)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="380" y="244" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">RAG</text>
+  <text x="380" y="258" text-anchor="middle" fill="#9e95b5" font-size="10">retrieval-augmented generation</text>
+
+  <!-- L2 AGENTS -->
+  <rect x="456" y="227" width="188" height="36" rx="10" fill="rgba(232,166,0,.14)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="550" y="244" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="800">AGENTS</text>
+  <text x="550" y="258" text-anchor="middle" fill="#9e95b5" font-size="10">LLM + outils + boucle ReAct</text>
+
+  <!-- L2 EMBEDDINGS -->
+  <rect x="622" y="227" width="196" height="36" rx="10" fill="rgba(27,175,122,.12)" stroke="#1baf7a" stroke-width="1.4"/>
+  <text x="720" y="244" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">EMBEDDINGS</text>
+  <text x="720" y="258" text-anchor="middle" fill="#9e95b5" font-size="10">texte → vecteur sémantique</text>
+
+  <!-- L3 Pipeline -->
+  <rect x="170" y="322" width="180" height="36" rx="9" fill="rgba(57,135,229,.12)" stroke="#3987e5" stroke-width="1.3"/>
+  <text x="260" y="339" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="700">Pipeline hybride</text>
+  <text x="260" y="352" text-anchor="middle" fill="#9e95b5" font-size="10">XGBoost + LLM + règles</text>
+
+  <!-- L3 Patterns -->
+  <rect x="344" y="322" width="192" height="36" rx="9" fill="rgba(230,103,103,.12)" stroke="#e66767" stroke-width="1.3"/>
+  <text x="440" y="339" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">Patterns d'intégration</text>
+  <text x="440" y="352" text-anchor="middle" fill="#9e95b5" font-size="10">pré-filtre · extraction · validation</text>
+
+  <!-- L3 Tool Use -->
+  <rect x="532" y="322" width="196" height="36" rx="9" fill="rgba(232,166,0,.12)" stroke="#e8a600" stroke-width="1.3"/>
+  <text x="630" y="339" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="700">Tool Use</text>
+  <text x="630" y="352" text-anchor="middle" fill="#9e95b5" font-size="10">LLM appelle fonctions Python</text>
+
+  <!-- L3 Monitoring -->
+  <rect x="720" y="322" width="200" height="36" rx="9" fill="rgba(230,103,103,.12)" stroke="#e66767" stroke-width="1.3"/>
+  <text x="820" y="339" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">Monitoring hybride</text>
+  <text x="820" y="352" text-anchor="middle" fill="#9e95b5" font-size="10">hallucination · faithfulness · coût</text>
+
+  <!-- L4 Pré-filtre -->
+  <rect x="96" y="412" width="168" height="30" rx="7" fill="rgba(57,135,229,.08)" stroke="#3987e5" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="180" y="432" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Pré-filtre ML</text>
+
+  <!-- L4 Post-valid -->
+  <rect x="256" y="412" width="168" height="30" rx="7" fill="rgba(57,135,229,.08)" stroke="#3987e5" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="340" y="432" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Validation post-LLM</text>
+
+  <!-- L4 Ragas -->
+  <rect x="548" y="412" width="180" height="30" rx="7" fill="rgba(230,103,103,.08)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="638" y="432" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Ragas (éval. RAG)</text>
+
+  <!-- L4 Coût/Latence -->
+  <rect x="730" y="412" width="180" height="30" rx="7" fill="rgba(230,103,103,.08)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="820" y="432" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Coût · Latence</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-pourquoi-les-architectures-hybrides"><span class="h2-num">2</span>1. Pourquoi les architectures hybrides<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>Une <strong>architecture hybride</strong> est un système de traitement automatique qui combine des modèles de ML classique (Random Forest, XGBoost, régressions) avec des grands modèles de langage (LLM). Le principe : chaque composant fait ce qu'il sait faire mieux que l'autre.</p>
+
+<p>Ni l'un ni l'autre ne suffit seul pour les systèmes complexes réels.</p>
+
+<h3 id="le-tableau-des-forces-et-faiblesses">Le tableau des forces et faiblesses</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Caractéristique</th>
+  <th>ML Classique</th>
+  <th>LLM (ex. Claude, GPT-4)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Vitesse</strong></td>
+  <td>&lt; 1 ms par inférence</td>
+  <td>500 ms – 5 s</td>
+</tr>
+<tr>
+  <td><strong>Coût</strong></td>
+  <td>~0,000001 €</td>
+  <td>~0,01 – 0,10 €</td>
+</tr>
+<tr>
+  <td><strong>Explicabilité</strong></td>
+  <td>Élevée (SHAP, feature importance)</td>
+  <td>Faible (boîte noire)</td>
+</tr>
+<tr>
+  <td><strong>Données tabulaires</strong></td>
+  <td>Excellent</td>
+  <td>Mauvais</td>
+</tr>
+<tr>
+  <td><strong>Texte libre</strong></td>
+  <td>Mauvais (features manuelles)</td>
+  <td>Excellent</td>
+</tr>
+<tr>
+  <td><strong>Raisonnement multi-étapes</strong></td>
+  <td>Impossible</td>
+  <td>Fort</td>
+</tr>
+<tr>
+  <td><strong>Déterminisme</strong></td>
+  <td>Oui (même input → même output)</td>
+  <td>Non (température, sampling)</td>
+</tr>
+<tr>
+  <td><strong>Dérive silencieuse</strong></td>
+  <td>Rare, détectable</td>
+  <td>Fréquente</td>
+</tr>
+<tr>
+  <td><strong>Données internes</strong></td>
+  <td>Intégrées à l'entraînement</td>
+  <td>Inconnues (hallucinations)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="situation-réelle-traitement-de-sinistres-chez-axa">Situation réelle : traitement de sinistres chez AXA</h3>
+
+<p>:::situation
+AXA reçoit 40 000 déclarations de sinistre automobile par jour. Chaque déclaration contient : un texte libre (le client décrit ce qui s'est passé), des données structurées (date, véhicule, contrat), et éventuellement des photos.</p>
+
+<p><strong>Le problème</strong> : un humain seul ne peut pas traiter ce volume. Un modèle ML seul ne peut pas lire le texte libre. Un LLM seul hallucine des montants et ignore les données contractuelles.</p>
+
+<p><strong>L'architecture hybride</strong> :
+1. Un LLM extrait les entités du texte : circonstances, tiers impliqués, dommages décrits
+2. Un modèle XGBoost score la probabilité de fraude (sur les données structurées + les entités extraites)
+3. Des règles métier prennent la décision finale (score &lt; 0.2 → remboursement automatique, score &gt; 0.8 → enquêteur humain, entre les deux → dossier prioritaire)
+:::</p>
+
+<p>:::callout-insight
+Ce découpage n'est pas arbitraire. Il suit une règle simple : <strong>chaque composant fait ce qu'il fait objectivement mieux que les autres.</strong> Le LLM lit le texte parce qu'il n'existe pas de meilleure façon. XGBoost score la fraude parce qu'il est 1000× moins cher et parfaitement auditrable. Les règles décident parce que les seuils de décision sont du ressort du métier, pas d'un modèle.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une architecture hybride ML + LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un système qui combine des modèles ML classiques (déterministes, rapides, explicables) avec des LLM (flexibles, capables de lire du texte libre, coûteux) — chaque composant traitant ce qu'il fait mieux que l'autre.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un LLM seul ne suffit pas pour scorer la fraude assurance ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Parce qu'un LLM est non-déterministe, coûteux (0,05€ par déclaration × 40 000/jour = 2 000€/jour), peu auditable, et moins précis qu'un XGBoost entraîné sur des données historiques labellisées.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans l'architecture AXA, quelle composante prend la décision finale de rembourser ou non ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Des règles métier explicites (seuils sur le score de fraude). Ni le LLM, ni le modèle ML. La décision finale reste sous contrôle humain explicite.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Citez deux avantages du ML classique par rapport aux LLM.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">(1) Vitesse : < 1 ms vs 500 ms – 5 s. (2) Coût : ~0,000001€ vs ~0,01 – 0,10€ par inférence. Aussi : déterminisme, explicabilité, pas de dérive silencieuse.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="2-rag-le-llm-ancré-dans-des-données-réelles"><span class="h2-num">3</span>2. RAG : le LLM ancré dans des données réelles<span class="h2-line"></span></h2>
+
+<h3 id="définition-le-problème-que-rag-résout">Définition — Le problème que RAG résout</h3>
+
+<p><strong>RAG</strong> signifie <em>Retrieval-Augmented Generation</em> (génération augmentée par récupération). Voici le problème qu'il résout :</p>
+
+<p>Un LLM est entraîné sur des données publiques jusqu'à une date de coupure. Il <strong>ne connaît pas</strong> :
+- Les documents internes de votre entreprise
+- Les données mises à jour après sa date d'entraînement
+- Les informations confidentielles ou propriétaires</p>
+
+<p>Conséquence : si on lui pose une question sur ces sujets, il <strong>hallucine</strong> — c'est-à-dire qu'il génère une réponse plausible mais fausse, avec une confiance totale.</p>
+
+<p><strong>Hallucination</strong> : phénomène où un LLM produit une réponse factuelle incorrecte de façon confiante, parce qu'il génère la suite de texte statistiquement la plus probable, pas nécessairement la plus vraie.</p>
+
+<p><strong>RAG</strong> résout ce problème en donnant au LLM accès, à chaque requête, aux documents pertinents — qu'il utilise comme source de vérité pour sa réponse.</p>
+
+<h3 id="larchitecture-rag-en-3-étapes">L'architecture RAG en 3 étapes</h3>
+
+<p><strong>Étape 1 — Indexation</strong> (une fois, à l'avance)
+1. Les documents sont découpés en morceaux (<em>chunks</em>) — typiquement 500-1000 tokens
+2. Chaque chunk est transformé en <strong>embedding</strong> : un vecteur numérique de 768 à 1536 dimensions qui encode le sens sémantique du texte
+3. Ces vecteurs sont stockés dans un <strong>vector store</strong> (base de données spécialisée)</p>
+
+<p><strong>Étape 2 — Retrieval</strong> (à chaque requête)
+4. La question de l'utilisateur est aussi transformée en embedding
+5. On calcule la <strong>similarité cosinus</strong> entre l'embedding de la question et tous les embeddings du vector store
+6. Les N chunks les plus similaires sont récupérés (typiquement N=3 à 10)</p>
+
+<p><strong>Étape 3 — Génération</strong>
+7. Le LLM reçoit la question + les chunks récupérés comme contexte
+8. Il répond en s'appuyant sur ces chunks (et pas sur ses paramètres internes)</p>
+
+<h3 id="comprendre-les-embeddings-depuis-zéro">Comprendre les embeddings depuis zéro</h3>
+
+<p><strong>Embedding</strong> : une représentation numérique d'un texte (ou d'une image, d'un son…) sous forme de vecteur, construite de façon à ce que des textes sémantiquement proches produisent des vecteurs proches.</p>
+
+<p>Exemple concret :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Ces deux phrases ont des embeddings proches (cos_sim ≈ 0.92)</span>
+<span class="s2">&quot;Le délai de garantie produit est de 2 ans&quot;</span>
+<span class="s2">&quot;La garantie s&#39;étend sur une période de 24 mois&quot;</span>
+
+<span class="c1"># Ces deux phrases ont des embeddings éloignés (cos_sim ≈ 0.12)</span>
+<span class="s2">&quot;Le délai de garantie produit est de 2 ans&quot;</span>
+<span class="s2">&quot;Recette de la tarte aux pommes&quot;</span>
+</code></pre>
+</div>
+
+<p>Le modèle d'embedding transforme le texte en un vecteur de 1536 nombres. Ce vecteur n'est pas interprétable directement — mais la <strong>distance entre vecteurs</strong> encode la proximité sémantique.</p>
+
+<h3 id="comprendre-la-similarité-cosinus-intuitivement">Comprendre la similarité cosinus intuitivement</h3>
+
+<p><strong>Similarité cosinus</strong> : mesure de similarité entre deux vecteurs, calculée comme le cosinus de l'angle entre eux. Vaut 1 si les vecteurs pointent dans la même direction (textes très proches), 0 s'ils sont orthogonaux (textes sans lien), -1 s'ils sont opposés.</p>
+
+<p>Intuition : deux textes sur le même sujet "pointent" dans la même direction dans l'espace vectoriel. La similarité cosinus mesure cet alignement directionnel, indépendamment de la longueur des textes.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="c1"># Le produit scalaire divisé par le produit des normes</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+
+<span class="c1"># Résultat entre 0 et 1 pour des embeddings (qui sont toujours positifs)</span>
+<span class="c1"># 0.9+ → très similaires</span>
+<span class="c1"># 0.7-0.9 → similaires</span>
+<span class="c1"># &lt; 0.5 → peu de rapport</span>
+</code></pre>
+</div>
+
+<h3 id="code-complet-rag-avec-langchain">Code complet : RAG avec LangChain</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># pip install langchain langchain-openai langchain-community faiss-cpu</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.text_splitter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIEmbeddings</span><span class="p">,</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">FAISS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.chains</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetrievalQA</span>
+
+<span class="c1"># ─── ÉTAPE 1 : INDEXATION ─────────────────────────────────────────</span>
+<span class="c1"># Charger les documents</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">TextLoader</span><span class="p">(</span><span class="s2">&quot;documentation_interne.txt&quot;</span><span class="p">)</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># Chunking : découper en morceaux de 800 tokens, avec 100 tokens de chevauchement</span>
+<span class="c1"># Le chevauchement préserve le contexte aux frontières des chunks</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">100</span>
+<span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+<span class="c1"># → Si le doc fait 10 000 tokens, on obtient ~13 chunks</span>
+
+<span class="c1"># Embedding + stockage dans FAISS (vector store local, en mémoire)</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OpenAIEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;text-embedding-ada-002&quot;</span><span class="p">)</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>
+<span class="c1"># FAISS calcule et stocke les 1536 dimensions pour chaque chunk</span>
+
+<span class="c1"># ─── ÉTAPE 2 + 3 : RETRIEVAL + GÉNÉRATION ────────────────────────</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># RetrievalQA assemble les deux étapes :</span>
+<span class="c1"># 1. embedder la question, trouver les 4 chunks les plus proches</span>
+<span class="c1"># 2. passer ces chunks + la question au LLM</span>
+<span class="n">qa_chain</span> <span class="o">=</span> <span class="n">RetrievalQA</span><span class="o">.</span><span class="n">from_chain_type</span><span class="p">(</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span>
+    <span class="n">chain_type</span><span class="o">=</span><span class="s2">&quot;stuff&quot;</span><span class="p">,</span>  <span class="c1"># &quot;stuff&quot; = concaténer les chunks dans le prompt</span>
+    <span class="n">retriever</span><span class="o">=</span><span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}),</span>
+    <span class="n">return_source_documents</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># pour voir quels chunks ont été utilisés</span>
+<span class="p">)</span>
+
+<span class="c1"># ─── UTILISATION ─────────────────────────────────────────────────</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">qa_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;Quelle est la procédure d&#39;escalade P1 ?&quot;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span>
+<span class="c1"># → Réponse basée sur les documents internes, pas sur l&#39;entraînement du LLM</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;source_documents&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+<span class="c1"># → Le chunk exact qui a été utilisé — vérifiable, auditable</span>
+</code></pre>
+</div>
+
+<h3 id="avant-après-rag">Avant / Après RAG</h3>
+
+<div class="mindmap">AVANT (LLM seul)
+─────────────────
+Question : "Quelle est notre procédure d'escalade P1 ?"
+Réponse  : "La procédure P1 standard consiste à contacter le responsable
+            de garde dans les 15 minutes..." [inventé, potentiellement faux]
+Problème : Hallucination. L'utilisateur ne sait pas que c'est faux.
+
+APRÈS (RAG)
+───────────
+Question : "Quelle est notre procédure d'escalade P1 ?"
+Chunks récupérés : [doc: ITSM_v2.3.pdf, page 14] "En cas d'incident P1,
+                   l'ingénieur de garde doit être notifié via PagerDuty
+                   dans les 10 minutes..."
+Réponse  : "Selon votre procédure ITSM v2.3, un incident P1 requiert de
+            notifier l'ingénieur de garde via PagerDuty dans les 10 min."
+Avantage : Réponse vérifiable et sourcée.
+</div>
+
+<h3 id="situation-réelle-capgemini-qampa-sur-documentation-technique">Situation réelle : Capgemini, Q&amp;A sur documentation technique</h3>
+
+<p>:::situation
+Les équipes Capgemini maintiennent des milliers de pages de documentation technique : runbooks, architectures, procédures d'escalade, contrats de service. Quand un nouvel ingénieur ou un client pose une question, il faut fouiller manuellement des SharePoints labyrinthiques.</p>
+
+<p><strong>Système RAG déployé</strong> : toute la documentation est indexée (embeddings mis à jour chaque nuit). Les ingénieurs posent leurs questions en langage naturel. Le système récupère les 4-6 passages pertinents et génère une réponse synthétique avec les sources citées.</p>
+
+<p><strong>Résultat mesurable</strong> : temps moyen pour trouver une information = de 12 minutes à 45 secondes. Les sources sont toujours citées → l'ingénieur peut vérifier.</p>
+
+<p><strong>Limite observée</strong> : si la documentation est incohérente (deux versions contradictoires), le RAG restitue l'incohérence. RAG ne corrige pas des sources de mauvaise qualité.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que RAG et quel problème résout-il ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">RAG (Retrieval-Augmented Generation) résout le problème d'hallucination des LLM sur les données internes. Il indexe les documents, retrouve les passages pertinents par similarité cosinus, et les fournit au LLM comme contexte pour répondre.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un embedding ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un vecteur numérique (ex. 1536 dimensions) qui encode le sens sémantique d'un texte. Des textes sémantiquement proches produisent des vecteurs proches. Utilisé pour comparer des textes sans comparaison mot à mot.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">La similarité cosinus vaut 1, 0 et -1 — que signifie chaque valeur ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">1 = vecteurs identiques (même direction, textes très similaires). 0 = vecteurs orthogonaux (textes sans rapport sémantique). -1 = vecteurs opposés (sens contraires — rare avec des embeddings positifs).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quel est le risque si la documentation indexée dans un RAG est de mauvaise qualité ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le RAG restitue fidèlement les incohérences ou erreurs de la documentation. Il n'hallucine plus, mais il peut "faithfully hallucinate" — reproduire les fausses informations de ses sources.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="3-embeddings-et-vector-stores-la-couche-sémantique"><span class="h2-num">4</span>3. Embeddings et vector stores : la couche sémantique<span class="h2-line"></span></h2>
+
+<h3 id="définition-approfondie-les-embeddings-ne-sont-pas-que-pour-le-texte">Définition approfondie : les embeddings ne sont pas que pour le texte</h3>
+
+<p>Un <strong>embedding</strong> est une représentation dense d'un objet (texte, image, produit, utilisateur) dans un espace vectoriel de haute dimension, entraînée de façon à ce que la <strong>distance entre vecteurs reflète la similarité sémantique ou comportementale</strong>.</p>
+
+<p>Ce n'est pas limité au texte :
+- <strong>Images</strong> : ResNet, CLIP → vecteur encodant le contenu visuel
+- <strong>Produits</strong> : comportement d'achat des utilisateurs → vecteur de préférences
+- <strong>Clients</strong> : historique de transactions → profil vectoriel
+- <strong>Nœuds de graphe</strong> : Node2Vec → embedding structurel</p>
+
+<h3 id="les-modèles-dembedding-principaux">Les modèles d'embedding principaux</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Modèle</th>
+  <th>Dimensions</th>
+  <th>Usage</th>
+  <th>Via</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>text-embedding-ada-002</code></td>
+  <td>1536</td>
+  <td>Texte général</td>
+  <td>API OpenAI</td>
+</tr>
+<tr>
+  <td><code>text-embedding-3-large</code></td>
+  <td>3072</td>
+  <td>Texte haute précision</td>
+  <td>API OpenAI</td>
+</tr>
+<tr>
+  <td><code>sentence-transformers/all-MiniLM-L6-v2</code></td>
+  <td>384</td>
+  <td>Local, rapide</td>
+  <td>HuggingFace</td>
+</tr>
+<tr>
+  <td><code>sentence-transformers/all-mpnet-base-v2</code></td>
+  <td>768</td>
+  <td>Local, précis</td>
+  <td>HuggingFace</td>
+</tr>
+<tr>
+  <td><code>CLIP</code></td>
+  <td>512</td>
+  <td>Texte + images</td>
+  <td>HuggingFace</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="les-vector-stores-bases-de-données-pour-vecteurs">Les vector stores : bases de données pour vecteurs</h3>
+
+<p><strong>Vector store</strong> : une base de données optimisée pour une seule opération — trouver les K vecteurs les plus proches d'un vecteur requête, le plus vite possible. Opération appelée <em>nearest neighbor search</em> ou <em>ANN</em> (Approximate Nearest Neighbors).</p>
+
+<p>Une base relationnelle classique ne peut pas faire ça efficacement : comparer un vecteur de 1536 dimensions avec 10 millions d'autres vecteurs en quelques millisecondes requiert des structures d'index spécialisées (HNSW, IVF…).</p>
+
+<table>
+<thead>
+<tr>
+  <th>Vector Store</th>
+  <th>Type</th>
+  <th>Usage typique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>FAISS</strong></td>
+  <td>Bibliothèque locale (Meta)</td>
+  <td>Prototypage, petits volumes</td>
+</tr>
+<tr>
+  <td><strong>Chroma</strong></td>
+  <td>Base embarquée</td>
+  <td>Dev local, petits projets</td>
+</tr>
+<tr>
+  <td><strong>Pinecone</strong></td>
+  <td>SaaS managé</td>
+  <td>Production, grandes volumétries</td>
+</tr>
+<tr>
+  <td><strong>Weaviate</strong></td>
+  <td>Open-source</td>
+  <td>Production self-hosted</td>
+</tr>
+<tr>
+  <td><strong>pgvector</strong></td>
+  <td>Extension PostgreSQL</td>
+  <td>Si déjà sur Postgres</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="cas-dusage-non-llm-recommandation-par-similarité">Cas d'usage non-LLM : recommandation par similarité</h3>
+
+<p>Les embeddings et vector stores sont utilisés depuis des années <strong>sans LLM</strong> pour la recommandation :
+- Netflix encode films → retrouve les plus similaires à ceux qu'un utilisateur a regardés
+- Spotify encode artistes → génère des playlists cohérentes
+- Amazon encode produits → "les clients ayant acheté X ont aussi regardé Y"</p>
+
+<h3 id="code-catalogue-produit-recherche-par-similarité">Code : catalogue produit, recherche par similarité</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># pip install sentence-transformers faiss-cpu numpy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+
+<span class="c1"># ─── CATALOGUE PRODUIT ──────────────────────────────────────────</span>
+<span class="n">catalogue</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque Sony WH-1000XM5&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque Bluetooth réduction de bruit active, 30h autonomie, audio haute résolution&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque Bose QuietComfort 45&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque sans fil noise-cancelling premium, 24h batterie, confort pour voyages&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Ecouteurs Apple AirPods Pro&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Intra-auriculaires sans fil, réduction de bruit adaptative, spatial audio&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Enceinte JBL Charge 5&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Enceinte portable Bluetooth étanche, 20h autonomie, basses profondes&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque Gaming Razer BlackShark&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Casque filaire gaming, micro détachable, son surround 7.1 virtuel&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Clavier mécanique Keychron K2&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Clavier compact sans fil, switches Cherry MX, rétroéclairage RGB&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># ─── EMBEDDING DU CATALOGUE ─────────────────────────────────────</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="n">descriptions</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">catalogue</span><span class="p">]</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># → shape (6, 384) : 6 produits, 384 dimensions chacun</span>
+
+<span class="c1"># Stocker dans FAISS (index pour recherche rapide)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 384</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>  <span class="c1"># IP = Inner Product (= cosine sim si normalisé)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+
+<span class="c1"># ─── RECHERCHE ──────────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">recherche_similaire</span><span class="p">(</span><span class="n">requete</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trouve les k produits les plus similaires sémantiquement à la requête.&quot;&quot;&quot;</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Requête : &#39;</span><span class="si">{</span><span class="n">requete</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;─&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">catalogue</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;nom&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">recherche_similaire</span><span class="p">(</span><span class="s2">&quot;casque sans fil pour voyages avec réduction de bruit&quot;</span><span class="p">)</span>
+<span class="c1"># → [0.924] Casque Sony WH-1000XM5</span>
+<span class="c1"># → [0.901] Casque Bose QuietComfort 45</span>
+<span class="c1"># → [0.743] Ecouteurs Apple AirPods Pro</span>
+
+<span class="n">recherche_similaire</span><span class="p">(</span><span class="s2">&quot;son immersif pour les jeux vidéo&quot;</span><span class="p">)</span>
+<span class="c1"># → [0.867] Casque Gaming Razer BlackShark</span>
+<span class="c1"># → [0.612] Casque Sony WH-1000XM5</span>
+<span class="c1"># → [0.543] Enceinte JBL Charge 5</span>
+</code></pre>
+</div>
+
+<h3 id="situation-réelle-fnac-recommandation-catalogue">Situation réelle : Fnac, recommandation catalogue</h3>
+
+<p>:::situation
+La Fnac dispose d'un catalogue de 12 millions de références. La recherche textuelle classique (Elasticsearch, matching de mots-clés) rate les synonymes et les descriptions vagues : "cadeau pour musicien amateur" ne retourne rien, alors qu'un casque d'écoute ou un contrôleur MIDI serait pertinent.</p>
+
+<p><strong>Système mis en place</strong> : chaque produit est embedé (titre + description + catégorie). La recherche utilisateur est aussi embedée. Les produits les plus proches par similarité cosinus remontent en premier, complétant la recherche par mots-clés.</p>
+
+<p><strong>Résultat</strong> : +18% de taux de clic sur les résultats de recherche pour les requêtes "longue traîne" (expressions peu fréquentes). La recherche sémantique ne remplace pas la recherche par mots-clés pour les requêtes exactes — les deux coexistent.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un vector store et pourquoi une base SQL ne suffit pas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un vector store est une base de données optimisée pour trouver les K vecteurs les plus proches d'un vecteur requête. Une base SQL n'a pas les structures d'index (HNSW, IVF) pour comparer des millions de vecteurs de haute dimension en quelques millisecondes.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Nommez deux usages d'embeddings qui n'impliquent pas de LLM.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">(1) Recommandation de films/musique par similarité comportementale (Netflix, Spotify). (2) Recherche sémantique dans un catalogue produit (Fnac, Amazon).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre FAISS et Pinecone ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">FAISS est une bibliothèque locale (Meta, open-source) — bonne pour le prototypage, en mémoire. Pinecone est un service cloud managé — conçu pour la production avec des millions de vecteurs, réplication, scalabilité.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="4-agents-et-tool-use-le-llm-qui-agit"><span class="h2-num">5</span>4. Agents et tool use : le LLM qui agit<span class="h2-line"></span></h2>
+
+<h3 id="définition-depuis-zéro">Définition depuis zéro</h3>
+
+<p><strong>Agent</strong> : un LLM capable d'utiliser des outils (fonctions Python, APIs externes) pour accomplir une tâche en plusieurs étapes. Au lieu de répondre en une seule génération, l'agent raisonne, décide d'une action, exécute l'outil, observe le résultat, puis continue — jusqu'à ce que la tâche soit accomplie.</p>
+
+<p><strong>Tool use</strong> : mécanisme par lequel on définit des fonctions disponibles au LLM, avec leur signature et leur description. Le LLM décide quand les appeler et avec quels arguments. Ce n'est pas le LLM qui exécute le code — il génère l'appel (nom de la fonction + arguments JSON), et c'est le code applicatif qui l'exécute réellement.</p>
+
+<h3 id="la-boucle-react-reason-act">La boucle ReAct (Reason + Act)</h3>
+
+<p><strong>ReAct</strong> est le pattern de raisonnement standard pour les agents. Le LLM alterne entre :
+1. <strong>Thought</strong> (raisonnement) : "Pour répondre, j'ai besoin de vérifier le solde du compte client X"
+2. <strong>Action</strong> (appel d'outil) : <code>get_account_balance(client_id="X")</code>
+3. <strong>Observation</strong> (résultat de l'outil) : <code>{"balance": 1250.00, "currency": "EUR"}</code>
+4. Retour à <strong>Thought</strong> si plus d'actions nécessaires, sinon <strong>Answer</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Thought  → l'agent réfléchit à ce qu'il doit faire
+Action   → l'agent choisit et appelle un outil
+Observation → le code exécute l'outil, retourne le résultat
+Thought  → l'agent analyse le résultat et décide de la suite
+...
+Answer   → l'agent a assez d'information pour répondre
+</code></pre></div>
+
+<h3 id="quand-les-agents-ont-du-sens-vs-quand-cest-over-engineering">Quand les agents ont du sens vs quand c'est over-engineering</h3>
+
+<p>:::rule
+<strong>Agents = utile</strong> quand la tâche nécessite plusieurs étapes dont le chemin n'est pas connu à l'avance, et que chaque étape peut dépendre du résultat de la précédente.</p>
+
+<p><strong>Agents = over-engineering</strong> quand le workflow est fixe et prévisible. Si vous pouvez écrire le code vous-même en 20 lignes de Python séquentiel, faites-le. Un agent coûte plus cher, est plus lent, et moins déterministe.</p>
+
+<p>Règle pratique : si vous pouvez remplacer l'agent par un script <code>if/elif/else</code> qui couvre 95% des cas, faites le script.
+:::</p>
+
+<h3 id="code-agent-avec-3-outils-api-anthropic">Code : agent avec 3 outils (API Anthropic)</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># pip install anthropic</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="c1"># ─── DÉFINITION DES OUTILS ──────────────────────────────────────</span>
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;calculer&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Effectue un calcul arithmétique. Utiliser pour tout calcul numérique.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;expression&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Expression Python à évaluer, ex: &#39;250 * 0.15&#39;&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;chercher_client&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Retourne les informations d&#39;un client à partir de son ID.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Identifiant unique du client&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;envoyer_alerte&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Envoie une alerte à l&#39;équipe support. Utiliser uniquement si une action urgente est requise.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;niveau&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]},</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;niveau&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># ─── IMPLÉMENTATION DES OUTILS ───────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_tool</span><span class="p">(</span><span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tool_input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">tool_name</span> <span class="o">==</span> <span class="s2">&quot;calculer&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">tool_input</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">])</span>  <span class="c1"># en prod : utiliser ast.literal_eval</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Erreur: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">elif</span> <span class="n">tool_name</span> <span class="o">==</span> <span class="s2">&quot;chercher_client&quot;</span><span class="p">:</span>
+        <span class="c1"># Simulation d&#39;une BDD</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;C001&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Martin Sophie&quot;</span><span class="p">,</span> <span class="s2">&quot;solde&quot;</span><span class="p">:</span> <span class="mf">1250.0</span><span class="p">,</span> <span class="s2">&quot;statut&quot;</span><span class="p">:</span> <span class="s2">&quot;premium&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;C002&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Dupont Pierre&quot;</span><span class="p">,</span> <span class="s2">&quot;solde&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">45.0</span><span class="p">,</span> <span class="s2">&quot;statut&quot;</span><span class="p">:</span> <span class="s2">&quot;standard&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tool_input</span><span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">],</span> <span class="p">{</span><span class="s2">&quot;erreur&quot;</span><span class="p">:</span> <span class="s2">&quot;client non trouvé&quot;</span><span class="p">}))</span>
+
+    <span class="k">elif</span> <span class="n">tool_name</span> <span class="o">==</span> <span class="s2">&quot;envoyer_alerte&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ALERTE </span><span class="si">{</span><span class="n">tool_input</span><span class="p">[</span><span class="s1">&#39;niveau&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">tool_input</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Alerte envoyée avec succès&quot;</span>
+
+<span class="c1"># ─── BOUCLE AGENTIQUE ────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_agent</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">}]</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-4-5&quot;</span><span class="p">,</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+            <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Fin de la boucle si le modèle a terminé</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;end_turn&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">text</span>
+
+        <span class="c1"># L&#39;agent veut utiliser des outils</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+            <span class="c1"># Ajouter la réponse de l&#39;agent aux messages</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">})</span>
+
+            <span class="c1"># Exécuter chaque outil demandé</span>
+            <span class="n">tool_results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">execute_tool</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+                    <span class="n">tool_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tool_use_id&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">result</span>
+                    <span class="p">})</span>
+
+            <span class="c1"># Ajouter les résultats des outils aux messages</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">tool_results</span><span class="p">})</span>
+            <span class="c1"># → La boucle repart : l&#39;agent traite les résultats et décide de la suite</span>
+
+<span class="c1"># ─── TEST ────────────────────────────────────────────────────────</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">run_agent</span><span class="p">(</span>
+    <span class="s2">&quot;Le client C002 a un solde négatif. Calcule les frais de découvert à 15%, &quot;</span>
+    <span class="s2">&quot;récupère ses infos complètes, et envoie une alerte WARNING si le solde est &lt; -20€.&quot;</span>
+<span class="p">))</span>
+<span class="c1"># L&#39;agent va : chercher_client → calculer → envoyer_alerte → répondre</span>
+</code></pre>
+</div>
+
+<h3 id="situation-réelle-support-client-automatisé-sncf">Situation réelle : support client automatisé SNCF</h3>
+
+<p>:::situation
+La SNCF reçoit des millions de messages de support : remboursements de billets, réclamations sur des trains en retard, questions sur les abonnements. Chaque cas nécessite d'interroger plusieurs systèmes (réservations, indemnisations, CRM).</p>
+
+<p><strong>Architecture agentique</strong> : un agent LLM reçoit le message client, identifie l'intention, et orchestrate des appels aux APIs internes (récupérer la réservation, vérifier l'éligibilité à l'indemnisation, calculer le montant, créer un ticket de remboursement, envoyer un email de confirmation).</p>
+
+<p><strong>Ce que l'agent fait</strong> : la boucle de raisonnement (identifier les étapes, interpréter les résultats d'API, rédiger la réponse personnalisée).</p>
+
+<p><strong>Ce que l'agent ne fait pas</strong> : exécuter les transactions financières directement — celles-ci passent toujours par un système de validation séparé.</p>
+
+<p><strong>Limite</strong> : les agents sont non-déterministes. Pour 3% des cas ambigus, l'agent prend des décisions incorrectes. Un humain supervise ces cas et ses corrections réalimentent l'entraînement.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre tool use et un agent ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le tool use est le mécanisme (le LLM peut appeler des fonctions). Un agent est l'architecture complète : boucle de raisonnement ReAct, gestion des résultats des outils, enchaînement de plusieurs appels jusqu'à complétion de la tâche.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans la boucle ReAct, qui exécute réellement le code de l'outil ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le code applicatif (Python, etc.), pas le LLM. Le LLM génère uniquement un appel structuré (nom de fonction + arguments JSON). Le développeur a écrit la fonction Python qui est appelée par l'orchestrateur.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand un agent est-il de l'over-engineering ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Quand le workflow est fixe et prévisible — si on peut le remplacer par un script séquentiel couvrant 95% des cas. Un agent coûte plus cher, est plus lent, et moins déterministe qu'un simple script.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="5-orchestrer-ml-classique-llm-dans-un-pipeline"><span class="h2-num">6</span>5. Orchestrer ML classique + LLM dans un pipeline<span class="h2-line"></span></h2>
+
+<h3 id="les-3-patterns-dintégration-principaux">Les 3 patterns d'intégration principaux</h3>
+
+<p><strong>Pattern 1 — ML en pré-filtre</strong></p>
+
+<p>Le modèle ML traite tous les cas et filtre. Le LLM (cher, lent) ne voit que les cas ambigus ou à fort enjeu. Objectif : réduire le coût LLM de 80-95%.</p>
+
+<div class="mindmap">[Données brutes]
+      ↓
+[Modèle ML rapide] ──── Score &lt; seuil bas  → Décision automatique (pas de LLM)
+      ↓                  Score &gt; seuil haut → Décision automatique (pas de LLM)
+      ↓                  Score ambigu       ↓
+                              [LLM — analyse approfondie]
+                                      ↓
+                              [Décision finale]
+</div>
+
+<p><strong>Pattern 2 — LLM en extraction de features</strong></p>
+
+<p>Le LLM lit du texte non structuré et en extrait des features structurées. Un modèle ML classique utilise ensuite ces features pour prédire.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">[Texte libre (email, contrat, déclaration)]
+      ↓
+[LLM — extraction d'entités → JSON structuré]
+      ↓
+[Features structurées + données tabulaires]
+      ↓
+[ML classique (XGBoost) — prédiction]
+</code></pre></div>
+
+<p><strong>Pattern 3 — ML en validation post-LLM</strong></p>
+
+<p>Le LLM génère une réponse ou un document. Un modèle ML valide la cohérence ou la conformité avant que ça parte en production.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">[Question / instruction]
+      ↓
+[LLM — génération (texte, JSON, données)]
+      ↓
+[ML — validation : cohérence, anomalie, règles métier]
+      ↓
+[Validation OK → publication] ou [KO → re-génération ou alerte]
+</code></pre></div>
+
+<h3 id="code-pipeline-complet-traitement-de-factures">Code : pipeline complet — traitement de factures</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FactureExtraite</span><span class="p">:</span>
+    <span class="n">fournisseur</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">montant_ht</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">tva_taux</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">numero</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">coherence_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1"># ─── ÉTAPE 1 : EXTRACTION PAR LLM ────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extraire_facture_llm</span><span class="p">(</span><span class="n">texte_facture</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Le LLM extrait les champs structurés du texte libre.&quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Extrais les informations de cette facture en JSON.</span>
+<span class="s2">Retourne uniquement un JSON valide avec les champs :</span>
+<span class="s2">fournisseur, montant_ht (float), tva_taux (float entre 0 et 1),</span>
+<span class="s2">date (YYYY-MM-DD), numero.</span>
+
+<span class="s2">Facture :</span>
+<span class="si">{</span><span class="n">texte_facture</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Parser le JSON de la réponse</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">json_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\{.*\}&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">json_match</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_match</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;LLM n&#39;a pas retourné de JSON valide&quot;</span><span class="p">)</span>
+
+<span class="c1"># ─── ÉTAPE 2 : VALIDATION PAR ML ──────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valider_coherence_ml</span><span class="p">(</span><span class="n">facture</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modèle ML entraîné sur des factures historiques pour détecter</span>
+<span class="sd">    les incohérences (taux TVA anormal pour le fournisseur,</span>
+<span class="sd">    montant hors plage, date suspecte, etc.)</span>
+<span class="sd">    Retourne un score de cohérence entre 0 (incohérent) et 1 (cohérent).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># En production : modèle XGBoost entraîné sur historique de factures</span>
+    <span class="c1"># Ici : règles simplifiées pour illustration</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+        <span class="n">facture</span><span class="p">[</span><span class="s2">&quot;montant_ht&quot;</span><span class="p">],</span>
+        <span class="n">facture</span><span class="p">[</span><span class="s2">&quot;tva_taux&quot;</span><span class="p">],</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">facture</span><span class="p">[</span><span class="s2">&quot;fournisseur&quot;</span><span class="p">]),</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">facture</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">][:</span><span class="mi">4</span><span class="p">]),</span>  <span class="c1"># année</span>
+    <span class="p">]])</span>
+
+    <span class="c1"># Chargement du modèle (entraîné offline)</span>
+    <span class="c1"># model = xgb.XGBClassifier()</span>
+    <span class="c1"># model.load_model(&quot;modele_coherence_factures.json&quot;)</span>
+    <span class="c1"># score = model.predict_proba(features)[0][1]</span>
+
+    <span class="c1"># Simulation pour l&#39;exemple</span>
+    <span class="n">tva_valides</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.055</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">]</span>
+    <span class="n">tva_ok</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">facture</span><span class="p">[</span><span class="s2">&quot;tva_taux&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tva_valides</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+    <span class="n">montant_ok</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">facture</span><span class="p">[</span><span class="s2">&quot;montant_ht&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1_000_000</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="k">if</span> <span class="p">(</span><span class="n">tva_ok</span> <span class="ow">and</span> <span class="n">montant_ok</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.2</span>
+
+    <span class="k">return</span> <span class="n">score</span>
+
+<span class="c1"># ─── ÉTAPE 3 : DÉCISION PAR RÈGLES ────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">decider</span><span class="p">(</span><span class="n">facture</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Règles métier explicites pour la décision finale.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;APPROUVÉE_AUTO&quot;</span>
+    <span class="k">elif</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;RÉVISION_HUMAINE&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;REJETÉE_ANOMALIE&quot;</span>
+
+<span class="c1"># ─── PIPELINE COMPLET ──────────────────────────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">traiter_facture</span><span class="p">(</span><span class="n">texte</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="c1"># 1. LLM extrait le JSON</span>
+    <span class="n">facture</span> <span class="o">=</span> <span class="n">extraire_facture_llm</span><span class="p">(</span><span class="n">texte</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LLM a extrait : </span><span class="si">{</span><span class="n">facture</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 2. ML valide la cohérence</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">valider_coherence_ml</span><span class="p">(</span><span class="n">facture</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score de cohérence ML : </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 3. Règles décident</span>
+    <span class="n">decision</span> <span class="o">=</span> <span class="n">decider</span><span class="p">(</span><span class="n">facture</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Décision : </span><span class="si">{</span><span class="n">decision</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">facture</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">decision</span>
+
+<span class="c1"># Test</span>
+<span class="n">texte_facture</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">FACTURE N° FA-2024-0892</span>
+<span class="s2">Fournisseur : TechSupply SAS</span>
+<span class="s2">Date : 15 novembre 2024</span>
+<span class="s2">Montant HT : 4 250,00 €</span>
+<span class="s2">TVA 20% : 850,00 €</span>
+<span class="s2">Total TTC : 5 100,00 €</span>
+<span class="s2">Prestation : Licences logicielles annuelles</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">facture</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">decision</span> <span class="o">=</span> <span class="n">traiter_facture</span><span class="p">(</span><span class="n">texte_facture</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="situation-réelle-société-générale-traitement-de-factures">Situation réelle : Société Générale, traitement de factures</h3>
+
+<p>:::situation
+La Société Générale traite 800 000 factures fournisseurs par an, dans 15 formats différents (PDF, scans, EDI, emails). Avant : équipes de saisie manuelle dans 3 pays. Problème : taux d'erreur de 2,3% sur la saisie, délais de 3-5 jours.</p>
+
+<p><strong>Pipeline hybride déployé</strong> :
+- LLM (extraction) : lit chaque facture quelle que soit sa structure, extrait les champs clés en JSON
+- ML (validation) : modèle XGBoost entraîné sur 5 ans d'historique, détecte les anomalies (TVA incohérente avec le fournisseur, montant hors plage habituelle, IBAN inconnu)
+- Règles (décision) : &lt; 500€ + score &gt; 0.85 → paiement automatique; sinon → file d'attente humaine</p>
+
+<p><strong>Résultats</strong> : 72% des factures traitées sans intervention humaine. Taux d'erreur : 0.08%. Délai moyen : 4 heures.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans le pattern "LLM en pré-filtre", quel est l'objectif principal ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Réduire le coût LLM de 80-95% en ne soumettant au LLM (cher et lent) que les cas ambigus que le ML classique ne peut pas traiter seul. Les cas clairs (score très haut ou très bas) sont traités sans LLM.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans le pattern "LLM en extraction", dans quel ordre les modèles interviennent-ils ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">LLM en premier (lit le texte non structuré, extrait des entités JSON), puis ML classique (utilise ces features structurées + données tabulaires pour prédire). Le LLM prépare les données pour le ML.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle décision ne doit jamais être prise directement par un LLM dans un pipeline de production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les décisions à fort enjeu irréversibles (transactions financières, remboursements, rejets définitifs). Ces décisions passent par des règles explicites ou une validation humaine, même si le LLM a généré la recommandation.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="6-évaluer-et-monitorer-un-système-hybride"><span class="h2-num">7</span>6. Évaluer et monitorer un système hybride<span class="h2-line"></span></h2>
+
+<h3 id="pourquoi-le-monitoring-llm-est-différent-du-monitoring-ml">Pourquoi le monitoring LLM est différent du monitoring ML</h3>
+
+<p>Un modèle ML classique dérive progressivement lorsque la distribution des données d'entrée change (data drift). C'est détectable : on surveille les distributions de features, les métriques de performance sur des échantillons labellisés.</p>
+
+<p>Un LLM dérive d'une façon différente et plus insidieuse :
+- Les réponses changent avec les mises à jour du modèle fournisseur
+- Le contenu du vector store (RAG) vieillit sans que le modèle ne le signale
+- Les réponses peuvent être factuellement incorrectes sans être statistiquement anomales
+- On ne peut pas comparer "ancienne réponse" vs "nouvelle réponse" avec une simple métrique</p>
+
+<h3 id="métriques-spécifiques-aux-llm-et-systèmes-rag">Métriques spécifiques aux LLM et systèmes RAG</h3>
+
+<p><strong>Hallucination rate</strong> : proportion de réponses qui contiennent des informations factuelles incorrectes ou inventées. Se mesure par un juge LLM ou par annotation humaine sur un échantillon. Une hallucination rate de 2% signifie que sur 1000 réponses, 20 contiennent des erreurs factuelles.</p>
+
+<p><strong>Faithfulness</strong> : mesure si la réponse s'appuie effectivement sur les documents récupérés, ou si le LLM "improvise" au-delà des sources. Une réponse peut être correcte mais non-faithfull (le LLM a répondu depuis ses paramètres, pas depuis les chunks) — c'est un risque car le comportement peut diverger à tout moment.</p>
+
+<p><strong>Answer relevance</strong> : mesure si la réponse répond vraiment à la question posée, indépendamment de sa factualité. Un système peut retourner des informations vraies mais hors-sujet.</p>
+
+<p><strong>Context precision</strong> : sur les chunks récupérés, quelle proportion est vraiment utile pour répondre ? Un retrieval qui ramène 10 chunks dont 8 sont hors-sujet dégrade la qualité de la génération.</p>
+
+<h3 id="ragas-framework-dévaluation-rag">Ragas : framework d'évaluation RAG</h3>
+
+<p><strong>Ragas</strong> est un framework open-source qui automatise l'évaluation des pipelines RAG. Il utilise un LLM juge pour calculer les métriques ci-dessus sans annotation humaine.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># pip install ragas datasets</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c1"># Jeu de test : questions + réponses du système + chunks récupérés + réponses de référence</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Quelle est la procédure d&#39;escalade P1 ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Quel est le SLA pour les incidents P2 ?&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;En cas d&#39;incident P1, notifier le responsable via PagerDuty dans les 10 min.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Les incidents P2 doivent être résolus sous 4 heures selon notre SLA standard.&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;[doc ITSM v2.3, p14] Incident P1 : notification PagerDuty &lt; 10 min...&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;[doc SLA 2024, p3] P2 resolution target : 4 hours...&quot;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ground_truth&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;L&#39;escalade P1 requiert une notification PagerDuty dans les 10 minutes.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Le SLA P2 est de 4 heures.&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+
+<span class="c1"># Évaluation automatisée (utilise un LLM juge en interne)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="c1"># → {&#39;faithfulness&#39;: 0.95, &#39;answer_relevancy&#39;: 0.88, &#39;context_precision&#39;: 0.92}</span>
+<span class="c1"># Si faithfulness &lt; 0.8 → le LLM &quot;improvise&quot; trop souvent → revoir le prompt</span>
+</code></pre>
+</div>
+
+<h3 id="coût-et-latence-en-production-les-chiffres-réels">Coût et latence en production : les chiffres réels</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Composant</th>
+  <th>Latence</th>
+  <th>Coût par appel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>XGBoost (inférence)</td>
+  <td>&lt; 1 ms</td>
+  <td>~0,000001 €</td>
+</tr>
+<tr>
+  <td>Embedding (ada-002)</td>
+  <td>50–150 ms</td>
+  <td>~0,0001 €</td>
+</tr>
+<tr>
+  <td>FAISS search (100k vecteurs)</td>
+  <td>2–10 ms</td>
+  <td>0 € (local)</td>
+</tr>
+<tr>
+  <td>LLM GPT-4o (1k tokens in/out)</td>
+  <td>1–3 s</td>
+  <td>~0,01 €</td>
+</tr>
+<tr>
+  <td>LLM Claude Opus (1k tokens)</td>
+  <td>2–5 s</td>
+  <td>~0,02 €</td>
+</tr>
+<tr>
+  <td>LLM Claude Haiku (1k tokens)</td>
+  <td>200–500 ms</td>
+  <td>~0,0003 €</td>
+</tr>
+</tbody>
+</table>
+
+<p>Un LLM coûte <strong>100× à 10 000×</strong> plus cher qu'une inférence ML classique. Sur un système traitant 100 000 requêtes/jour, la différence est de 1€/jour (ML) vs 1 000€/jour (LLM GPT-4o).</p>
+
+<h3 id="stratégies-doptimisation-en-production">Stratégies d'optimisation en production</h3>
+
+<p><strong>Caching sémantique</strong> : si deux questions ont une similarité cosinus &gt; 0.95, retourner la réponse mise en cache plutôt que d'interroger le LLM. Réduit les coûts de 30-60% sur les questions fréquentes.</p>
+
+<p><strong>Routing intelligent</strong> : utiliser un modèle léger pour classer la difficulté de la question. Questions simples → modèle bon marché (Claude Haiku, GPT-4o-mini). Questions complexes → modèle puissant.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">router_question</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classe la complexité de la question et choisit le bon modèle.&quot;&quot;&quot;</span>
+    <span class="c1"># Heuristiques simples + classification rapide</span>
+    <span class="n">mots_complexes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;compare&quot;</span><span class="p">,</span> <span class="s2">&quot;analyse&quot;</span><span class="p">,</span> <span class="s2">&quot;explique pourquoi&quot;</span><span class="p">,</span> <span class="s2">&quot;quelles sont toutes&quot;</span><span class="p">]</span>
+    <span class="n">est_complexe</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">mot</span> <span class="ow">in</span> <span class="n">question</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">mot</span> <span class="ow">in</span> <span class="n">mots_complexes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">question</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">est_complexe</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;claude-haiku-4-5&quot;</span>      <span class="c1"># 0.0003€/1k tokens</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;claude-opus-4-5&quot;</span>       <span class="c1"># 0.02€/1k tokens</span>
+</code></pre>
+</div>
+
+<h3 id="situation-réelle-dérive-dun-chatbot-rag-après-3-mois">Situation réelle : dérive d'un chatbot RAG après 3 mois</h3>
+
+<p>:::warning
+<strong>Ce qui s'est passé</strong> : une équipe déploie un chatbot RAG sur leur documentation produit en janvier. En mars, des utilisateurs signalent des réponses bizarres. Investigation : la documentation a été mise à jour (nouvelles versions du produit), mais le vector store n'a pas été ré-indexé. Le chatbot répond avec des informations périmées, avec la même confiance qu'avant.</p>
+
+<p><strong>Second problème</strong> : le fournisseur LLM a mis à jour son modèle en février. Les nouvelles versions du modèle ont une tendance légèrement différente à interpréter les prompts — le taux de réponses "Je ne sais pas" a augmenté de 2% à 18%, sans que personne ne s'en aperçoive.</p>
+
+<p><strong>Ce qui manquait</strong> :
+- Pipeline de ré-indexation automatique déclenché à chaque mise à jour de doc
+- Dashboard de monitoring : faithfulness, answer relevancy, volume de "Je ne sais pas"
+- Tests de régression automatiques sur un golden dataset de 50 questions</p>
+
+<p><strong>Leçon</strong> : un système RAG en production requiert autant de surveillance qu'un modèle ML classique — avec des métriques différentes.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Définissez faithfulness dans le contexte RAG.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La faithfulness mesure si les réponses du LLM s'appuient réellement sur les chunks récupérés, ou si le LLM répond depuis ses paramètres internes (hors-sources). Une faible faithfulness signifie que le RAG ne remplit pas son rôle d'ancrage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi le caching sémantique réduit-il les coûts LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Si deux questions ont une similarité cosinus > 0.95 (très proches sémantiquement), on retourne la réponse en cache sans appeler le LLM. Sur des systèmes avec des questions répétitives, 30-60% des requêtes peuvent être servies depuis le cache.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que Ragas et à quoi sert-il ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Ragas est un framework open-source qui automatise l'évaluation des pipelines RAG. Il utilise un LLM juge pour calculer faithfulness, answer relevancy, context precision — sans annotation humaine, sur un jeu de test de questions/réponses.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un chatbot RAG fonctionne bien en janvier et dérive en mars sans changement de code. Deux causes possibles ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">(1) La documentation source a été mise à jour mais le vector store n'a pas été ré-indexé → réponses périmées. (2) Le fournisseur LLM a mis à jour son modèle → comportement légèrement différent (prompt interpretation, refusals, etc.).</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="résumé"><span class="h2-num">8</span>Résumé<span class="h2-line"></span></h2>
+
+<div class="mindmap">╔══════════════════════════════════════════════════════════════════════════╗
+║              JOUR 6 — ARCHITECTURE HYBRIDE : RÉSUMÉ                     ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  POURQUOI HYBRIDE                                                        ║
+║  ├─ ML classique : rapide (&lt; 1ms), cheap, explicable, déterministe      ║
+║  ├─ LLM         : lit le texte libre, raisonne, génère, mais coûteux   ║
+║  └─ Hybride     : chaque composant fait ce qu'il fait mieux             ║
+║                                                                          ║
+║  RAG (Retrieval-Augmented Generation)                                    ║
+║  ├─ Problème résolu : hallucination sur données internes                 ║
+║  ├─ Pipeline    : Indexation → Retrieval → Génération                   ║
+║  ├─ Embedding   : texte → vecteur sémantique (1536 dim)                 ║
+║  └─ Similarité cosinus : mesure d'alignement directionnel entre vecteurs║
+║                                                                          ║
+║  EMBEDDINGS &amp; VECTOR STORES                                              ║
+║  ├─ Pas que du texte : images, produits, clients                        ║
+║  ├─ FAISS (local) vs Pinecone (cloud managé)                            ║
+║  └─ Usage non-LLM : recommandation Netflix/Spotify/Fnac                 ║
+║                                                                          ║
+║  AGENTS &amp; TOOL USE                                                       ║
+║  ├─ Agent = LLM + outils + boucle ReAct (Reason + Act)                  ║
+║  ├─ Tool use = LLM génère l'appel, le code Python l'exécute             ║
+║  └─ Over-engineering si workflow fixe et prévisible                     ║
+║                                                                          ║
+║  PATTERNS D'INTÉGRATION                                                  ║
+║  ├─ ML en pré-filtre  : LLM ne voit que les cas ambigus (coût ÷10)     ║
+║  ├─ LLM en extraction : LLM → JSON → ML classique prédit               ║
+║  └─ ML en validation  : LLM génère → ML valide la cohérence             ║
+║                                                                          ║
+║  MONITORING HYBRIDE                                                      ║
+║  ├─ Métriques LLM : hallucination rate, faithfulness, answer relevancy  ║
+║  ├─ Ragas : évaluation automatisée des pipelines RAG                    ║
+║  ├─ Coût   : LLM = 100× à 10000× plus cher que ML classique            ║
+║  └─ Optims : caching sémantique, routing intelligent par complexité     ║
+║                                                                          ║
+║  RÈGLE D'OR : définir d'abord CE QUE chaque composant doit faire,      ║
+║  puis choisir la technologie — jamais l'inverse.                        ║
+╚══════════════════════════════════════════════════════════════════════════╝
+</div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

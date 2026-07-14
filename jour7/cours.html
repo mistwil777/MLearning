@@ -1,0 +1,1019 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 7Jour 7 — Capstone : Architecturer un projet ML de A à ZCoursThéorieExemple</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 7</div><h1>Jour 7 — <em>Capstone : Architecturer un projet ML de A à Z</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Layout :
+    ROOT         cx=550 cy=45
+    DONNÉES      cx=160 cy=155
+    ALGORITHME   cx=420 cy=155
+    ÉVALUATION   cx=680 cy=155
+    PRODUCTION   cx=940 cy=155
+    Qualité      cx=80  cy=265
+    Volume       cx=220 cy=265
+    Classique    cx=330 cy=265
+    Deep/LLM     cx=470 cy=265
+    Hybride      cx=590 cy=265
+    Métriques    cx=610 cy=265 → réservé évaluation
+    Métier/Tech  cx=680 cy=265
+    Deploy       cx=860 cy=265
+    Monitor      cx=1000 cy=265
+    Cycle vie    cx=940 cy=355
+  -->
+
+  <!-- Connecteurs ROOT → L1 -->
+  <path d="M550,66 C550,110 160,110 160,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 420,110 420,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 680,110 680,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 940,110 940,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- DONNÉES → L2 -->
+  <path d="M160,175 C160,220 80,220 80,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M160,175 C160,220 240,220 240,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- ALGORITHME → L2 -->
+  <path d="M420,175 C420,220 340,220 340,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M420,175 C420,220 480,220 480,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M420,175 C420,220 580,220 580,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- ÉVALUATION → L2 -->
+  <path d="M680,175 C680,220 640,220 640,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M680,175 C680,220 730,220 730,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- PRODUCTION → L2 -->
+  <path d="M940,175 C940,220 870,220 870,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M940,175 C940,220 1010,220 1010,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- PRODUCTION → L3 cycle vie -->
+  <path d="M940,175 L940,337" fill="none" stroke="#4a4360" stroke-width="1.3" stroke-dasharray="5,3"/>
+
+  <!-- ─── L0 ROOT ─── -->
+  <rect x="350" y="24" width="400" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">PROJET ML DE A À Z</text>
+
+  <!-- ─── L1 DONNÉES ─── -->
+  <rect x="60" y="137" width="200" height="38" rx="12" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="160" y="161" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800">DONNÉES</text>
+
+  <!-- ─── L1 ALGORITHME ─── -->
+  <rect x="308" y="137" width="224" height="38" rx="12" fill="rgba(144,133,233,.16)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="420" y="161" text-anchor="middle" fill="#9085e9" font-size="13" font-weight="800">ALGORITHME</text>
+
+  <!-- ─── L1 ÉVALUATION ─── -->
+  <rect x="575" y="137" width="210" height="38" rx="12" fill="rgba(27,175,122,.16)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="680" y="161" text-anchor="middle" fill="#1baf7a" font-size="13" font-weight="800">ÉVALUATION</text>
+
+  <!-- ─── L1 PRODUCTION ─── -->
+  <rect x="820" y="137" width="240" height="38" rx="12" fill="rgba(232,166,0,.14)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="940" y="161" text-anchor="middle" fill="#e8a600" font-size="13" font-weight="800">PRODUCTION</text>
+
+  <!-- ─── L2 DONNÉES ─── -->
+  <rect x="30" y="247" width="100" height="30" rx="8" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="80" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Qualité</text>
+
+  <rect x="170" y="247" width="100" height="30" rx="8" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="220" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Volume / Labels</text>
+
+  <!-- ─── L2 ALGORITHME ─── -->
+  <rect x="268" y="247" width="145" height="30" rx="8" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="340" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Classique / XGB</text>
+
+  <rect x="428" y="247" width="105" height="30" rx="8" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="480" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Deep / LLM</text>
+
+  <rect x="545" y="247" width="105" height="30" rx="8" fill="rgba(230,103,103,.12)" stroke="#e66767" stroke-width="1.2"/>
+  <text x="597" y="267" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">Hybride</text>
+
+  <!-- ─── L2 ÉVALUATION ─── -->
+  <rect x="590" y="247" width="110" height="30" rx="8" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="645" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Métier</text>
+
+  <rect x="710" y="247" width="100" height="30" rx="8" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="760" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Technique</text>
+
+  <!-- ─── L2 PRODUCTION ─── -->
+  <rect x="815" y="247" width="110" height="30" rx="8" fill="rgba(232,166,0,.1)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="870" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Déploiement</text>
+
+  <rect x="945" y="247" width="120" height="30" rx="8" fill="rgba(232,166,0,.1)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="1005" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Monitoring</text>
+
+  <!-- ─── L3 Cycle de vie ─── -->
+  <rect x="820" y="337" width="240" height="36" rx="10" fill="rgba(217,89,38,.12)" stroke="#d95926" stroke-width="1.3"/>
+  <text x="940" y="352" text-anchor="middle" fill="#d95926" font-size="12" font-weight="700">Cycle de vie</text>
+  <text x="940" y="367" text-anchor="middle" fill="#9e95b5" font-size="10">Train → Deploy → Monitor → Retrain</text>
+
+  <!-- ─── L4 étapes clés en bas ─── -->
+  <rect x="60" y="390" width="145" height="30" rx="7" fill="rgba(57,135,229,.07)" stroke="#3987e5" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="132" y="410" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">1. Reformuler</text>
+
+  <rect x="220" y="390" width="120" height="30" rx="7" fill="rgba(57,135,229,.07)" stroke="#9085e9" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="280" y="410" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">2. Auditer</text>
+
+  <rect x="355" y="390" width="120" height="30" rx="7" fill="rgba(144,133,233,.07)" stroke="#9085e9" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="415" y="410" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">3. Choisir archi</text>
+
+  <rect x="490" y="390" width="145" height="30" rx="7" fill="rgba(27,175,122,.07)" stroke="#1baf7a" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="562" y="410" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">4. Métriques succès</text>
+
+  <rect x="650" y="390" width="145" height="30" rx="7" fill="rgba(232,166,0,.07)" stroke="#e8a600" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="722" y="410" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">5. Plan déploiement</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-méthode-du-brief-client-à-larchitecture-technique"><span class="h2-num">2</span>1. Méthode : du brief client à l'architecture technique<span class="h2-line"></span></h2>
+
+<p><strong>Définition.</strong> Un projet ML ne commence jamais par le code. Il commence par une demande — souvent vague, parfois contradictoire — qu'il faut transformer en problème résolvable par une machine. La méthode ci-dessous est un processus en 5 étapes qui structure ce travail de traduction.</p>
+
+<p>:::situation
+<strong class="lbl-situation">&#x1f4cd; Situation réelle — La demande vague</strong></p>
+
+<p>Un directeur digital de grande surface vous convoque. Il dit : "On veut faire de l'IA pour améliorer l'expérience client." Silence. Il attend. Il ne sait pas ce qu'il veut exactement, mais il a lu un article sur Amazon. Votre réponse à cet instant définit la qualité de tout le projet qui suivra.
+:::</p>
+
+<h3 id="étape-1-reformuler-le-problème-métier-en-problème-ml">Étape 1 — Reformuler le problème métier en problème ML</h3>
+
+<p>La plupart des demandes métier sont des symptômes. "Améliorer l'expérience client" est un objectif business, pas un problème ML. Pour le transformer, il faut poser les bonnes questions :</p>
+
+<ul>
+<li>Quel comportement client vous coûte de l'argent en ce moment ?</li>
+<li>Pouvez-vous me donner un exemple concret de "mauvaise expérience" ?</li>
+<li>Si vous deviez mesurer le succès dans 6 mois, que regarderiez-vous ?</li>
+</ul>
+
+<p>Ces questions font émerger un problème précis : "30% des clients abandonnent leur panier avant de payer, et on ne sait pas pourquoi." C'est un problème ML : prédire l'abandon de panier pour déclencher une intervention en temps réel.</p>
+
+<p><strong>La règle de reformulation.</strong> Un problème ML valide contient : une variable à prédire, un contexte d'utilisation, et un critère de succès mesurable. "Améliorer l'expérience" ne contient aucun des trois.</p>
+
+<h3 id="étape-2-auditer-les-données-disponibles">Étape 2 — Auditer les données disponibles</h3>
+
+<p><strong>Définition.</strong> Un audit de données répond à quatre questions : Est-ce que les données existent ? Sont-elles de bonne qualité ? Couvrent-elles le phénomène qu'on veut prédire ? Peut-on les utiliser légalement ?</p>
+
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Questions à poser</th>
+  <th>Signal d'alarme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Existence</strong></td>
+  <td>Les données sont-elles collectées ? Depuis quand ?</td>
+  <td>Données &lt; 6 mois pour un phénomène annuel</td>
+</tr>
+<tr>
+  <td><strong>Qualité</strong></td>
+  <td>Taux de valeurs manquantes ? Erreurs de saisie ?</td>
+  <td>&gt; 20% de valeurs manquantes sur des features clés</td>
+</tr>
+<tr>
+  <td><strong>Labels</strong></td>
+  <td>La variable cible est-elle disponible ? Fiable ?</td>
+  <td>Labels créés manuellement par des humains fatigués</td>
+</tr>
+<tr>
+  <td><strong>Légalité</strong></td>
+  <td>RGPD, consentement, données sensibles ?</td>
+  <td>Données de santé sans DPO consulté</td>
+</tr>
+<tr>
+  <td><strong>Volume</strong></td>
+  <td>Assez d'exemples du phénomène rare ?</td>
+  <td>0,1% d'événements positifs sur 10k lignes</td>
+</tr>
+<tr>
+  <td><strong>Fraîcheur</strong></td>
+  <td>Les données de 2019 reflètent-elles 2024 ?</td>
+  <td>Data pre-Covid pour prédire comportements post-Covid</td>
+</tr>
+</tbody>
+</table>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège — Le biais de confirmation dans l'audit</strong></p>
+
+<p>Il est tentant de déclarer les données "suffisantes" pour ne pas décevoir le client. C'est la principale cause d'échec de projets ML. Un projet lancé sur des données insuffisantes échouera dans 6 mois avec 5× plus de coût qu'un refus honnête dès le départ.
+:::</p>
+
+<h3 id="étape-3-choisir-larchitecture">Étape 3 — Choisir l'architecture</h3>
+
+<p>Le choix de l'architecture est la décision la plus structurante. Elle dépend de l'audit des données, de la contrainte de latence, du besoin d'explicabilité et du budget.</p>
+
+<p><strong>Arbre de décision simplifié :</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">choisir_architecture</span><span class="p">(</span><span class="n">problem</span><span class="p">):</span>
+    <span class="c1"># Règles d&#39;abord — souvent sous-estimées</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">regles_metier_claires</span> <span class="ow">and</span> <span class="n">problem</span><span class="o">.</span><span class="n">volume_faible</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Règles if/else + validation humaine&quot;</span>
+
+    <span class="c1"># ML classique — le cheval de bataille</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_tabulaires</span> <span class="ow">and</span> <span class="n">problem</span><span class="o">.</span><span class="n">volume</span> <span class="o">&lt;</span> <span class="mi">10_000_000</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">interpretabilite_requise</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Logistic Regression ou Decision Tree&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;XGBoost (Gradient Boosting)&quot;</span>
+
+    <span class="c1"># Séries temporelles</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;prévision_temporelle&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">patterns_saisonniers</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Prophet + XGBoost pour anomalies&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;LSTM ou Transformer temporel&quot;</span>
+
+    <span class="c1"># Deep Learning — seulement si données non-structurées</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_images</span> <span class="ow">or</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_texte</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">budget_inference_eleve</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Fine-tuning LLM&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;BERT/CamemBERT classifié&quot;</span>
+
+    <span class="c1"># Hybride — le cas le plus fréquent en entreprise</span>
+    <span class="k">return</span> <span class="s2">&quot;Pipeline hybride : ML classique + règles métier&quot;</span>
+</code></pre>
+</div>
+
+<p>:::rule
+<strong class="lbl-rule">&#x2705; Règle d'or — La complexité doit être justifiée</strong></p>
+
+<p>Un LLM coûte entre 100× et 1000× plus cher à l'inférence qu'un XGBoost. Avant de le choisir, il faut démontrer qu'un modèle plus simple ne suffit pas. Ce n'est pas un choix par défaut.
+:::</p>
+
+<h3 id="étape-4-définir-les-métriques-de-succès">Étape 4 — Définir les métriques de succès</h3>
+
+<p><strong>Définition.</strong> Une métrique est une mesure quantitative qui dit si un modèle remplit son objectif. Il en faut deux types : les métriques <strong>techniques</strong> (précision, rappel, AUC…) et les métriques <strong>métier</strong> (chiffre d'affaires supplémentaire, taux de réduction des incidents, temps économisé).</p>
+
+<p>La confusion entre les deux est une source fréquente de conflits. Un modèle peut avoir une excellente AUC et un impact métier nul, parce que les décisions prises sur sa base n'étaient pas les bonnes.</p>
+
+<table>
+<thead>
+<tr>
+  <th>Contexte</th>
+  <th>Métrique technique</th>
+  <th>Métrique métier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Détection de fraude</td>
+  <td>Recall sur fraudes (minimiser faux négatifs)</td>
+  <td>Montant frauduleux évité / mois</td>
+</tr>
+<tr>
+  <td>Recommandation</td>
+  <td>NDCG@10 (classement des suggestions)</td>
+  <td>CTR, panier moyen, conversions</td>
+</tr>
+<tr>
+  <td>Prévision de stock</td>
+  <td>MAE (écart absolu moyen)</td>
+  <td>Coût de rupture + coût de surstock</td>
+</tr>
+<tr>
+  <td>Classification texte</td>
+  <td>F1-macro</td>
+  <td>Temps économisé par les agents</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="étape-5-planifier-le-cycle-de-vie">Étape 5 — Planifier le cycle de vie</h3>
+
+<p><strong>Définition.</strong> Un modèle ML n'est pas un livrable statique. C'est un système vivant qui se dégrade avec le temps parce que le monde change. Le cycle de vie couvre : entraînement initial, déploiement, monitoring, et ré-entraînement.</p>
+
+<div class="mindmap">Entraînement ──► Validation ──► Déploiement ──► Monitoring
+     ▲                                               │
+     └─────────────── Ré-entraînement ◄──────────────┘
+                     (dérive détectée)
+</div>
+
+<p>La cadence de ré-entraînement dépend de la vitesse à laquelle le phénomène évolue : quotidien pour la détection de fraude, hebdomadaire pour la prévision de stock, mensuel pour la recommandation.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre une métrique technique et une métrique métier ? Donnez un exemple.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une <strong>métrique technique</strong> mesure la performance du modèle (ex : AUC = 0.87 pour détecter la fraude). Une <strong>métrique métier</strong> mesure l'impact réel (ex : 450 000 € de fraude évités par mois). Un modèle peut avoir une excellente AUC et un impact métier nul si les décisions prises sur sa base sont mauvaises.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un LLM n'est pas le bon choix par défaut pour un problème de classification ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un LLM coûte <strong>100× à 1000×</strong> plus cher à l'inférence qu'un XGBoost. Pour un problème de classification sur données tabulaires, XGBoost est plus rapide, plus interprétable, et plus précis. Le LLM ne se justifie que si le problème nécessite de la compréhension de texte libre ou de la génération.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un audit de données et quand faut-il refuser de démarrer un projet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un audit de données vérifie l'existence, la qualité, les labels, la légalité et le volume. Il faut <strong>refuser de démarrer</strong> si les labels sont absents ou peu fiables, si les données ne couvrent pas le phénomène prédit, ou si des contraintes RGPD n'ont pas été traitées par le DPO.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que contient un problème ML "valide" selon la règle de reformulation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un problème ML valide contient <strong>trois éléments</strong> : une variable à prédire (ex : abandon de panier), un contexte d'utilisation (ex : en temps réel pendant la navigation), et un critère de succès mesurable (ex : réduire le taux d'abandon de 30% à 22%).</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="2-cas-complet-1-système-de-recommandation-e-commerce-fnac"><span class="h2-num">3</span>2. Cas complet 1 — Système de recommandation e-commerce (Fnac)<span class="h2-line"></span></h2>
+
+<h3 id="le-brief">Le brief</h3>
+
+<p>La Fnac veut "personnaliser l'expérience d'achat". Après reformulation : augmenter le taux de conversion sur la page produit en proposant des articles pertinents à chaque visiteur.</p>
+
+<p><strong>Données disponibles</strong> : historique d'achats (3 ans, 8M transactions), navigation (clics, temps passé), catalogue produits (500k références), données démographiques (âge, région, programme fidélité). Labels : achat = positif, navigation sans achat = négatif (proxy imparfait).</p>
+
+<h3 id="les-5-étapes-appliquées">Les 5 étapes appliquées</h3>
+
+<p><strong>Étape 1 — Reformulation.</strong> Prédire pour chaque utilisateur et chaque session les 5 produits les plus susceptibles d'être achetés, parmi ceux qu'il n'a pas encore achetés.</p>
+
+<p><strong>Étape 2 — Audit.</strong> Données riches, 3 ans d'historique. Problème identifié : cold start (30% des visiteurs sont nouveaux, sans historique). Les labels "navigation sans achat" sont du bruit : on peut naviguer longtemps sans vouloir acheter.</p>
+
+<p><strong>Étape 3 — Architecture choisie.</strong></p>
+
+<div class="mindmap">                    ┌─────────────────────────────────┐
+                    │   PIPELINE RECOMMANDATION FNAC   │
+                    └──────────────┬──────────────────┘
+                                   │
+              ┌────────────────────┼────────────────────┐
+              ▼                    ▼                    ▼
+     ┌─────────────────┐  ┌──────────────────┐  ┌─────────────┐
+     │ Embedding       │  │ Filtrage         │  │ Règles      │
+     │ produits        │  │ collaboratif     │  │ métier      │
+     │ (Word2Vec-like) │  │ (ALS / Matrix    │  │ (nouveautés,│
+     │ sur co-achats   │  │  Factorization)  │  │ stock dispo)│
+     └────────┬────────┘  └────────┬─────────┘  └──────┬──────┘
+              └────────────────────┼───────────────────┘
+                                   ▼
+                      ┌────────────────────────┐
+                      │ Ranking final : XGBoost │
+                      │ (features : score reco, │
+                      │  marge, fraîcheur, CTR  │
+                      │  historique)             │
+                      └───────────┬─────────────┘
+                                  ▼
+                        ┌──────────────────┐
+                        │   A/B Test       │
+                        │ (10% trafic)     │
+                        └──────────────────┘
+</div>
+
+<p><strong>Pourquoi pas un LLM ici ?</strong> Un LLM génératif pourrait "décrire" des produits recommandés, mais il ne peut pas apprendre les corrélations entre 8M transactions. Le filtrage collaboratif exploite exactement ce que le LLM ne peut pas voir : "les gens qui achètent X achètent aussi Y".</p>
+
+<p><strong>Pourquoi XGBoost pour le ranking final ?</strong> Parce que le ranking intègre des features métier (marge produit, niveau de stock, partenariats commerciaux) que les algorithmes de recommandation pure n'optimisent pas. XGBoost les combine proprement et reste interprétable pour la direction commerciale.</p>
+
+<h3 id="code-skeleton-embedding-produits">Code skeleton — Embedding produits</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Embedding produits via co-achats (style Word2Vec)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gensim.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Word2Vec</span>
+
+<span class="c1"># Chaque &quot;phrase&quot; = liste ordonnée des achats d&#39;un panier</span>
+<span class="n">baskets</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s2">&quot;livre_polar&quot;</span><span class="p">,</span> <span class="s2">&quot;stylo_luxe&quot;</span><span class="p">,</span> <span class="s2">&quot;carnet&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;casque_audio&quot;</span><span class="p">,</span> <span class="s2">&quot;cable_usb&quot;</span><span class="p">,</span> <span class="s2">&quot;pochette&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span>
+    <span class="n">sentences</span><span class="o">=</span><span class="n">baskets</span><span class="p">,</span>
+    <span class="n">vector_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>    <span class="c1"># dimension de l&#39;embedding</span>
+    <span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>           <span class="c1"># contexte dans le panier</span>
+    <span class="n">min_count</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>       <span class="c1"># ignorer les produits rares</span>
+    <span class="n">workers</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="c1"># Produits similaires à un article donné</span>
+<span class="n">similaires</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="s2">&quot;casque_audio&quot;</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="c1"># [(&#39;casque_gaming&#39;, 0.92), (&#39;micro_usb&#39;, 0.88), ...]</span>
+</code></pre>
+</div>
+
+<h3 id="code-skeleton-ranking-xgboost">Code skeleton — Ranking XGBoost</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Features pour le ranking</span>
+<span class="n">features</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;score_collaboratif&#39;</span><span class="p">,</span>    <span class="c1"># issu du filtrage collaboratif</span>
+    <span class="s1">&#39;similarite_embedding&#39;</span><span class="p">,</span>  <span class="c1"># distance cosinus dans l&#39;espace produit</span>
+    <span class="s1">&#39;marge_produit&#39;</span><span class="p">,</span>         <span class="c1"># feature métier</span>
+    <span class="s1">&#39;stock_disponible&#39;</span><span class="p">,</span>      <span class="c1"># règle binaire</span>
+    <span class="s1">&#39;ctr_historique&#39;</span><span class="p">,</span>        <span class="c1"># taux de clic passé sur ce produit</span>
+    <span class="s1">&#39;fraicheur_article&#39;</span><span class="p">,</span>     <span class="c1"># jours depuis la mise en ligne</span>
+<span class="p">]</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">features</span><span class="p">]</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;achete&#39;</span><span class="p">]</span>  <span class="c1"># 1 = acheté, 0 = non-acheté</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="métriques-et-monitoring">Métriques et monitoring</h3>
+
+<ul>
+<li><strong>Métrique technique</strong> : NDCG@5 (qualité du classement des 5 premières suggestions)</li>
+<li><strong>Métrique métier</strong> : taux de conversion sur page produit (baseline : 2.3%, cible : 3.0%)</li>
+<li><strong>Monitoring</strong> : dérive de distribution des embeddings (les produits tendance changent vite)</li>
+<li><strong>Ré-entraînement</strong> : hebdomadaire pour les embeddings, quotidien pour le ranking XGBoost</li>
+</ul>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le "cold start" en recommandation et comment le résoudre ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le <strong>cold start</strong> est le problème posé par les nouveaux utilisateurs sans historique : impossible de calculer un filtrage collaboratif. Solutions : recommander les tops ventes par catégorie, utiliser les données démographiques disponibles (âge, région), ou démarrer avec un questionnaire d'onboarding.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utilise-t-on des embeddings de produits plutôt qu'une simple similarité de catégorie ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les catégories sont définies par des humains (ex : "Électronique"). Les <strong>embeddings</strong> apprennent les associations réelles dans les données (ex : les acheteurs de casques audio achètent aussi des câbles USB et des coques de téléphone — hors même catégorie). Ils capturent des co-achats invisibles aux taxonomies.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quel est le rôle du A/B test dans un pipeline de recommandation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le A/B test mesure l'<strong>impact causal</strong> du système de recommandation sur les métriques métier (conversion, panier moyen). Sans A/B test, on ne peut pas distinguer "les recommandations améliorent les ventes" de "les gens qui cliquent sur les recommandations achètent de toute façon plus".</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi la couche XGBoost de ranking final intègre-t-elle des features métier comme la marge produit ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un système de recommandation pur maximise la pertinence pour l'utilisateur, pas la rentabilité pour l'entreprise. Le <strong>ranking XGBoost</strong> permet de pondérer la pertinence avec des objectifs commerciaux (marge, stock à écouler, partenariats). C'est la couche qui aligne ML et stratégie business.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="3-cas-complet-2-prévision-de-ruptures-de-stock-carrefour"><span class="h2-num">4</span>3. Cas complet 2 — Prévision de ruptures de stock (Carrefour)<span class="h2-line"></span></h2>
+
+<h3 id="le-brief">Le brief</h3>
+
+<p>Carrefour veut réduire les ruptures de stock en hypermarché. Coût actuel estimé : 4% du chiffre d'affaires perdu en ventes manquées. Reformulation : prédire la demande à 7 jours par référence produit et par magasin, pour déclencher des commandes anticipées.</p>
+
+<p><strong>Données disponibles</strong> :
+- Historique de ventes (2 ans, ~50M lignes)
+- Météo (historique + prévisions à 7 jours)
+- Calendrier (jours fériés, soldes, événements locaux)
+- Promotions planifiées (catalogue)
+- Données fournisseurs (délais de livraison, ruptures passées)</p>
+
+<h3 id="architecture-choisie">Architecture choisie</h3>
+
+<div class="mindmap">              ┌──────────────────────────────────────────────┐
+              │           PIPELINE PRÉVISION STOCK            │
+              └─────────────────────┬────────────────────────┘
+                                    │
+          ┌─────────────────────────┼──────────────────────┐
+          ▼                         ▼                      ▼
+┌──────────────────┐    ┌───────────────────┐   ┌──────────────────┐
+│ Prophet          │    │ XGBoost           │   │ Règles métier    │
+│ (tendance +      │    │ (événements       │   │ (seuils mini,    │
+│  saisonnalité    │    │  exceptionnels :  │   │  délais livraison│
+│  par référence)  │    │  météo, promos,   │   │  par fournisseur)│
+│                  │    │  fériés)          │   │                  │
+└────────┬─────────┘    └────────┬──────────┘   └──────────┬───────┘
+         │                       │                         │
+         └───────────────────────┼─────────────────────────┘
+                                 ▼
+                    ┌────────────────────────┐
+                    │ Prévision finale :      │
+                    │ Prophet + résidu XGB    │
+                    │ + contrainte règles     │
+                    └───────────┬────────────┘
+                                ▼
+                    ┌────────────────────────┐
+                    │ MLflow (tracking)       │
+                    │ Airflow (orchestration) │
+                    │ Ré-entraînement /semaine│
+                    └────────────────────────┘
+</div>
+
+<p><strong>Pourquoi Prophet pour la base ?</strong> Prophet décompose proprement la tendance (croissance ou déclin d'une référence), la saisonnalité hebdomadaire (pic du samedi), et la saisonnalité annuelle (fêtes de fin d'année). Il gère nativement les jours fériés. Pour 80% des références sans événements particuliers, il est suffisant.</p>
+
+<p><strong>Pourquoi XGBoost pour les événements ?</strong> Prophet ne sait pas que la météo pluvieuse du week-end va faire exploser les ventes de raclette, ou que le catalogue de la semaine va tripler la demande de cet article spécifique. XGBoost apprend ces corrélations à partir des données historiques.</p>
+
+<p><strong>Pourquoi des règles pour les seuils ?</strong> Le stock minimum n'est pas une prédiction ML — c'est une contrainte contractuelle avec le fournisseur. On ne prédit pas le délai de livraison de 48h de Lactalis : on l'applique comme règle.</p>
+
+<h3 id="code-skeleton-pipeline-prophet-xgboost">Code skeleton — Pipeline Prophet + XGBoost</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">entrainer_pipeline</span><span class="p">(</span><span class="n">df_ref</span><span class="p">,</span> <span class="n">ref_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Entraîne le pipeline pour une référence produit.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Étape 1 : Prophet sur la tendance de base</span>
+    <span class="n">df_prophet</span> <span class="o">=</span> <span class="n">df_ref</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;ventes&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;ds&#39;</span><span class="p">,</span> <span class="s1">&#39;ventes&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">modele_prophet</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span>
+        <span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">holidays</span><span class="o">=</span><span class="n">jours_feries_france</span><span class="p">,</span>  <span class="c1"># DataFrame prédéfini</span>
+    <span class="p">)</span>
+    <span class="n">modele_prophet</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_prophet</span><span class="p">)</span>
+
+    <span class="c1"># Prévision base Prophet (7 jours)</span>
+    <span class="n">futur</span> <span class="o">=</span> <span class="n">modele_prophet</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">forecast</span> <span class="o">=</span> <span class="n">modele_prophet</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span>
+
+    <span class="c1"># Étape 2 : XGBoost sur le résidu (événements exceptionnels)</span>
+    <span class="n">df_ref</span><span class="p">[</span><span class="s1">&#39;residual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ref</span><span class="p">[</span><span class="s1">&#39;ventes&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_ref</span><span class="p">[</span><span class="s1">&#39;prophet_fitted&#39;</span><span class="p">]</span>
+    <span class="n">features_xgb</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;temperature_max&#39;</span><span class="p">,</span> <span class="s1">&#39;precipitation_mm&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;est_promotion&#39;</span><span class="p">,</span> <span class="s1">&#39;est_ferie&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ventes_lag_7&#39;</span><span class="p">,</span> <span class="s1">&#39;ventes_lag_14&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;semaine_annee&#39;</span><span class="p">,</span> <span class="s1">&#39;jour_semaine&#39;</span>
+    <span class="p">]</span>
+
+    <span class="n">modele_xgb</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">modele_xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_ref</span><span class="p">[</span><span class="n">features_xgb</span><span class="p">],</span> <span class="n">df_ref</span><span class="p">[</span><span class="s1">&#39;residual&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">modele_prophet</span><span class="p">,</span> <span class="n">modele_xgb</span>
+</code></pre>
+</div>
+
+<h3 id="mlflow-et-airflow">MLflow et Airflow</h3>
+
+<p><strong>MLflow</strong> — outil de tracking d'expériences ML. Il enregistre automatiquement pour chaque entraînement : les hyperparamètres utilisés, les métriques obtenues (MAE, RMSE), les artefacts du modèle, et la version des données.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">mlflow</span>
+
+<span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;stock_prevision_</span><span class="si">{</span><span class="n">ref_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;ref_id&quot;</span><span class="p">,</span> <span class="n">ref_id</span><span class="p">)</span>
+
+    <span class="n">modele_prophet</span><span class="p">,</span> <span class="n">modele_xgb</span> <span class="o">=</span> <span class="n">entrainer_pipeline</span><span class="p">(</span><span class="n">df_ref</span><span class="p">,</span> <span class="n">ref_id</span><span class="p">)</span>
+
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">calcul_mae</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">actuel</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;mae_7j&quot;</span><span class="p">,</span> <span class="n">mae</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">modele_xgb</span><span class="p">,</span> <span class="s2">&quot;modele_xgb&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Airflow</strong> — outil d'orchestration de pipelines de données. Chaque dimanche à 2h, le DAG (Directed Acyclic Graph — graphe orienté sans cycle, représentant les étapes du pipeline) se déclenche : récupération des nouvelles données de vente, ré-entraînement, validation, déploiement si les métriques s'améliorent.</p>
+
+<h3 id="métriques">Métriques</h3>
+
+<ul>
+<li><strong>Métrique technique</strong> : MAE (erreur absolue moyenne) par référence, sur les 7 jours suivants</li>
+<li><strong>Métrique métier</strong> : taux de rupture (objectif : passer de 4% à 1.5%) + coût de surstock évité</li>
+<li><strong>Monitoring</strong> : dérive de distribution des ventes (alerte si le MAE dépasse 2× le MAE historique)</li>
+</ul>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi combiner Prophet ET XGBoost plutôt que choisir l'un ou l'autre ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Prophet</strong> capture la structure temporelle régulière (saisonnalité, tendance). <strong>XGBoost</strong> capture les événements exceptionnels (météo, promotions) que Prophet ne peut pas utiliser car il n'intègre pas de covariables arbitraires facilement. L'architecture hybride exploite la complémentarité : Prophet pour la base, XGBoost pour les résidus.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que MLflow et à quel moment du cycle de vie ML intervient-il ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>MLflow</strong> est un outil de suivi d'expériences. Il intervient pendant <strong>l'entraînement</strong> pour enregistrer : les paramètres utilisés, les métriques obtenues, et les artefacts du modèle. Sans MLflow, il est impossible de reproduire un résultat ou de comparer deux expériences plusieurs semaines plus tard.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi les règles métier (seuils, délais fournisseurs) ne sont-elles pas remplacées par le modèle ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les seuils de réapprovisionnement sont des <strong>contraintes contractuelles et logistiques</strong>, pas des patterns statistiques. Un modèle ML qui prédit 50 unités ne peut pas "apprendre" que le fournisseur livre en 72h minimum. Les règles encodent des connaissances déterministes ; le ML encode des corrélations probabilistes.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="4-cas-complet-3-système-hybride-de-traitement-de-réclamations-sncf"><span class="h2-num">5</span>4. Cas complet 3 — Système hybride de traitement de réclamations (SNCF)<span class="h2-line"></span></h2>
+
+<h3 id="le-brief">Le brief</h3>
+
+<p>La SNCF reçoit 12 000 réclamations par semaine via email, formulaire web et chatbot. Le traitement actuel prend 5 jours en moyenne. Objectif reformulé : réduire le délai de traitement à 48h en automatisant la classification, la priorisation et la génération de réponses standard pour les cas simples.</p>
+
+<p><strong>Données disponibles</strong> :
+- 3 ans de réclamations avec labels (catégorie, priorité, résolution)
+- Données structurées (retard en minutes, type de billet, gare, train)
+- Réponses rédigées par les agents (corpus de 50k exemples)</p>
+
+<p><strong>Contrainte critique</strong> : les décisions impactant des remboursements &gt; 500€ ou des situations complexes doivent être validées par un humain.</p>
+
+<h3 id="architecture-hybride">Architecture hybride</h3>
+
+<div class="mindmap">              ┌──────────────────────────────────────────────────┐
+              │         PIPELINE RÉCLAMATIONS SNCF                │
+              └────────────────────┬─────────────────────────────┘
+                                   │
+                     ┌─────────────▼──────────────┐
+                     │  Texte + données structurées │
+                     └─────────────┬──────────────┘
+                                   │
+              ┌────────────────────┼──────────────────┐
+              ▼                    ▼                   ▼
+    ┌──────────────────┐  ┌───────────────┐  ┌─────────────────┐
+    │ CamemBERT        │  │ XGBoost       │  │ Règles métier   │
+    │ Classification   │  │ Priorisation  │  │ (montant, délai,│
+    │ (catégorie :     │  │ (urgence 1-5  │  │  type billet)   │
+    │  retard, annul., │  │  selon données│  │                 │
+    │  remboursement,  │  │  structurées) │  │                 │
+    │  accident, autre)│  │               │  │                 │
+    └────────┬─────────┘  └───────┬───────┘  └────────┬────────┘
+             └────────────────────┼──────────────────┘
+                                  ▼
+                  ┌───────────────────────────────┐
+                  │         Décision de routage    │
+                  │  Confiance &gt; 0.90 ET           │
+                  │  montant &lt; 500€ ET             │
+                  │  priorité ≤ 3                  │
+                  └──────────────┬────────────────┘
+                                 │
+               ┌─────────────────┼──────────────────┐
+               ▼                 ▼                   ▼
+  ┌────────────────────┐  ┌────────────┐  ┌──────────────────┐
+  │ LLM (génération    │  │ File agent │  │ Escalade humaine │
+  │ réponse standard)  │  │ prioritaire│  │ (cas complexes)  │
+  │                    │  │            │  │                  │
+  └────────────────────┘  └────────────┘  └──────────────────┘
+</div>
+
+<h3 id="pourquoi-camembert-et-pas-un-llm-pour-la-classification">Pourquoi CamemBERT et pas un LLM pour la classification ?</h3>
+
+<p>CamemBERT est un modèle BERT entraîné sur du texte français. Il produit une représentation vectorielle dense d'un texte, qu'on utilise comme entrée d'un classifieur.</p>
+
+<p>Pourquoi pas directement GPT-4 pour classifier ? Trois raisons :</p>
+
+<ol>
+<li><strong>Coût</strong> : classifier 12 000 emails par semaine avec GPT-4 coûte ~200€/semaine. CamemBERT fine-tuné coûte ~2€/semaine en inférence.</li>
+<li><strong>Latence</strong> : CamemBERT répond en 50ms, GPT-4 en 2-3 secondes.</li>
+<li><strong>Reproductibilité</strong> : un LLM peut changer de comportement entre deux versions d'API. CamemBERT est figé après le fine-tuning.</li>
+</ol>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CamembertTokenizer</span><span class="p">,</span> <span class="n">CamembertForSequenceClassification</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">CamembertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">CamembertForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="s2">&quot;camembert-base&quot;</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="mi">5</span>  <span class="c1"># retard, annulation, remboursement, accident, autre</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">classifier_reclamation</span><span class="p">(</span><span class="n">texte</span><span class="p">):</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">texte</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                       <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
+    <span class="n">proba</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">categorie</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">proba</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">confiance</span> <span class="o">=</span> <span class="n">proba</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">categorie</span><span class="p">,</span> <span class="n">confiance</span>
+</code></pre>
+</div>
+
+<h3 id="le-llm-uniquement-pour-la-génération">Le LLM uniquement pour la génération</h3>
+
+<p>Quand la confiance &gt; 0.90 ET le montant &lt; 500€, le LLM génère une réponse personnalisée :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generer_reponse</span><span class="p">(</span><span class="n">reclamation</span><span class="p">,</span> <span class="n">categorie</span><span class="p">,</span> <span class="n">donnees_dossier</span><span class="p">):</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Tu es un agent SNCF. Rédige une réponse professionnelle et empathique.</span>
+
+<span class="s2">Catégorie de la réclamation : </span><span class="si">{</span><span class="n">categorie</span><span class="si">}</span>
+<span class="s2">Détails du dossier : </span><span class="si">{</span><span class="n">donnees_dossier</span><span class="si">}</span>
+<span class="s2">Réclamation du client : </span><span class="si">{</span><span class="n">reclamation</span><span class="si">}</span>
+
+<span class="s2">Réponse (2-3 paragraphes, ton courtois, solution concrète proposée) :&quot;&quot;&quot;</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-4-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+</code></pre>
+</div>
+
+<h3 id="coût-total-estimé">Coût total estimé</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Composant</th>
+  <th>Volume/semaine</th>
+  <th>Coût/unité</th>
+  <th>Coût/semaine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>CamemBERT classification</td>
+  <td>12 000</td>
+  <td>~0.00017€</td>
+  <td>~2€</td>
+</tr>
+<tr>
+  <td>XGBoost priorisation</td>
+  <td>12 000</td>
+  <td>négligeable</td>
+  <td>&lt;1€</td>
+</tr>
+<tr>
+  <td>LLM génération (60% des cas)</td>
+  <td>7 200</td>
+  <td>~0.01€</td>
+  <td>~72€</td>
+</tr>
+<tr>
+  <td>Escalade humaine (15% des cas)</td>
+  <td>1 800</td>
+  <td>temps agent</td>
+  <td>variable</td>
+</tr>
+<tr>
+  <td><strong>Total automatisation ML</strong></td>
+  <td></td>
+  <td></td>
+  <td><strong>~75€/sem.</strong></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Comparaison</strong> : traitement 100% humain à 5 agents × 35h/sem. × 25€/h = 4 375€/semaine.</p>
+
+<h3 id="monitoring-de-la-dérive">Monitoring de la dérive</h3>
+
+<p><strong>Dérive de concept (concept drift)</strong> : le sens des mots dans les réclamations change avec le temps. Exemple : "retard de connexion" signifiait train de correspondance en 2019 et WiFi embarqué en 2023. La distribution des catégories change aussi avec les incidents.</p>
+
+<p>Indicateurs de dérive à surveiller :
+- Taux de confiance moyen de CamemBERT (baisse = dérive probable)
+- Distribution des catégories prédites (alerte si une catégorie explose ou disparaît)
+- Taux d'escalade humaine (augmentation = le modèle est moins sûr de lui)</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi CamemBERT est-il préféré à un LLM pour la classification de réclamations en production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Trois raisons : <strong>coût</strong> (100× moins cher à l'inférence), <strong>latence</strong> (50ms vs 2-3s), <strong>reproductibilité</strong> (comportement stable après fine-tuning, un LLM peut changer entre versions d'API). Le LLM est réservé aux tâches génératives où sa flexibilité est un avantage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la dérive de concept (concept drift) et comment la détecter ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La <strong>dérive de concept</strong> survient quand la relation entre les features et la variable cible change dans le temps (ex : "retard de connexion" change de sens). On la détecte par : baisse du taux de confiance moyen du modèle, changement de la distribution des prédictions, augmentation du taux d'escalade vers les humains.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment déterminer le seuil au-delà duquel un cas doit être escaladé vers un humain ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le seuil combine plusieurs critères : <strong>confiance du modèle</strong> (< 0.90 = incertitude), <strong>enjeu financier</strong> (> 500€ = risque d'erreur coûteuse), <strong>complexité</strong> (priorité haute = contexte émotionnel). Ces seuils ne sont pas techniques — ils sont négociés avec les équipes métier et le service juridique.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi ne pas utiliser un seul LLM pour l'ensemble du pipeline (classification + priorisation + réponse) ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un LLM unique serait 50-100× plus cher, 20× plus lent, et moins fiable sur la classification (un BERT fine-tuné surpasse GPT-4 sur des tâches de classification courte en domaine spécialisé). L'architecture hybride utilise chaque outil là où il excelle : BERT pour comprendre, XGBoost pour scorer, LLM pour générer.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="5-ce-que-le-programme-ta-donné-et-ce-qui-reste"><span class="h2-num">6</span>5. Ce que le programme t'a donné et ce qui reste<span class="h2-line"></span></h2>
+
+<h3 id="bilan-honnête-après-7-jours">Bilan honnête après 7 jours</h3>
+
+<p>Ce programme t'a donné un vocabulaire de praticien et un schéma mental pour naviguer dans le paysage ML. Voici ce qui est réellement acquis, ce qui demande de la pratique, et ce qui ne s'acquiert qu'avec de l'expérience projet.</p>
+
+<table>
+<thead>
+<tr>
+  <th>Niveau</th>
+  <th>Ce que tu maîtrises</th>
+  <th>Ce qui demande de la pratique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Maîtrisé</strong></td>
+  <td>Choisir entre règles / ML classique / deep / LLM</td>
+  <td>Implémenter un pipeline complet de A à Z</td>
+</tr>
+<tr>
+  <td><strong>Maîtrisé</strong></td>
+  <td>Interpréter précision, rappel, AUC, F1</td>
+  <td>Diagnostiquer une dérive en production</td>
+</tr>
+<tr>
+  <td><strong>Maîtrisé</strong></td>
+  <td>Comprendre les arbres de décision et le boosting</td>
+  <td>Tuner XGBoost sur un vrai dataset déséquilibré</td>
+</tr>
+<tr>
+  <td><strong>Maîtrisé</strong></td>
+  <td>Réduire la dimensionnalité avec PCA et t-SNE</td>
+  <td>Choisir le bon nombre de clusters sans y passer 2 jours</td>
+</tr>
+<tr>
+  <td><strong>Maîtrisé</strong></td>
+  <td>Intégrer un LLM dans un pipeline hybride</td>
+  <td>Optimiser les coûts d'inférence en production</td>
+</tr>
+<tr>
+  <td><strong>Pratique requise</strong></td>
+  <td>Débogage d'un pipeline scikit-learn qui fuit</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td><strong>Expérience projet</strong></td>
+  <td>Négocier les métriques de succès avec un client</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td><strong>Expérience projet</strong></td>
+  <td>Gérer un changement de specs à mi-projet</td>
+  <td>—</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="les-pièges-qui-attendent-en-vrai-projet">Les pièges qui attendent en vrai projet</h3>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège 1 — La qualité des données réelles</strong></p>
+
+<p>En cours, les datasets sont propres. En entreprise, 40 à 60% du temps projet est de la préparation de données. Les colonnes "date" ont 4 formats différents dans le même fichier. Les valeurs manquantes ne sont pas NaN mais "N/A", "non renseigné", "-", et 0 utilisé comme valeur par défaut. Le pipeline scikit-learn ne plante pas sur ces cas : il produit un modèle silencieusement faux.
+:::</p>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège 2 — Le changement de specs à mi-projet</strong></p>
+
+<p>Après 6 semaines de travail sur la prédiction d'attrition client, le métier revient avec : "En fait, on voudrait aussi avoir une explication pour chaque client prédit." Ce n'est pas un détail — c'est potentiellement un changement d'algorithme complet. L'explicabilité doit être dans les requirements dès le départ.
+:::</p>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège 3 — Le conflit avec le SI existant</strong></p>
+
+<p>Le modèle est prêt. Le déploiement prend 3 mois parce que la DSI impose une validation de sécurité, que le système de production tourne sur Python 3.6 (incompatible avec votre bibliothèque), et que personne n'a pensé à demander l'accès au serveur de production dès le début du projet.
+:::</p>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège 4 — La résistance au changement</strong></p>
+
+<p>Un modèle de recommandation qui surpasse les règles métier de 15% peut être rejeté par l'équipe commerciale qui ne comprend pas "pourquoi la machine conseille ça". La technique est rarement le problème final d'un projet ML. L'adoption l'est souvent.
+:::</p>
+
+<h3 id="la-compétence-la-plus-rare">La compétence la plus rare</h3>
+
+<p>:::rule
+<strong class="lbl-rule">&#x2705; Règle d'or — Savoir dire non à un LLM quand une regex suffit</strong></p>
+
+<p>La compétence la plus rare en 2025 n'est pas de savoir utiliser un LLM — tout le monde peut appeler une API. C'est de savoir <strong>quand ne pas le faire</strong>. Un pattern de validation d'email se résout en une ligne de regex. Une classification de 5 catégories sur des textes courts se résout avec CamemBERT fine-tuné. Un LLM sur ces cas coûte plus cher, répond moins vite, et est moins fiable. La sophistication non justifiée est une dette technique déguisée en innovation.
+:::</p>
+
+<h3 id="recommandations-concrètes-pour-la-suite">Recommandations concrètes pour la suite</h3>
+
+<p><strong>Projets personnels (0-3 mois)</strong>
+- Kaggle : compétitions "Getting Started" (Titanic, Housing Prices) pour pratiquer le pipeline complet. Ensuite, rejoindre une compétition active dans ton domaine (NLP ou tabular).
+- Reproduire un des 3 cas du Jour 7 avec un dataset public similaire (MovieLens pour la recommandation, données météo pour la prévision).</p>
+
+<p><strong>Ressources</strong>
+- <em>Hands-On Machine Learning</em> (Géron) — le meilleur livre pour ancrer scikit-learn et les fondements
+- Fast.ai (cours en ligne, gratuit) — deep learning par la pratique, approche top-down
+- Papers With Code (paperswithcode.com) — l'état de l'art par tâche, avec le code</p>
+
+<p><strong>En alternance chez Capgemini</strong>
+- Proposer de faire le POC technique sur un projet client : construire le premier modèle baseline, mesurer l'AUC, présenter les limites. C'est le meilleur apprentissage.
+- Documenter les décisions d'architecture (pourquoi XGBoost et pas un LLM) dans un ADR (Architecture Decision Record). Ça force la réflexion et ça montre la maturité.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la compétence la plus rare en ML selon le programme, et pourquoi ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Savoir <strong>dire non à un LLM quand une solution plus simple suffit</strong>. Parce que tout le monde sait appeler l'API OpenAI ou Anthropic. Ce qui différencie un bon data scientist est la capacité à choisir l'outil proportionnel au problème : regex, règles, XGBoost, ou LLM selon le contexte.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi l'explicabilité doit-elle être dans les requirements dès le début d'un projet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Parce qu'elle <strong>contraint le choix de l'algorithme</strong>. Un modèle de deep learning n'est pas nativement explicable : ajouter SHAP après coup est une rustine. Si l'explicabilité est requise (RGPD, décision sur une personne, conformité), il faut partir sur une régression logistique ou un arbre de décision, pas sur un réseau de neurones.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la proportion habituelle du temps projet consacrée à la préparation des données en entreprise ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Entre <strong>40% et 60%</strong> du temps projet. Les datasets réels ont des formats incohérents, des valeurs manquantes encodées de façons multiples, des colonnes dupliquées, et des erreurs de saisie. Contrairement aux datasets de cours, ils ne sont jamais "prêts à l'emploi".</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la première chose à faire si un projet ML échoue à être adopté par les équipes métier ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Investiguer les raisons de la <strong>résistance au changement</strong> : manque de confiance dans les prédictions, incompréhension du fonctionnement, peur de perdre le contrôle. La solution est souvent une formation courte + des outils de visualisation des décisions + un mode dégradé où l'humain garde la main.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="ce-que-ce-programme-ta-donné"><span class="h2-num">7</span>Ce que ce programme t'a donné<span class="h2-line"></span></h2>
+
+<div class="mindmap">┌──────────────────────────────────────────────────────────────────────────────────────────┐
+│                        PROGRAMME ML ACCÉLÉRÉ — BILAN 7 JOURS                            │
+├──────────┬──────────────────────────────────────┬───────────────────────────────────────┤
+│  JOUR    │  CONCEPTS CLÉS                        │  COMPÉTENCE ACQUISE                   │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 1  │  Paysage ML, règles vs ML vs GenAI    │  Choisir l'outil avant de coder       │
+│          │  Supervisé, non-supervisé, deep       │  Ne pas sur-ingénier le problème       │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 2  │  Régression, arbres, Random Forest    │  Implémenter un pipeline de base       │
+│          │  Entraînement / test / validation     │  Diagnostiquer l'overfitting           │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 3  │  XGBoost, Gradient Boosting           │  Choisir entre RF et XGBoost           │
+│          │  Feature importance, SHAP             │  Expliquer une prédiction              │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 4  │  Précision, rappel, F1, AUC           │  Choisir la métrique selon le contexte │
+│          │  Données déséquilibrées, seuils       │  Éviter l'exactitude trompeuse         │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 5  │  Clustering K-means, DBSCAN           │  Segmenter sans labels                 │
+│          │  PCA, t-SNE, réduction dimensionnelle │  Visualiser des espaces à haute dim.   │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 6  │  Pipelines hybrides ML + LLM          │  Intégrer un LLM dans un système ML    │
+│          │  Orchestration, déploiement, coûts    │  Arbitrer entre coût et performance    │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  Jour 7  │  Architecture projet de A à Z         │  Traduire un brief en projet technique │
+│          │  3 cas complets : reco, stock, NLP    │  Justifier chaque décision technique   │
+├──────────┼──────────────────────────────────────┼───────────────────────────────────────┤
+│  TOTAL   │  ML classique + Deep + GenAI + Hybride│  Architecturer, défendre, déployer     │
+│  7 JOURS │  Données → Algorithme → Production   │  un projet ML en contexte entreprise   │
+└──────────┴──────────────────────────────────────┴───────────────────────────────────────┘
+</div>
+
+<p><strong>Ce que ce programme ne remplace pas</strong> : les heures passées à déboguer un pipeline sur de vraies données sales, à négocier des métriques avec un client qui veut "100% de précision", à expliquer à un comité de direction pourquoi le modèle s'est trompé sur un cas visible. Ces compétences s'acquièrent en projet.</p>
+
+<p><strong>Ce que tu emportes</strong> : un cadre de pensée. Quand quelqu'un dit "on veut faire de l'IA", tu sais maintenant poser les cinq questions qui transforment une intention en architecture. C'est ce qui distingue un data scientist junior qui code, d'un data scientist senior qui conçoit.</p>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 4Jour 4 — Exercices : Deep Learning &amp; Transfer LearningExercicesCas cli</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 4</div><h1>Jour 4 — <em>Exercices : Deep Learning &amp; Transfer Learning</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<hr />
+
+<h2 id="exercice-1-diagnostic-deep-learning-justifié-ou-non">Exercice 1 — Diagnostic : deep learning justifié ou non ?</h2>
+
+<p>Pour chacun des 4 problèmes suivants, répondez :
+1. Deep learning justifié ? (Oui / Non / Peut-être)
+2. Architecture recommandée
+3. Justification en 2-3 phrases</p>
+
+<hr />
+
+<p><strong>Problème A — Prédiction du churn (résiliation) chez un opérateur télécom</strong></p>
+
+<p>Un opérateur français (Free, SFR-type) veut prédire quels clients vont résilier leur abonnement dans les 30 prochains jours. Données disponibles : 800 000 clients, chacun décrit par 45 variables (ancienneté, consommation data, fréquence des appels support, retards de paiement, type de forfait, région...).</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Deep learning justifié : ___
+Architecture : ___
+Justification :
+</code></pre></div>
+
+<hr />
+
+<p><strong>Problème B — Détection de défauts sur circuits imprimés</strong></p>
+
+<p>Un sous-traitant électronique (ex : Lacroix Electronics) contrôle des circuits imprimés en sortie de chaîne. Les défauts à détecter : soudure froide, composant manquant, court-circuit visible. Dataset disponible : 120 000 images annotées, résolution 2048×2048, 8 types de défauts.</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Deep learning justifié : ___
+Architecture : ___
+Justification :
+</code></pre></div>
+
+<hr />
+
+<p><strong>Problème C — Calcul de la prime d'assurance habitation</strong></p>
+
+<p>Une assurance (AXA) calcule la prime annuelle d'un contrat habitation. Paramètres : surface, ville, étage, année de construction, valeur du mobilier, antécédents sinistres, présence d'alarme. Les actuaires ont des tables de risque établies depuis 30 ans.</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Deep learning justifié : ___
+Architecture : ___
+Justification :
+</code></pre></div>
+
+<hr />
+
+<p><strong>Problème D — Analyse de sentiment sur des verbatims patients</strong></p>
+
+<p>Un hôpital (AP-HP) collecte 50 000 retours patients par an sous forme de texte libre en français. Il veut les classer automatiquement en 5 catégories : accueil, soins, hôtellerie, information, délais.</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Deep learning justifié : ___
+Architecture : ___
+Justification :
+</code></pre></div>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Vous avez 800K clients décrits par 45 variables numériques. Quel algorithme choisir ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">XGBoost ou LightGBM. Données tabulaires, aucune structure spatiale/séquentielle. XGBoost surpasse les réseaux de neurones sur ce type de données, est plus rapide et plus interprétable avec SHAP.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Vous avez 50 000 verbatims en français à classer. Quel modèle pré-entraîné utiliser ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">CamemBERT (camembert-base sur HuggingFace). C'est un BERT entraîné sur du texte français. Fine-tuning avec le Trainer HuggingFace en 3 epochs.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="exercice-2-fine-tuning-huggingface-code-à-compléter">Exercice 2 — Fine-tuning HuggingFace : code à compléter</h2>
+
+<p>Le code suivant doit fine-tuner CamemBERT pour classifier des tweets en français en deux catégories : plainte (1) ou satisfaction (0). Complétez les <code>___</code> en vous appuyant sur le cours.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">TrainingArguments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Données</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;texte&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Votre service client est catastrophique, 3h d&#39;attente !&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Livraison ultra rapide, emballage soigné, merci !&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Encore une panne sur votre appli, insupportable.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Très belle expérience, je recommande vivement.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Remboursement jamais reçu malgré 4 relances.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Parfait du début à la fin, client fidèle depuis 10 ans.&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># ── Étape 1 : Charger le tokenizer ──────────────────────────────────</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># ← Quel modèle français ?</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tokeniser</span><span class="p">(</span><span class="n">exemples</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span>
+        <span class="n">exemples</span><span class="p">[</span><span class="s2">&quot;texte&quot;</span><span class="p">],</span>
+        <span class="n">truncation</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>           <span class="c1"># ← Tronquer si le texte dépasse la longueur max ?</span>
+        <span class="n">padding</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>              <span class="c1"># ← Padder à longueur uniforme ?</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">___</span>            <span class="c1"># ← Longueur max raisonnable pour des tweets</span>
+    <span class="p">)</span>
+
+<span class="n">dataset_tok</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tokeniser</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># ── Étape 2 : Charger le modèle ──────────────────────────────────────</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">___</span><span class="p">,</span>             <span class="c1"># ← Même modèle que le tokenizer</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="n">___</span>   <span class="c1"># ← Combien de classes ?</span>
+<span class="p">)</span>
+
+<span class="c1"># ── Étape 3 : Geler les couches de base (feature extraction) ─────────</span>
+<span class="k">for</span> <span class="n">nom</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;classifier&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nom</span><span class="p">:</span>   <span class="c1"># Ne pas geler la tête de classification</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># ← Geler ou pas ?</span>
+
+<span class="c1"># ── Étape 4 : Configuration de l&#39;entraînement ────────────────────────</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./tweets_model&quot;</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>         <span class="c1"># ← 3 epochs : trop ou suffisant pour du transfer learning ?</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>  <span class="c1"># ← Taille de batch raisonnable</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>            <span class="c1"># ← Faible ou élevé pour du fine-tuning ?</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>      <span class="c1"># ← Évaluer à quelle fréquence ?</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">modele</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_tok</span><span class="p">[</span><span class="n">___</span><span class="p">],</span>   <span class="c1"># ← Quelle split ?</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_tok</span><span class="p">[</span><span class="n">___</span><span class="p">],</span>    <span class="c1"># ← Quelle split ?</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+<span class="c1"># ── Étape 5 : Tester sur un nouveau tweet ────────────────────────────</span>
+<span class="n">nouveau_tweet</span> <span class="o">=</span> <span class="s2">&quot;Mon colis a été livré en avance, super service !&quot;</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plainte&quot;</span> <span class="k">if</span> <span class="n">pred</span> <span class="o">==</span> <span class="n">___</span> <span class="k">else</span> <span class="s2">&quot;Satisfaction&quot;</span><span class="p">)</span>  <span class="c1"># ← Quel label pour plainte ?</span>
+</code></pre>
+</div>
+
+<p><strong>Questions de réflexion :</strong>
+1. Pourquoi utilise-t-on <code>requires_grad = False</code> sur les couches de base ?
+2. Le dataset est très petit (6 exemples). Quels problèmes peut-on anticiper ? Comment les mitiger en production ?
+3. Comparez les lignes "Charger le modèle" et "Charger le tokenizer" : pourquoi faut-il le même identifiant pour les deux ?</p>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi `learning_rate=2e-5` (0.00002) est-il recommandé pour le fine-tuning plutôt que la valeur par défaut 1e-3 ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les poids pré-entraînés encodent des représentations utiles. Un learning rate élevé les écrase (catastrophic forgetting). 2e-5 les ajuste délicatement pour la nouvelle tâche.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans l'étape de tokenisation, à quoi sert `padding="max_length"` ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les phrases d'un batch ont des longueurs différentes. Le padding ajoute des tokens spéciaux [PAD] pour que toutes atteignent la même longueur — nécessaire pour former des tenseurs rectangulaires.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="exercice-3-cas-piège-modèle-sur-entraîné-overfitting">Exercice 3 — Cas piège : modèle sur-entraîné (overfitting)</h2>
+
+<p>Un collègue vous montre ses courbes d'entraînement. Le modèle est un CNN EfficientNet-B0 entraîné pour classifier des images de documents (facture / contrat / relevé bancaire / courrier), dataset : 8 000 images.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Epoch  Train Loss  Val Loss   Train Acc  Val Acc
+  1      0.842      0.891      68.2%     66.1%
+  2      0.612      0.723      76.4%     71.8%
+  3      0.421      0.634      83.7%     75.2%
+  4      0.298      0.712      89.1%     73.8%   ← ?
+  5      0.187      0.834      93.6%     71.2%   ← ?
+  6      0.121      0.978      96.8%     69.4%   ← ?
+  7      0.075      1.143      98.2%     67.1%
+  8      0.048      1.312      99.1%     65.3%
+</code></pre></div>
+
+<p><strong>Question 1 — Diagnostic</strong></p>
+
+<p>Que se passe-t-il à partir de l'epoch 4 ? Nommez le phénomène précisément et expliquez ce qu'il signifie dans ce contexte.</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Phénomène :
+Explication :
+Indice dans les chiffres :
+</code></pre></div>
+
+<p><strong>Question 2 — Identifier les causes probables</strong></p>
+
+<p>Parmi les hypothèses suivantes, lesquelles sont plausibles pour un dataset de 8 000 images ? (plusieurs réponses possibles)</p>
+
+<p>a) Le learning rate est trop élevé<br />
+b) Le dataset est trop petit pour ce modèle<br />
+c) Il n'y a pas de data augmentation<br />
+d) Le dropout est absent ou trop faible<br />
+e) Le modèle est trop simple (underfitting)<br />
+f) L'entraînement a duré trop longtemps  </p>
+
+<p><strong>Question 3 — Corriger le code</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Code original — problème d&#39;overfitting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transforms</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># Transform sans augmentation</span>
+<span class="n">transform_train</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+    <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)),</span>
+    <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span>
+<span class="p">])</span>
+
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">efficientnet_b0</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Dégeler TOUS les paramètres</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Tête de classification sans dropout</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="c1"># pas d&#39;early stopping</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Corrigez ce code en appliquant au moins <strong>4 techniques</strong> pour réduire l'overfitting. Commentez chaque correction.</p>
+
+<p><em>Espace de réponse :</em></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Code corrigé</span>
+
+<span class="n">transform_train</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+    <span class="c1"># ← Corrections ici</span>
+<span class="p">])</span>
+
+<span class="c1"># ← Autres corrections</span>
+</code></pre>
+</div>
+
+<p><strong>Question 4 — Early stopping</strong></p>
+
+<p>D'après les courbes, à quelle epoch aurait-il fallu arrêter l'entraînement et pourquoi ?</p>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Définissez l'overfitting. Comment le reconnaître sur des courbes d'entraînement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le modèle mémorise le dataset d'entraînement au lieu d'apprendre des patterns généralisables. Sur les courbes : la loss d'entraînement continue de baisser, mais la loss de validation commence à remonter.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Citez 4 techniques pour réduire l'overfitting sur un petit dataset d'images.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">1. Data augmentation (flip, rotation, color jitter), 2. Dropout dans la tête de classification, 3. Réduire le learning rate, 4. Early stopping (arrêter quand la val loss remonte), 5. Feature extraction plutôt que fine-tuning complet, 6. Weight decay (L2 regularization).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que l'early stopping ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Surveiller la val loss pendant l'entraînement et arrêter automatiquement quand elle ne s'améliore plus depuis N epochs consécutives. On restaure les poids du meilleur checkpoint.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="exercice-4-checkpoint-jour-4">Exercice 4 — Checkpoint Jour 4</h2>
+
+<p>Répondez sans relire le cours.</p>
+
+<p><strong>4.1 — Vrai ou Faux (justifiez si faux)</strong></p>
+
+<ol>
+<li>Un réseau de neurones est toujours meilleur que XGBoost sur des données structurées.</li>
+<li>La backpropagation modifie tous les poids du réseau simultanément après chaque exemple.</li>
+<li>Le transfer learning nécessite toujours plus de données que l'entraînement from scratch.</li>
+<li>CamemBERT est un modèle de génération de texte.</li>
+<li>La quantization int8 réduit la taille du modèle d'un facteur 4 environ.</li>
+<li><code>modele.eval()</code> est indispensable en inférence pour les modèles avec Dropout.</li>
+</ol>
+
+<hr />
+
+<p><strong>4.2 — Question ouverte</strong></p>
+
+<p>Vous êtes consultant chez Capgemini sur un projet pour une banque française. La banque veut analyser automatiquement les commentaires laissés par les clients lors des enquêtes de satisfaction post-visite en agence. Environ 200 000 commentaires/an, en français.</p>
+
+<p>Décrivez en 8-10 lignes l'architecture technique complète de votre solution, de l'ingestion des commentaires à l'API de prédiction, en justifiant chaque choix (modèle, stratégie de fine-tuning, format de déploiement).</p>
+
+<hr />
+
+<p><strong>4.3 — Débogage rapide</strong></p>
+
+<p>Le code suivant lève une erreur. Trouvez les 3 bugs (1 bug conceptuel, 2 bugs de code).</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Bug 1 : conceptuel</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># On veut fine-tuner, mais on a gelé tous les poids</span>
+
+<span class="c1"># Bug 2 : code</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">optimiseur</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="c1"># Le learning rate est 1.0 pour du fine-tuning</span>
+
+<span class="c1"># Bug 3 : code</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="n">X_batch</span><span class="p">)</span>
+<span class="n">perte</span> <span class="o">=</span> <span class="n">critere</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">y_batch</span><span class="p">)</span>
+<span class="n">perte</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">optimiseur</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># On calcule les gradients après torch.no_grad()</span>
+</code></pre>
+</div>
+
+<p><em>Pour chaque bug : nommez-le, expliquez l'impact, proposez la correction.</em></p>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Si vous deviez présenter le transfer learning à un client non-technique en 30 secondes, que diriez-vous ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">"On n'entraîne pas le modèle depuis zéro. On prend un modèle qui a déjà appris à comprendre des images ou du texte sur des millions d'exemples, et on lui montre juste les vôtres pour qu'il se spécialise. Comme former un médecin généraliste en cardiologie plutôt que former un cardiologue depuis l'école primaire."</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre val loss et train loss, et pourquoi surveille-t-on les deux ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Train loss : erreur sur les données d'entraînement (que le modèle a vues). Val loss : erreur sur des données jamais vues. Si train loss baisse mais val loss monte → overfitting. On surveille les deux pour détecter ce décrochage.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

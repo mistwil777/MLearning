@@ -1,0 +1,925 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 1Jour 1 — Paysage ML : La carte avant le territoireCoursThéorieExemples rée</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 1</div><h1>Jour 1 — <em>Paysage ML : La carte avant le territoire</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!--
+    Layout (tous les centres calculés) :
+    L0  y=45   ROOT           cx=550
+    L1  y=150  RÈGLES cx=150  ML cx=550  GÉNÉRATIF cx=950
+    L2  y=255  Supervisé cx=450  Non-supervisé cx=670
+    L3  y=350  Classique cx=275  Séries cx=450  Deep cx=625
+    L4  y=435  Régression cx=130  Classification cx=275  Clustering cx=420
+  -->
+
+  <!-- ─── Connecteurs (bezier S) ─── -->
+  <!-- Root → L1 -->
+  <path d="M550,66 C550,108 150,108 150,128" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 L550,130"                 fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 950,108 950,128" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- ML → L2 -->
+  <path d="M550,172 C550,213 450,213 450,237" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,172 C550,213 670,213 670,237" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- Supervisé → L3 -->
+  <path d="M450,271 C450,310 275,310 275,332" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M450,271 L450,332"                 fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M450,271 C450,310 625,310 625,332" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- Classique → L4 -->
+  <path d="M275,368 C275,401 130,401 130,417" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M275,368 L275,417"                 fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M275,368 C275,401 420,401 420,417" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- ─── L0 — ROOT ─── cx=550, cy=45, w=340, h=42 -->
+  <rect x="380" y="24" width="340" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">INTELLIGENCE ARTIFICIELLE</text>
+
+  <!-- ─── L1 — RÈGLES cx=150, w=220, h=48 ─── -->
+  <rect x="40" y="128" width="220" height="48" rx="12" fill="rgba(232,166,0,.13)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="150" y="149" text-anchor="middle" fill="#e8a600" font-size="13" font-weight="800">RÈGLES</text>
+  <text x="150" y="167" text-anchor="middle" fill="#9e95b5" font-size="11">(if/else — toujours là)</text>
+
+  <!-- ─── L1 — ML cx=550, w=160, h=42 ─── -->
+  <rect x="470" y="130" width="160" height="42" rx="12" fill="rgba(144,133,233,.16)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="550" y="156" text-anchor="middle" fill="#9085e9" font-size="13" font-weight="800">ML</text>
+
+  <!-- ─── L1 — GÉNÉRATIF cx=950, w=220, h=48 ─── -->
+  <rect x="840" y="128" width="220" height="48" rx="12" fill="rgba(27,175,122,.13)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="950" y="149" text-anchor="middle" fill="#1baf7a" font-size="13" font-weight="800">GÉNÉRATIF</text>
+  <text x="950" y="167" text-anchor="middle" fill="#9e95b5" font-size="11">(LLM, diffusion)</text>
+
+  <!-- ─── L2 — Supervisé cx=450, w=170, h=34 ─── -->
+  <rect x="365" y="237" width="170" height="34" rx="9" fill="rgba(144,133,233,.13)" stroke="#9085e9" stroke-width="1.3"/>
+  <text x="450" y="259" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Supervisé</text>
+
+  <!-- ─── L2 — Non-supervisé cx=670, w=190, h=34 ─── -->
+  <rect x="575" y="237" width="190" height="34" rx="9" fill="rgba(57,135,229,.12)" stroke="#3987e5" stroke-width="1.3"/>
+  <text x="670" y="259" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="700">Non-supervisé</text>
+
+  <!-- ─── L3 — Classique cx=275, w=170, h=36 ─── -->
+  <rect x="190" y="332" width="170" height="36" rx="9" fill="rgba(232,166,0,.12)" stroke="#e8a600" stroke-width="1.3"/>
+  <text x="275" y="349" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="700">Classique</text>
+  <text x="275" y="362" text-anchor="middle" fill="#9e95b5" font-size="10">(tableau)</text>
+
+  <!-- ─── L3 — Séries temp. cx=450, w=165, h=34 ─── -->
+  <rect x="368" y="332" width="165" height="34" rx="9" fill="rgba(230,103,103,.12)" stroke="#e66767" stroke-width="1.3"/>
+  <text x="450" y="354" text-anchor="middle" fill="#e66767" font-size="12" font-weight="700">Séries temp.</text>
+
+  <!-- ─── L3 — Deep Learning cx=625, w=175, h=34 ─── -->
+  <rect x="538" y="332" width="175" height="34" rx="9" fill="rgba(27,175,122,.12)" stroke="#1baf7a" stroke-width="1.3"/>
+  <text x="625" y="354" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Deep Learning</text>
+
+  <!-- ─── L4 — Régression cx=130, w=150, h=30 ─── -->
+  <rect x="55" y="417" width="150" height="30" rx="7" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="130" y="437" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Régression</text>
+
+  <!-- ─── L4 — Classification cx=275, w=165, h=30 ─── -->
+  <rect x="193" y="417" width="165" height="30" rx="7" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="275" y="437" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Classification</text>
+
+  <!-- ─── L4 — Clustering cx=420, w=150, h=30 ─── -->
+  <rect x="345" y="417" width="150" height="30" rx="7" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="420" y="437" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Clustering</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-le-problème-qui-a-tout-déclenché-pourquoi-le-ml-existe"><span class="h2-num">2</span>1. Le problème qui a tout déclenché — Pourquoi le ML existe<span class="h2-line"></span></h2>
+
+<h3 id="situation-réelle-ing-direct-2008">Situation réelle : ING Direct, 2008</h3>
+
+<p>ING Direct, banque en ligne, reçoit des milliers de demandes de crédit par jour. Leurs analystes passent en revue chaque dossier : revenus, historique, charges. Ils ont formulé des règles : "si revenu &gt; 3× loyer ET pas d'incident depuis 2 ans → accorder".</p>
+
+<p>Ça marche. Jusqu'au jour où ils réalisent que leurs règles acceptent des clients qui font défaut, et refusent des clients qui auraient été excellents. Pourquoi ? Parce que la réalité a des interactions que l'humain ne voit pas : un client avec un faible revenu mais une épargne régulière sur 10 ans est meilleur qu'un client avec un haut revenu instable.</p>
+
+<p><strong>Le problème</strong> : Formuler explicitement toutes les règles est impossible. Il y en aurait des milliers, elles se contrediraient, et elles changeraient avec le marché.</p>
+
+<p><strong>La solution ML</strong> : Au lieu de programmer les règles, on montre des exemples (dossiers passés + résultat réel) et on laisse l'algorithme <strong>apprendre les patterns lui-même</strong>.</p>
+
+<blockquote>
+  <p><strong>ML = programmer par l'exemple plutôt que par les règles</strong></p>
+</blockquote>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">En une phrase, quelle est la différence fondamentale entre ML et règles métier ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les règles métier programment le comportement explicitement (if/else). Le ML programme par l'exemple — on lui montre des cas passés et il apprend les patterns lui-même.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">ING Direct avait des règles de scoring crédit. Pourquoi ça ne suffisait pas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les règles acceptaient de mauvais clients et refusaient de bons — parce que la réalité a des interactions invisibles à l'humain (ex : faible revenu + épargne régulière sur 10 ans = meilleur profil qu'un haut revenu instable). Ces interactions sont trop nombreuses et changeantes pour être formulées manuellement.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Complète : "ML = programmer par _____ plutôt que par _____"</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">ML = programmer par <strong>l'exemple</strong> plutôt que par les <strong>règles</strong>.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="2-la-vraie-question-avant-tout-a-t-on-besoin-du-ml"><span class="h2-num">3</span>2. La vraie question avant tout : A-t-on besoin du ML ?<span class="h2-line"></span></h2>
+
+<h3 id="situation-réelle-système-de-pricing-dun-loueur-de-voitures">Situation réelle : Système de pricing d'un loueur de voitures</h3>
+
+<p>Un loueur comme Europcar veut calculer le prix d'une location en temps réel. La tentation : "On va faire du ML, on prédit le prix optimal."</p>
+
+<p>Mais regardons les vraies règles métier :
+- Prix de base selon catégorie de voiture
+- +20% le week-end
+- +15% si moins de 48h avant le départ
+- -10% si client fidélité Gold
+- Surcharge carburant selon cours du pétrole</p>
+
+<p><strong>Résultat</strong> : Ces règles sont parfaitement formulables. Un système de règles est :
+- Plus rapide (0ms vs 50ms pour un modèle)
+- Plus auditable ("pourquoi ce prix ?" → réponse instantanée)
+- Plus stable (pas de dérive)
+- Moins cher à maintenir</p>
+
+<p><strong>Quand le ML devient utile</strong> : Quand on veut <strong>prédire la demande</strong> (combien de voitures de catégorie B à Paris vendredi prochain) — là, les patterns sont trop complexes pour des règles.</p>
+
+<h3 id="règle-de-décision">Règle de décision</h3>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Peut-on écrire les règles sur un tableau blanc en moins d'une heure ?
+    → OUI + elles sont stables → Règles. Pas de ML.
+    → OUI mais elles changent tout le temps → ML peut aider
+    → NON → ML nécessaire
+    → NON + données insuffisantes → Règles quand même (mieux que rien)
+</code></pre></div>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Europcar veut calculer un prix de location. Faut-il du ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Non. Les règles métier sont formulables en moins d'une heure (+20% le week-end, -10% fidélité Gold…). Le ML devient utile uniquement pour <strong>prédire la demande</strong> (combien de voitures vendredi prochain) — là où les patterns sont trop complexes pour des règles.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle question poser avant tout projet IA pour éviter de sortir le ML inutilement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">"Peut-on écrire les règles sur un tableau blanc en moins d'une heure ?" Si oui et qu'elles sont stables → règles. Le ML n'apporte de valeur que là où la logique n'est pas formulable explicitement.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Cite 3 avantages d'un système de règles sur un modèle ML pour un même problème formulable.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1. Vitesse</strong> (0ms vs 50ms), <strong>2. Auditabilité</strong> (on peut expliquer chaque décision immédiatement), <strong>3. Stabilité</strong> (pas de dérive dans le temps — le modèle ne se dégrade pas si les données changent).</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="3-la-taxonomie-du-ml-la-carte-complète"><span class="h2-num">4</span>3. La taxonomie du ML — La carte complète<span class="h2-line"></span></h2>
+
+<h3 id="31-apprentissage-supervisé">3.1 Apprentissage supervisé</h3>
+
+<p><strong>Définition</strong> : L'apprentissage supervisé consiste à entraîner un modèle sur des exemples <strong>pour lesquels on connaît déjà la bonne réponse</strong>. Chaque exemple est un couple (entrée, réponse attendue). Le modèle apprend la relation entre les deux, puis l'applique sur de nouveaux exemples dont on ne connaît pas encore la réponse.</p>
+
+<p>Le mot "supervisé" vient de là : un humain a <strong>supervisé</strong> la constitution des données en fournissant les bonnes réponses (les <strong>labels</strong>). C'est un travail parfois long et coûteux — annoter 100 000 photos médicales, c'est des mois de travail de médecins.</p>
+
+<p><strong>Situation réelle : Criteo, adtech parisien</strong></p>
+
+<p>Criteo doit prédire si un utilisateur va cliquer sur une pub (0 ou 1). Ils ont des millions d'exemples passés avec la réponse connue : utilisateur X a cliqué / n'a pas cliqué. L'algo apprend à reconnaître les patterns qui distinguent un cliqueur d'un non-cliqueur.</p>
+
+<div class="mindmap">Entrées (ce qu'on connaît)     Réponse attendue (le label)
+──────────────────────────     ────────────────────────────
+âge, revenu, historique   →    crédit accordé / refusé    ← classification
+surface, quartier, étage  →    prix en €                  ← régression
+pixels d'une image        →    chat / chien               ← classification
+température, pression     →    panne dans 48h / non       ← classification
+</div>
+
+<p><strong>Deux sous-types selon la nature de la réponse</strong> :
+- <strong>Classification</strong> : la réponse est une <strong>catégorie</strong> parmi un ensemble fini (fraude/non-fraude, maladie A/B/C, chat/chien). Le modèle trace des frontières entre les catégories.
+- <strong>Régression</strong> : la réponse est un <strong>nombre continu</strong> (prix d'un appartement, consommation électrique en kWh, durée d'une hospitalisation). Le modèle apprend une fonction qui prédit ce nombre.</p>
+
+<blockquote>
+  <p>La distinction est importante car les algorithmes et les métriques de performance ne sont pas les mêmes pour les deux.</p>
+</blockquote>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Fond transparent -->
+  <!-- === GAUCHE : données étiquetées === -->
+  <text x="90" y="22" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Données étiquetées</text>
+  <!-- Rectangles de données empilés -->
+  <rect x="20" y="32" width="140" height="22" rx="4" fill="#26232f" stroke="#3987e5" stroke-width="1"/>
+  <text x="90" y="47" text-anchor="middle" fill="#c8c0d8" font-size="10">age=34, revenu=45k → accordé</text>
+  <rect x="20" y="59" width="140" height="22" rx="4" fill="#26232f" stroke="#3987e5" stroke-width="1"/>
+  <text x="90" y="74" text-anchor="middle" fill="#c8c0d8" font-size="10">surface=65m², paris → 420k€</text>
+  <rect x="20" y="86" width="140" height="22" rx="4" fill="#26232f" stroke="#3987e5" stroke-width="1"/>
+  <text x="90" y="101" text-anchor="middle" fill="#c8c0d8" font-size="10">pixels… → chat</text>
+  <rect x="20" y="113" width="140" height="22" rx="4" fill="#26232f" stroke="#3987e5" stroke-width="1"/>
+  <text x="90" y="128" text-anchor="middle" fill="#c8c0d8" font-size="10">temp=82°, pression=4 → panne</text>
+
+  <!-- Flèche entraînement -->
+  <line x1="170" y1="100" x2="215" y2="100" stroke="#3987e5" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="192" y="93" text-anchor="middle" fill="#3987e5" font-size="10" font-weight="600">entraînement</text>
+
+  <!-- === CENTRE : boîte modèle === -->
+  <rect x="217" y="60" width="166" height="80" rx="10" fill="#26232f" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="300" y="90" text-anchor="middle" fill="#9085e9" font-size="14" font-weight="700">Modèle</text>
+  <!-- Engrenage simplifié -->
+  <circle cx="300" cy="115" r="12" fill="none" stroke="#9085e9" stroke-width="1.5"/>
+  <circle cx="300" cy="115" r="5" fill="#9085e9"/>
+  <line x1="300" y1="100" x2="300" y2="97" stroke="#9085e9" stroke-width="2"/>
+  <line x1="300" y1="130" x2="300" y2="133" stroke="#9085e9" stroke-width="2"/>
+  <line x1="285" y1="115" x2="282" y2="115" stroke="#9085e9" stroke-width="2"/>
+  <line x1="315" y1="115" x2="318" y2="115" stroke="#9085e9" stroke-width="2"/>
+  <line x1="289.4" y1="104.4" x2="287.3" y2="102.3" stroke="#9085e9" stroke-width="2"/>
+  <line x1="310.6" y1="125.6" x2="312.7" y2="127.7" stroke="#9085e9" stroke-width="2"/>
+  <line x1="289.4" y1="125.6" x2="287.3" y2="127.7" stroke="#9085e9" stroke-width="2"/>
+  <line x1="310.6" y1="104.4" x2="312.7" y2="102.3" stroke="#9085e9" stroke-width="2"/>
+
+  <!-- Flèche inférence -->
+  <line x1="383" y1="100" x2="428" y2="100" stroke="#1baf7a" stroke-width="2" marker-end="url(#arr-aqua)"/>
+  <text x="405" y="93" text-anchor="middle" fill="#1baf7a" font-size="10" font-weight="600">inférence</text>
+
+  <!-- === DROITE : nouvelle donnée → prédiction === -->
+  <text x="510" y="22" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Nouvelle donnée</text>
+  <rect x="435" y="32" width="150" height="22" rx="4" fill="#26232f" stroke="#e8a600" stroke-width="1"/>
+  <text x="510" y="47" text-anchor="middle" fill="#c8c0d8" font-size="10">age=41, revenu=62k → ?</text>
+
+  <line x1="510" y1="57" x2="510" y2="72" stroke="#e8a600" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <rect x="435" y="75" width="150" height="30" rx="6" fill="rgba(27,175,122,0.15)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="510" y="95" text-anchor="middle" fill="#1baf7a" font-size="13" font-weight="700">accordé ✓</text>
+
+  <!-- Définitions marqueurs -->
+  <defs>
+    <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3987e5"/>
+    </marker>
+    <marker id="arr-aqua" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#1baf7a"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<hr />
+
+<h3 id="32-apprentissage-non-supervisé">3.2 Apprentissage non-supervisé</h3>
+
+<p><strong>Définition</strong> : L'apprentissage non-supervisé consiste à laisser un algorithme trouver <strong>de la structure dans des données qui n'ont pas de réponse attendue</strong>. Il n'y a pas de label. Le modèle n'apprend pas à imiter un humain qui aurait annoté les données — il cherche lui-même des régularités, des groupes, des anomalies.</p>
+
+<p>Le mot "non-supervisé" vient du fait qu'aucun humain ne "supervise" l'apprentissage en fournissant les bonnes réponses. L'algorithme travaille seul sur les données brutes.</p>
+
+<p><strong>Situation réelle : Carrefour, segmentation clients</strong></p>
+
+<p>Carrefour a 10M de clients. Personne n'a jamais défini ce qu'est un "type de client" pour cette enseigne. Le service marketing veut comprendre : est-ce qu'il existe des groupes naturels dans les comportements d'achat, et si oui, combien ?</p>
+
+<p>Un algorithme de clustering analyse les achats de chaque client (quels produits, à quelle fréquence, à quelle heure, en quelle quantité) et fait émerger 5 profils distincts : acheteurs bio premium, familles avec enfants, étudiants pressés, seniors économes, sportifs. Personne n'avait demandé ces 5 catégories — l'algorithme les a trouvées dans les données.</p>
+
+<p><strong>Ce n'est pas plus simple que le supervisé — c'est différent.</strong> En supervisé, on peut mesurer l'erreur (la prédiction était-elle correcte ?). En non-supervisé, il n'existe pas de "bonne réponse" à comparer : on évalue si les groupes trouvés sont cohérents et utiles métier, pas s'ils sont "corrects".</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Trois usages principaux du non-supervisé :
+
+Clustering      → Regrouper des exemples similaires
+                  K-Means (groupes sphériques), DBSCAN (formes libres, détecte les outliers)
+                  Exemple : profils clients, segments de marché
+
+Réduction dim.  → Compresser des données en gardant l'essentiel
+                  PCA (composantes principales), t-SNE / UMAP (visualisation 2D)
+                  Exemple : visualiser 50 features en 2 dimensions pour voir des patterns
+
+Détection       → Identifier ce qui est "différent de la norme"
+d'anomalies       Isolation Forest, One-Class SVM
+                  Exemple : détecter des transactions inhabituelles dans un système bancaire
+</code></pre></div>
+
+<p>:::warning
+<strong>Une limite importante à connaître dès le départ</strong> : les clusters trouvés par un algorithme ne sont que des groupes mathématiques. Deux clients peuvent être "proches" au sens mathématique (achats similaires en volume et fréquence) mais appartenir à des profils métier totalement différents. <strong>L'interprétation des clusters reste une tâche humaine</strong> — un data scientist ne nomme jamais seul les segments, il travaille avec le métier pour valider leur sens.
+:::</p>
+
+<hr />
+
+<h3 id="33-séries-temporelles-le-cas-à-part">3.3 Séries temporelles — Le cas à part</h3>
+
+<p><strong>Définition</strong> : Une série temporelle est une suite de valeurs <strong>mesurées à intervalles réguliers dans le temps</strong>, où chaque valeur est influencée par les valeurs précédentes. Ce n'est pas simplement "des données avec une date" — c'est une séquence où l'ordre chronologique porte de l'information.</p>
+
+<p><strong>Situation réelle : RTE (Réseau de Transport d'Électricité)</strong></p>
+
+<p>RTE gère le réseau électrique français. Chaque heure, il faut équilibrer exactement la production (centrales, éolien, solaire) avec la consommation. Un déséquilibre entraîne des pannes en cascade. RTE doit donc prévoir la consommation nationale pour les 48h suivantes, heure par heure.</p>
+
+<p>Pourquoi ne pas simplement utiliser une régression classique avec comme features "il est 18h, c'est un lundi de janvier" ? Parce que cette approche <strong>ignore une information cruciale</strong> : la consommation à 18h dépend aussi de ce qui s'est passé à 17h, et à 16h, et la semaine dernière à la même heure. Les données ne sont <strong>pas indépendantes dans le temps</strong>.</p>
+
+<div class="mindmap">Exemples de séries temporelles :
+─────────────────────────────────────────────────────
+Consommation électrique nationale (RTE) — toutes les heures
+Ventes d'un produit en supermarché — chaque jour
+Cours d'une action en bourse — chaque minute
+Température d'une machine industrielle — toutes les secondes
+Taux d'occupation d'un hôtel — chaque nuit
+</div>
+
+<p>Ce qui rend ces données particulières, c'est qu'elles contiennent plusieurs types de patterns superposés :</p>
+
+<ul>
+<li><strong>Tendance</strong> : la consommation électrique française augmente lentement sur 10 ans (parc de véhicules électriques, data centers)</li>
+<li><strong>Saisonnalité</strong> : chaque hiver elle monte, chaque été elle baisse — un cycle annuel prévisible</li>
+<li><strong>Cyclicité hebdomadaire</strong> : les lundis-vendredis consomment plus que les week-ends</li>
+<li><strong>Résidus</strong> : ce qui reste après avoir retiré tendance et saisonnalité — les événements imprévisibles (vague de froid exceptionnelle, match de coupe du monde)</li>
+</ul>
+
+<p><strong>Pourquoi des outils spécifiques ?</strong></p>
+
+<p>Le ML classique (régression, XGBoost) suppose que chaque exemple est <strong>indépendant des autres</strong>. Un dossier de crédit n'influence pas le dossier suivant. En séries temporelles, cette hypothèse est <strong>violée par construction</strong> : la valeur de demain dépend mécaniquement de celle d'aujourd'hui. Utiliser XGBoost naïvement sur une série temporelle, c'est jeter cette information et souvent obtenir de mauvaises prédictions.</p>
+
+<p>Les outils dédiés (statsmodels, Prophet, darts) sont construits pour exploiter cette dépendance temporelle, modéliser la saisonnalité automatiquement, et gérer les jours fériés, les données manquantes et les irrégularités de calendrier.</p>
+
+<p>:::callout-insight
+<strong>Le test mental pour identifier une série temporelle</strong> : est-ce que l'ordre des lignes dans mon tableau a une signification ? Si mélanger les lignes détruit de l'information, c'est une série temporelle. Si les lignes sont interchangeables (chaque client est indépendant), c'est du ML classique.
+:::</p>
+
+<blockquote>
+  <p>On y revient en détail Jour 3, avec statsmodels, Prophet et darts.</p>
+</blockquote>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="300" y="18" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Décomposition d'une série temporelle</text>
+
+  <!-- === LIGNE 1 : Série brute === -->
+  <text x="8" y="52" fill="#c8c0d8" font-size="10" font-weight="600">Série brute</text>
+  <line x1="90" y1="35" x2="590" y2="35" stroke="#2e2b3a" stroke-width="1"/>
+  <line x1="90" y1="70" x2="590" y2="70" stroke="#2e2b3a" stroke-width="1"/>
+  <!-- Courbe irrégulière complexe (série brute) -->
+  <polyline points="95,62 130,48 155,58 180,42 210,54 240,38 265,55 295,44 320,60 345,40 370,52 395,35 420,50 445,42 470,55 495,38 520,52 545,44 570,58 590,45" fill="none" stroke="#3987e5" stroke-width="1.5"/>
+  <line x1="88" y1="35" x2="88" y2="70" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- === LIGNE 2 : Tendance === -->
+  <text x="8" y="115" fill="#c8c0d8" font-size="10" font-weight="600">Tendance</text>
+  <line x1="90" y1="97" x2="590" y2="97" stroke="#2e2b3a" stroke-width="1"/>
+  <line x1="90" y1="132" x2="590" y2="132" stroke="#2e2b3a" stroke-width="1"/>
+  <!-- Droite montante douce -->
+  <line x1="95" y1="128" x2="590" y2="102" stroke="#e8a600" stroke-width="2"/>
+  <line x1="88" y1="97" x2="88" y2="132" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- === LIGNE 3 : Saisonnalité === -->
+  <text x="8" y="178" fill="#c8c0d8" font-size="10" font-weight="600">Saisonnalité</text>
+  <line x1="90" y1="158" x2="590" y2="158" stroke="#2e2b3a" stroke-width="1"/>
+  <line x1="90" y1="198" x2="590" y2="198" stroke="#2e2b3a" stroke-width="1"/>
+  <!-- Sinusoïde régulière — calculée : y = 178 + 16*sin(2π*(x-95)/100) -->
+  <polyline points="95,178 107,170 120,163 132,161 145,163 157,170 170,178 182,186 195,193 207,195 220,193 232,186 245,178 257,170 270,163 282,161 295,163 307,170 320,178 332,186 345,193 357,195 370,193 382,186 395,178 407,170 420,163 432,161 445,163 457,170 470,178 482,186 495,193 507,195 520,193 532,186 545,178 557,170 570,163 582,161 590,163" fill="none" stroke="#1baf7a" stroke-width="2"/>
+  <line x1="88" y1="158" x2="88" y2="198" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- === LIGNE 4 : Résidus === -->
+  <text x="8" y="240" fill="#c8c0d8" font-size="10" font-weight="600">Résidus</text>
+  <line x1="90" y1="222" x2="590" y2="222" stroke="#2e2b3a" stroke-width="1"/>
+  <line x1="90" y1="258" x2="590" y2="258" stroke="#2e2b3a" stroke-width="1"/>
+  <!-- Ligne zéro et bruit faible -->
+  <line x1="95" y1="240" x2="590" y2="240" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+  <polyline points="95,240 115,237 135,243 155,239 175,242 195,238 215,241 235,244 255,238 275,242 295,239 315,243 335,238 355,241 375,244 395,237 415,240 435,243 455,238 475,241 495,244 515,239 535,242 555,238 575,241 590,240" fill="none" stroke="#e66767" stroke-width="1.5"/>
+  <line x1="88" y1="222" x2="88" y2="258" stroke="#2e2b3a" stroke-width="1"/>
+
+  <!-- Légende en bas -->
+  <rect x="95" y="275" width="10" height="3" rx="1" fill="#3987e5"/>
+  <text x="110" y="282" fill="#9e95b5" font-size="10">Série brute</text>
+  <rect x="185" y="275" width="10" height="3" rx="1" fill="#e8a600"/>
+  <text x="200" y="282" fill="#9e95b5" font-size="10">Tendance</text>
+  <rect x="270" y="275" width="10" height="3" rx="1" fill="#1baf7a"/>
+  <text x="285" y="282" fill="#9e95b5" font-size="10">Saisonnalité</text>
+  <rect x="370" y="275" width="10" height="3" rx="1" fill="#e66767"/>
+  <text x="385" y="282" fill="#9e95b5" font-size="10">Résidus</text>
+  <text x="300" y="308" text-anchor="middle" fill="#716989" font-size="10">Série brute = Tendance + Saisonnalité + Résidus</text>
+</svg>
+</div>
+
+<hr />
+
+<h3 id="34-deep-learning-quand-et-pourquoi">3.4 Deep Learning — Quand et pourquoi</h3>
+
+<p><strong>Situation réelle : Doctolib, triage de documents médicaux</strong></p>
+
+<p>Doctolib reçoit des ordonnances en photo, des comptes-rendus en texte libre. Impossible d'extraire manuellement les features pertinentes : "qu'est-ce qui, dans ce bout de texte médical, indique une urgence ?"</p>
+
+<p>Le deep learning apprend lui-même quelles features extraire (via les couches cachées). C'est sa force — et son coût.</p>
+
+<p><strong>Quand deep learning s'impose</strong> :
+- Données non-structurées (image, texte, audio, vidéo)
+- Features impossibles à définir manuellement
+- Très grande quantité de données (&gt;100k exemples souvent)</p>
+
+<p><strong>Quand il ne s'impose PAS</strong> :
+- Données tabulaires → XGBoost gagne presque toujours
+- Peu de données (&lt;10k) → overfitting garanti sans tricks
+- Explicabilité requise (médical réglementé, banque) → modèles intrinsèquement interprétables d'abord</p>
+
+<hr />
+
+<h3 id="35-genai-la-couche-au-dessus">3.5 GenAI — La couche au-dessus</h3>
+
+<p><strong>Situation réelle : Capgemini, automatisation de réponses à appels d'offres</strong></p>
+
+<p>Les équipes commerciales répondent à des appels d'offres de 100 pages. Un LLM peut lire le cahier des charges, comprendre les exigences, et générer une première réponse structurée en s'appuyant sur les réponses passées.</p>
+
+<p>Ce n'est pas de la prédiction (classification/régression). C'est de la <strong>génération de contenu nouveau</strong> basée sur une compréhension du langage.</p>
+
+<p><strong>GenAI = pré-entraîné sur tout internet + fine-tuning ou RAG pour le contexte métier</strong></p>
+
+<p><strong>Quand GenAI a sa place</strong> :
+- Génération de texte, code, images
+- Compréhension de documents non-structurés (Q&amp;A sur PDF, extraction d'entités)
+- Interface conversationnelle
+- Tâches où la "bonne réponse" est subjective ou créative</p>
+
+<p><strong>Quand GenAI est surdimensionné</strong> :
+- Prédire si un client va churner (→ XGBoost)
+- Détecter une anomalie dans une série de capteurs (→ Isolation Forest)
+- Classifier des tickets support en 5 catégories fixes (→ sklearn, ou même regex)</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Criteo prédit les clics pub. Supervisé ou non-supervisé ? Classification ou régression ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Supervisé</strong> (ils ont des millions d'exemples labelisés : cliqué / pas cliqué). <strong>Classification binaire</strong> (0 ou 1) — pas une régression car la sortie est une catégorie, pas un nombre continu.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Carrefour veut segmenter 10M de clients sans avoir défini les profils à l'avance. Quel type de ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Non-supervisé — clustering</strong>. Pas de label "type de client" existant → impossible de faire du supervisé. L'algo (K-Means, DBSCAN) trouve lui-même les groupes naturels dans les comportements d'achat.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi les séries temporelles ne sont-elles PAS simplement de la régression supervisée classique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">En régression classique, chaque ligne est indépendante. En séries temporelles, la valeur de demain <strong>dépend des valeurs précédentes</strong>. Cette dépendance temporelle viole l'hypothèse d'indépendance du ML classique — elle nécessite des outils spécifiques (Prophet, ARIMA, modèles à fenêtre temporelle).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Doctolib trie des ordonnances en photo. Pourquoi le deep learning s'impose ici ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les features pertinentes (ce qui dans une image indique une urgence) sont <strong>impossibles à définir manuellement</strong>. Le deep learning apprend lui-même quelles zones d'image regarder via ses couches cachées. C'est sa différence fondamentale avec sklearn qui exige des features définies par l'humain.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="4-la-carte-des-bibliothèques-python"><span class="h2-num">5</span>4. La carte des bibliothèques Python<span class="h2-line"></span></h2>
+
+<blockquote>
+  <p>Pour chaque outil : <strong>qui l'a créé et pourquoi → problème résolu (avec avant/après) → code réel → situation réelle → quand ne pas l'utiliser.</strong></p>
+</blockquote>
+
+<hr />
+
+<h3 id="scikit-learn-je-veux-entraîner-un-modèle-sur-un-tableau-excel">scikit-learn — "Je veux entraîner un modèle sur un tableau Excel"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>En 2007, des chercheurs de l'INRIA (France) veulent un outil unique pour expérimenter des dizaines d'algorithmes ML. Ils créent scikit-learn : une bibliothèque où <strong>tous les modèles s'utilisent exactement de la même façon</strong> — mêmes noms de méthodes, mêmes paramètres, même structure — peu importe l'algorithme.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>Avant sklearn, chaque algorithme venait d'un package différent avec sa propre syntaxe. Pour tester 3 algorithmes sur le même problème, il fallait réécrire l'entraînement et l'évaluation 3 fois</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># AVANT sklearn — 3 algos, 3 syntaxes différentes, du code à réécrire à chaque fois</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libsvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">svm</span>
+<span class="n">sv</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">();</span> <span class="n">sv</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">);</span> <span class="n">sv</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rpy2</span><span class="w"> </span><span class="kn">import</span> <span class="n">robjects</span>  <span class="c1"># appel à R depuis Python...</span>
+<span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;model &lt;- randomForest(y ~ ., data=train)&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># régression logistique à la main</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># ... 30 lignes de gradient descent</span>
+</code></pre>
+</div>
+
+<p><strong>Avec sklearn</strong> : tu changes une seule ligne, tout le reste est identique :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># APRÈS sklearn — même structure pour tous les algos</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.svm</span><span class="w"> </span><span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+<span class="k">for</span> <span class="n">ModelClass</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SVC</span><span class="p">,</span> <span class="n">RandomForestClassifier</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">]:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>      <span class="c1"># toujours .fit()</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>  <span class="c1"># toujours .score()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ModelClass</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Il inclut aussi tout ce qu'il faut autour du modèle : normaliser les données, diviser train/test, mesurer la performance, chercher les meilleurs hyperparamètres.</p>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Un data scientist chez Axa compare 5 algorithmes pour prédire la probabilité de sinistre. Avec sklearn, ça prend une boucle de 10 lignes. Sans, c'est une journée de travail.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Quand ton tableau a des millions de lignes et que l'entraînement prend des heures → XGBoost. Sklearn ne fait pas de deep learning, pas de séries temporelles avancées.</p></div>
+
+<hr />
+
+<h3 id="sklearn-et-xgboost-deux-outils-complémentaires-pas-concurrents">sklearn et XGBoost : deux outils complémentaires, pas concurrents</h3>
+
+<p>Une confusion fréquente : puisque XGBoost est plus rapide et plus précis sur données tabulaires, sklearn semblerait superflu. En réalité, ils jouent des rôles entièrement différents dans la même chaîne de travail.</p>
+
+<p><strong>XGBoost prédit. Sklearn prépare et mesure.</strong> Un projet professionnel utilise les deux simultanément.</p>
+
+<h4>Rôle 1 — Le preprocessing (préparer les données avant d'entraîner)</h4>
+
+<p>Un modèle ML ne peut pas travailler directement sur tes données brutes. Il a besoin que :
+- Les <strong>nombres soient normalisés</strong> — si "âge" va de 18 à 90 et "revenu" va de 0 à 100 000, le modèle va surpondérer le revenu juste parce que ses valeurs sont plus grandes. La normalisation ramène tout à la même échelle (ex : entre 0 et 1).
+- Les <strong>textes ou catégories soient convertis en nombres</strong> — un modèle ne comprend pas "Paris" ou "Lyon", seulement 0, 1, 2… L'encodage fait cette conversion.
+- Les <strong>valeurs manquantes soient gérées</strong> — un CSV avec des cases vides plante XGBoost si on ne les traite pas.</p>
+
+<p>Tout ça, c'est sklearn. XGBoost ne fait rien de tout ça.</p>
+
+<h4>Rôle 2 — Le pipeline (chaîner toutes les étapes sans erreur)</h4>
+
+<p>Un <strong>pipeline</strong>, c'est une chaîne d'étapes qui s'exécutent dans l'ordre : d'abord on prépare les données, puis on entraîne le modèle. L'avantage clé : le pipeline garantit que les mêmes transformations appliquées à l'entraînement sont appliquées identiquement sur les nouvelles données en production. Sans pipeline, on oublie une étape et le modèle plante ou donne des résultats absurdes en prod.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># AVEC sklearn + XGBoost — sklearn prépare, XGBoost prédit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>   <span class="c1"># normalise les nombres</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrdinalEncoder</span>   <span class="c1"># convertit les catégories en chiffres</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span> <span class="c1"># mesure la vraie performance</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;enc&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">()),</span>    <span class="c1"># étape 1 : catégories → chiffres (sklearn)</span>
+    <span class="p">(</span><span class="s1">&#39;scl&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>    <span class="c1"># étape 2 : normaliser les nombres (sklearn)</span>
+    <span class="p">(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">())</span>  <span class="c1"># étape 3 : entraîner le modèle (XGBoost)</span>
+<span class="p">])</span>
+
+<span class="c1"># cross_val_score = mesurer la performance sur 5 découpages différents train/test</span>
+<span class="c1"># pour s&#39;assurer que le modèle généralise, pas qu&#39;il a juste mémorisé les données</span>
+<span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># sklearn</span>
+</code></pre>
+</div>
+
+<p>En pratique : <strong>sklearn représente 70% du code d'un projet XGBoost</strong>. XGBoost ne fait que la dernière étape.</p>
+
+<h4>Rôle 3 — Les algos que XGBoost ne fait pas du tout</h4>
+
+<p>XGBoost est un <strong>classificateur/régresseur</strong> — il prédit une valeur ou une catégorie à partir de données existantes. Mais plusieurs familles de problèmes n'ont rien à voir avec ça :</p>
+
+<table>
+<thead>
+<tr>
+  <th>Problème</th>
+  <th>Algo sklearn</th>
+  <th>Ce que XGBoost ferait</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>"Quelles transactions sont bizarres ?"</td>
+  <td>Isolation Forest</td>
+  <td>Rien — XGBoost ne détecte pas les anomalies</td>
+</tr>
+<tr>
+  <td>"Combien de groupes naturels dans mes clients ?"</td>
+  <td>K-Means, DBSCAN</td>
+  <td>Rien — XGBoost ne fait pas de clustering</td>
+</tr>
+<tr>
+  <td>"Réduire 200 colonnes à 10 sans perdre l'info"</td>
+  <td>PCA</td>
+  <td>Rien — XGBoost ne compresse pas les données</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Isolation Forest</strong> : imagine un algo qui essaie d'isoler chaque point de données. Les anomalies (transactions frauduleuses, pannes de capteur) s'isolent facilement — elles sont seules dans leur coin. Les points normaux sont entourés d'autres points normaux, difficiles à isoler.</p>
+
+<p><strong>PCA (Analyse en Composantes Principales)</strong> : si tu as 200 colonnes dans ton tableau, c'est souvent parce qu'elles se recoupent (taille et poids d'une personne sont corrélés). PCA trouve les "axes d'information" réels et réduit les 200 colonnes à 10 qui contiennent l'essentiel de l'information.</p>
+
+<blockquote>
+  <p><strong>Résumé</strong> : sklearn = infrastructure + petits modèles + algos non-supervisés. XGBoost = le meilleur classificateur/régresseur sur données tabulaires à volume. Les deux sont complémentaires — un projet professionnel utilise les deux en même temps.</p>
+</blockquote>
+
+<hr />
+
+<h3 id="xgboost-lightgbm-mon-sklearn-est-trop-lent-et-pas-assez-précis">XGBoost / LightGBM — "Mon sklearn est trop lent et pas assez précis"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>En 2016, Tianqi Chen (chercheur à l'Université de Washington) publie XGBoost. Il gagne immédiatement toutes les compétitions Kaggle sur données tabulaires. Pourquoi ? Il implémente le <strong>gradient boosting</strong> (enchaîner des centaines d'arbres de décision en corrigeant les erreurs du précédent) de façon ultra-optimisée — parallélisée, gestion native des valeurs manquantes, régularisation intégrée. LightGBM (Microsoft, 2017) va encore plus loin en vitesse sur les très grandes tables.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>La Random Forest de sklearn entraîne chaque arbre indépendamment — chaque arbre apprend sur les données d'origine, pas sur les erreurs du précédent. Le gradient boosting construit les arbres en séquence : chaque nouvel arbre apprend spécifiquement à corriger ce que le précédent a raté. C'est comme avoir un expert qui relit le travail du précédent et ne s'occupe que de ses erreurs.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># AVEC sklearn RandomForest — arbres indépendants, entraînement lent sur gros volumes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># mono-thread par défaut</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># sur 1M lignes : ~45 min, accuracy 0.847</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Durée : </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+<span class="c1"># AVEC XGBoost — arbres en séquence corrigeant les erreurs, parallélisé automatiquement</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># sur 1M lignes : ~4 min, accuracy 0.923</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Durée : </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>BNP Paribas, pour scorer des millions de dossiers de crédit chaque nuit. sklearn RandomForest mettrait 8h, XGBoost tourne en 45 minutes avec une meilleure précision.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Données images/texte (ce n'est pas son domaine). Quand tu as moins de 1000 lignes — une régression logistique simple fait souvent aussi bien.</p></div>
+
+<hr />
+
+<h3 id="statsmodels-je-veux-comprendre-pourquoi-pas-juste-prédire">statsmodels — "Je veux comprendre <em>pourquoi</em>, pas juste prédire"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>Vient du monde académique et de l'économétrie. Contrairement à sklearn qui optimise la prédiction, statsmodels est fait pour <strong>tester des hypothèses statistiques</strong> et comprendre les relations entre variables.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>sklearn te dit "le revenu est une feature importante" — mais il ne te dit pas si cette importance est statistiquement significative ou due au hasard dans tes données. Un médecin ou un économiste qui publie des résultats doit prouver que ses conclusions ne sont pas du bruit. statsmodels te donne la p-value : "la probabilité d'observer ce résultat si la relation n'existait pas réellement". En dessous de 0.05, c'est considéré comme significatif.</p></div>
+
+<div class="callout rule"><div class="callout-head">&#x2699;&#xfe0f; Ce qu'il fait concrètement</div><p>Tu veux savoir si l'âge d'un client a un impact <em>statistiquement significatif</em> sur son churn, indépendamment du revenu. statsmodels te donne une régression avec intervalles de confiance, p-values, tests de significativité — tout ce qu'un économiste ou médecin attend pour valider une conclusion.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>  <span class="c1"># tableau complet avec p-values, R², intervalles de confiance</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Une étude épidémiologique (type INSERM) qui veut prouver qu'un facteur de risque est réellement associé à une maladie, avec la rigueur statistique requise pour publication.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Quand tu veux juste prédire sans expliquer → sklearn/XGBoost. Quand tes données sont de vraies séries temporelles longues → Prophet ou darts.</p></div>
+
+<hr />
+
+<h3 id="prophet-jai-des-ventes-par-semaine-sur-3-ans-et-je-veux-prévoir-les-6-prochains-mois">Prophet — "J'ai des ventes par semaine sur 3 ans et je veux prévoir les 6 prochains mois"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>Meta (Facebook) l'a créé en 2017 pour ses équipes internes qui prévoyaient le trafic et les revenus publicitaires. Le problème : les data analysts métier (pas data scientists) devaient faire des prévisions avec des données qui avaient des cycles hebdomadaires, annuels, et des jours fériés variables selon les pays.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>Avec sklearn ou XGBoost, prévoir des ventes futures sur une série temporelle demande de construire manuellement des dizaines de features : "ventes il y a 7 jours", "moyenne des 4 dernières semaines", "c'est un jour férié ?", "c'est les soldes ?"… C'est long, technique, et il faut recommencer pour chaque nouveau pays ou produit. Prophet fait tout ça automatiquement en détectant lui-même les patterns saisonniers dans tes données.</p></div>
+
+<div class="callout rule"><div class="callout-head">&#x2699;&#xfe0f; Ce qu'il fait concrètement</div><p>Tu lui donnes une colonne de dates et une colonne de valeurs (ventes, visites, etc.). Il décompose automatiquement en tendance + saisonnalité hebdomadaire + saisonnalité annuelle + jours fériés. Il sort une prévision avec intervalles d'incertitude.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>  <span class="c1"># df avec colonnes &#39;ds&#39; (date) et &#39;y&#39; (valeur)</span>
+<span class="n">future</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Decathlon prévoit les ventes de vélos par magasin pour optimiser les stocks avant l'été. Les pics sont prévisibles (mai-juin, Noël), les jours fériés créent des anomalies connues.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Signaux industriels à haute fréquence (vibrations de machine toutes les secondes) → modèles spécialisés. Quand la série a peu d'historique (&lt;2 cycles complets).</p></div>
+
+<hr />
+
+<h3 id="pytorch-je-veux-construire-un-réseau-de-neurones-sur-mesure">PyTorch — "Je veux construire un réseau de neurones sur mesure"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>Meta AI Research l'a sorti en 2016 pour remplacer Torch (Lua). L'idée centrale : le réseau se construit dynamiquement pendant l'exécution, ce qui le rend aussi facile à déboguer qu'un programme Python normal. TensorFlow (Google) existait avant mais était beaucoup plus difficile à déboguer.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>TensorFlow 1.x obligeait à définir l'architecture du réseau entière avant de l'exécuter — impossible d'inspecter les valeurs intermédiaires avec un <code>print()</code> ou un debugger. PyTorch exécute le réseau ligne par ligne comme du Python normal : tu peux t'arrêter n'importe où et regarder ce qui se passe. Pour la recherche et les architectures complexes, c'est indispensable.</p></div>
+
+<div class="callout rule"><div class="callout-head">&#x2699;&#xfe0f; Ce qu'il fait concrètement</div><p>Tu construis ton réseau couche par couche, comme assembler des briques. Chaque couche est une transformation mathématique sur des tenseurs (des matrices multidimensionnelles). PyTorch calcule automatiquement les gradients pour l'entraînement.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>   <span class="c1"># couche dense : 128 entrées → 64 neurones</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>            <span class="c1"># activation non-linéaire</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>     <span class="c1"># sortie : 1 valeur</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>          <span class="c1"># probabilité entre 0 et 1</span>
+<span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Owkin (biotech française) entraîne des modèles sur des images de biopsies pour prédire la réponse aux traitements. Architecture sur mesure nécessaire car les images médicales ne ressemblent pas à ImageNet.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Données tabulaires → XGBoost. Si un modèle pré-entraîné HuggingFace fait le job → inutile de construire from scratch.</p></div>
+
+<hr />
+
+<h3 id="huggingface-transformers-je-veux-utiliser-un-modèle-de-langage-ou-de-vision-sans-lentraîner-from-scratch">HuggingFace Transformers — "Je veux utiliser un modèle de langage ou de vision sans l'entraîner from scratch"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>En 2018, l'article BERT (Google) montre qu'un modèle pré-entraîné sur des milliards de textes peut être adapté à n'importe quelle tâche NLP en quelques heures. HuggingFace crée une bibliothèque pour télécharger et utiliser ces modèles en 5 lignes.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>Entraîner un modèle NLP from scratch demande des millions d'exemples et des semaines de calcul GPU — hors de portée pour 99% des projets clients. Or, un modèle comme BERT a déjà "appris" la grammaire, le sens des mots, les nuances du langage. Il suffit de lui montrer quelques centaines d'exemples de <em>ta</em> tâche spécifique (analyse de sentiment sur des avis produits, extraction d'entités dans des contrats) pour qu'il s'adapte. HuggingFace est le catalogue centralisé de tous ces modèles pré-entraînés, avec une API unifiée pour les utiliser.</p></div>
+
+<div class="callout rule"><div class="callout-head">&#x2699;&#xfe0f; Ce qu'il fait concrètement</div><p>Tu télécharges un modèle pré-entraîné (BERT, CamemBERT pour le français, Whisper pour la transcription audio, ViT pour les images) et tu l'adaptes à ton problème. Le modèle a déjà "compris" la langue — tu lui apprends juste la tâche spécifique.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;text-classification&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+<span class="n">classifier</span><span class="p">(</span><span class="s2">&quot;Cette livraison était un désastre complet&quot;</span><span class="p">)</span>
+<span class="c1"># → [{&#39;label&#39;: &#39;NEGATIVE&#39;, &#39;score&#39;: 0.97}]</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>La Poste analyse des milliers d'avis clients en français chaque jour. CamemBERT fine-tuné sur 500 avis labelisés dépasse 95% de précision — sans GPU coûteux pour l'inférence.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Classification de données tabulaires → sklearn. Quand la tâche est trop éloignée du pré-entraînement et que les données sont insuffisantes pour le fine-tuning.</p></div>
+
+<hr />
+
+<h3 id="mlflow-jai-lancé-50-expériences-je-ne-sais-plus-laquelle-était-la-meilleure">MLflow — "J'ai lancé 50 expériences, je ne sais plus laquelle était la meilleure"</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>Databricks l'a créé en 2018 après avoir observé un problème universel : les data scientists lancent des dizaines d'expériences (modèle A avec paramètres X, modèle B avec paramètres Y), notent les résultats dans des fichiers Excel dispersés, et perdent la traçabilité. MLflow est le <strong>carnet de laboratoire automatique</strong>.</p></div>
+
+<div class="callout problem"><div class="callout-head">&#x1f534; Problème qu'il résout</div><p>Sans MLflow, scénario classique en projet : tu as entraîné 40 variantes d'un modèle sur 3 semaines. Le client demande "quelle version est en prod et pourquoi celle-là ?" — tu ne sais plus. Pire : 6 mois plus tard, les performances chutent. Tu veux revenir à l'ancienne version — introuvable. MLflow enregistre automatiquement chaque run avec ses paramètres, ses métriques, et le modèle lui-même, accessible depuis une interface web.</p></div>
+
+<div class="callout rule"><div class="callout-head">&#x2699;&#xfe0f; Ce qu'il fait concrètement</div><p>Tu ajoutes 3 lignes à ton code existant. MLflow enregistre automatiquement les paramètres utilisés, les métriques obtenues, et sauvegarde le modèle. Une interface web locale te montre tous tes runs comparés.</p></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">mlflow</span>
+<span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">():</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>     <span class="c1"># paramètre utilisé</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="mf">0.923</span><span class="p">)</span>      <span class="c1"># résultat obtenu</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>  <span class="c1"># modèle sauvegardé</span>
+</code></pre>
+</div>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Une équipe de 3 data scientists chez Decathlon optimise un modèle de prévision de ruptures de stock. Sans MLflow, personne ne sait quelle version est en prod, ni quels paramètres ont donné le meilleur résultat le mois dernier.</p></div>
+
+<div class="callout limit"><div class="callout-head">&#x26d4; Quand ne pas l'utiliser</div><p>Projet solo one-shot de 2 jours → overhead inutile. Mais dès qu'on est plusieurs ou qu'on itère sur plusieurs semaines → indispensable.</p></div>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Tu as des données tabulaires, 2M de lignes, tu dois prédire un churn. sklearn ou XGBoost ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>XGBoost</strong>. sklearn RandomForest serait trop lent sur 2M lignes et moins précis. XGBoost entraîne des arbres en séquence (chaque arbre corrige les erreurs du précédent), parallélisé sur tous les cœurs CPU — 10× plus rapide, meilleure précision sur gros volumes.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">sklearn sert-il encore à quelque chose quand XGBoost existe ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Oui — sklearn gère tout ce que XGBoost ne fait pas : <strong>preprocessing</strong> (normalisation, encodage), <strong>pipeline</strong> (chaîner les étapes), <strong>métriques</strong> (cross-validation, scoring), et des <strong>algos sans équivalent</strong> (K-Means, Isolation Forest, PCA, SVM). Un projet XGBoost utilise sklearn pour 70% du code.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle bibliothèque utiliser pour prouver qu'un facteur de risque est statistiquement significatif dans une étude médicale ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>statsmodels</strong> — pas sklearn. statsmodels donne les p-values, intervalles de confiance et tests de significativité nécessaires à la publication scientifique. sklearn optimise la prédiction mais ne dit pas si les relations sont dues au hasard.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Tu dois prévoir les ventes hebdomadaires de 500 références Decathlon sur 12 mois. Quel outil ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Prophet</strong> (Meta). Il détecte automatiquement la saisonnalité hebdomadaire/annuelle et les jours fériés sans construire les features manuellement. sklearn/XGBoost exigeraient de créer à la main "ventes J-7", "moyenne 4 semaines", "est-ce un férié ?" — c'est long et à recommencer pour chaque référence.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Sans MLflow, quel problème concret survient après 3 semaines d'expériences ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Impossible de répondre à "<strong>quelle version est en prod et pourquoi ?</strong>" — les paramètres sont dans des Excel dispersés, les modèles sauvegardés sous des noms comme `model_v3_final_vraiment_final.pkl`. MLflow enregistre automatiquement chaque run avec ses paramètres, métriques et le modèle lui-même.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="5-le-framework-de-décision-client-vision-globale"><span class="h2-num">6</span>5. Le framework de décision client — Vision globale<span class="h2-line"></span></h2>
+
+<h3 id="situation-réelle-un-client-vous-appelle">Situation réelle : Un client vous appelle</h3>
+
+<p>Imaginons : une coopérative agricole (comme Limagrain) vous contacte. Ils veulent "faire de l'IA". Voici le questionnaire mental à dérouler :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">ÉTAPE 1 — Quel est le vrai problème ?
+"Nous voulons de l'IA" n'est pas un problème.
+→ Qu'est-ce qui coûte cher / prend du temps / rate souvent aujourd'hui ?
+→ Exemple : "On anticipe mal les rendements, on sur-stocke les engrais"
+
+ÉTAPE 2 — Quel type de réponse ?
+→ Prédire un nombre (rendement en tonnes/ha) → Régression supervisée
+→ Classer (bonne récolte / mauvaise récolte) → Classification supervisée
+→ Trouver des profils de parcelles → Clustering
+→ Détecter des maladies sur photo → Deep Learning (CV)
+→ Q&amp;A sur documentation technique → GenAI (RAG)
+
+ÉTAPE 3 — Des données existent-elles ?
+→ OUI, labelisées → Supervisé
+→ OUI, non-labelisées → Non-supervisé ou étape de labeling
+→ NON → Règles métier + collecte future / API externe
+
+ÉTAPE 4 — Contraintes ?
+→ Explicabilité requise ? → Modèles interprétables d'abord
+→ Temps réel (&lt;100ms) ? → Modèles légers, pas de deep
+→ Peu de données ? → Modèles simples, transfer learning
+→ Réglementé (médical, banque) ? → Auditabilité = priorité
+</code></pre></div>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un client agricole veut "faire de l'IA". Quelle est ta première question ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">"<strong>Qu'est-ce qui coûte cher ou rate souvent aujourd'hui ?</strong>" — pas "quelles données avez-vous ?". Le problème métier d'abord. Exemple : "on anticipe mal les rendements → on sur-stocke les engrais" → ça devient un problème de régression supervisée (prédire tonnes/ha).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un client dit "nos données ne sont pas labelisées". Quelles sont tes 3 options ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1. Non-supervisé</strong> (clustering pour trouver des groupes si l'objectif est exploratoire). <strong>2. Étape de labeling</strong> (faire annoter un échantillon pour rendre possible le supervisé). <strong>3. Règles métier</strong> (si la logique est formulable sans données). Le ML supervisé est impossible sans labels.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Contrainte : "la décision doit être expliquée à un régulateur". Comment ça change ton choix de modèle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Prioriser les <strong>modèles interprétables</strong> : régression logistique (coefficients directement lisibles), arbres de décision, ou XGBoost avec <strong>SHAP values</strong> (qui attribue une contribution à chaque feature pour chaque prédiction). Un réseau de neurones profond est à éviter si l'auditabilité est obligatoire.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="6-ce-que-le-ml-ne-fait-pas-les-illusions-à-éviter"><span class="h2-num">7</span>6. Ce que le ML ne fait PAS — Les illusions à éviter<span class="h2-line"></span></h2>
+
+<h3 id="illusion-1-le-ml-va-trouver-la-solution-tout-seul">Illusion 1 : "Le ML va trouver la solution tout seul"</h3>
+
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Une startup retail a entraîné un modèle de recommandation. Il performe bien en offline (AUC 0.85). En prod, les ventes n'augmentent pas. Pourquoi ? Le modèle recommandait des articles déjà vus (il avait appris à être "safe"). Personne n'avait défini la bonne métrique métier.</p>
+
+<p><strong>Le ML optimise ce qu'on lui dit d'optimiser.</strong> Si la métrique est mal choisie, le modèle sera parfait... pour le mauvais objectif.</p></div>
+
+<h3 id="illusion-2-plus-de-données-meilleur-modèle">Illusion 2 : "Plus de données = meilleur modèle"</h3>
+
+<p>Plus de données aide si elles sont <strong>pertinentes et de qualité</strong>. 10M de lignes avec 40% d'erreurs de saisie, c'est pire que 100k lignes propres.</p>
+
+<h3 id="illusion-3-le-deep-learning-est-toujours-meilleur">Illusion 3 : "Le deep learning est toujours meilleur"</h3>
+
+<p>Sur données tabulaires structurées, XGBoost bat des réseaux de neurones profonds dans la majorité des benchmarks. Les tabular transformers existent mais leur supériorité n'est pas prouvée en général.</p>
+
+<h3 id="illusion-4-le-modèle-en-prod-le-modèle-en-dev">Illusion 4 : "Le modèle en prod = le modèle en dev"</h3>
+
+<p>Le monde change. Les données dérivent. Un modèle de scoring de crédit entraîné avant le COVID et déployé pendant ne vaut rien. Le monitoring est obligatoire.</p>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un modèle de recommandation a AUC 0.85 en test mais les ventes n'augmentent pas en prod. Pourquoi ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La <strong>métrique était mal choisie</strong>. Le modèle a optimisé ce qu'on lui a demandé (AUC sur clics) mais pas l'objectif métier (ventes). Il recommandait probablement des articles déjà vus (safe, bon AUC) plutôt que des nouveautés qui convertissent. Le ML optimise ce qu'on lui dit d'optimiser — pas ce qu'on veut vraiment.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un modèle de détection de fraude affiche 99.5% d'accuracy. Faut-il être rassuré ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Non — <strong>paradoxe des classes déséquilibrées</strong>. Si 0.5% des transactions sont des fraudes, un modèle qui dit "normal" à chaque fois obtient 99.5%. Il ne détecte aucune fraude. Les bonnes métriques sont le <strong>rappel</strong> (fraudes détectées / total vraies fraudes) et la <strong>précision</strong> (vraies fraudes / total alertes levées).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">"Le deep learning est toujours meilleur que XGBoost." Vrai ou faux ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Faux</strong>. Sur données tabulaires structurées, XGBoost bat des réseaux de neurones profonds dans la majorité des benchmarks. Le deep learning s'impose uniquement sur des données non-structurées (image, texte, audio) où les features ne peuvent pas être définies manuellement.</p></div></div></div></div></div>
+
+<h2 id="résumé-du-jour-1"><span class="h2-num">8</span>Résumé du Jour 1<span class="h2-line"></span></h2>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Ce que tu sais maintenant :
+
+1. ML = programmer par l'exemple (vs règles explicites)
+2. Règles d'abord si logique formulable et stable
+3. 4 types : supervisé / non-supervisé / séries temp. / deep+GenAI
+4. Données tabulaires → sklearn / XGBoost
+   Séries temp. → statsmodels / Prophet / darts
+   Image/Texte → PyTorch / HuggingFace
+   Génération → LLM API ou fine-tuning
+5. Le ML optimise ce qu'on lui dit d'optimiser
+6. La vraie valeur : choisir le bon outil, pas le plus sophistiqué
+</code></pre></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

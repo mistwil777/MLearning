@@ -1,0 +1,377 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 6Jour 6 — Exercices : Architecture hybrideExercicesCas clientsAuto-évaluati</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 6</div><h1>Jour 6 — <em>Exercices : Architecture hybride</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<hr />
+
+<h2 id="exercice-1-architecturer-un-système-hybride">Exercice 1 — Architecturer un système hybride</h2>
+
+<p>Pour chacun des 3 cas ci-dessous, proposez une architecture hybride ML + LLM + règles. Pour chaque proposition, indiquez :
+- Quel composant fait quoi (ML classique, LLM, règles)
+- Pourquoi ce découpage (pas l'inverse)
+- Le point de défaillance le plus probable</p>
+
+<hr />
+
+<h3 id="cas-a-modération-de-contenu-chez-une-plateforme-de-commerce">Cas A — Modération de contenu chez une plateforme d'e-commerce</h3>
+
+<p><strong>Contexte</strong> : Une marketplace reçoit 500 000 nouvelles annonces par jour. Certaines contiennent du contenu illicite (produits contrefaits, objets interdits, arnaque). Les règles actuelles basées sur des mots-clés ont un taux de faux positifs de 12% (annonces légitimes bloquées) et ratent 8% des fraudes sophistiquées qui contournent les mots-clés.</p>
+
+<p><strong>Contraintes</strong> :
+- 500 000 annonces/jour — le budget est limité
+- Temps de traitement cible : &lt; 2 secondes par annonce
+- Les décisions de bannissement définitif doivent être auditables
+- L'annonce contient : titre (texte), description (texte libre, 0-2000 chars), prix, catégorie, photos (1-10)</p>
+
+<p><strong>À proposer</strong> : schéma du pipeline avec les composants, justification du découpage.</p>
+
+<p>:::problem
+<strong>Question piège</strong> : pourquoi ne pas envoyer toutes les annonces directement à un LLM multimodal (texte + images) ?
+:::</p>
+
+<hr />
+
+<h3 id="cas-b-système-de-prêt-immobilier-chez-une-banque-régionale">Cas B — Système de prêt immobilier chez une banque régionale</h3>
+
+<p><strong>Contexte</strong> : La banque reçoit 2 000 demandes de prêt immobilier par mois. Chaque dossier contient : données structurées (revenus, charges, historique bancaire), pièces justificatives scannées (bulletins de salaire, avis d'imposition, relevés), et un formulaire libre où le demandeur décrit son projet.</p>
+
+<p><strong>Contraintes</strong> :
+- Décision réglementaire : le motif de refus doit être expliqué au client (RGPD, DSP2)
+- Les conseillers passent actuellement 45 min par dossier sur la saisie des pièces
+- Taux d'erreur de saisie manuelle : 3,2%
+- La décision finale d'octroi reste humaine (réglementation bancaire)</p>
+
+<p><strong>À proposer</strong> : pipeline d'assistance à l'instruction du dossier (pas la décision finale).</p>
+
+<hr />
+
+<h3 id="cas-c-chatbot-de-support-technique-pour-un-éditeur-de-logiciel-saas">Cas C — Chatbot de support technique pour un éditeur de logiciel SaaS</h3>
+
+<p><strong>Contexte</strong> : L'éditeur gère 15 000 tickets de support par mois. 60% sont des questions documentées (les réponses existent dans la documentation, les changelogs, les tickets précédents résolus). 30% sont des bugs nouveaux qui nécessitent une investigation. 10% sont des demandes de features.</p>
+
+<p><strong>Contraintes</strong> :
+- La documentation est mise à jour toutes les 2 semaines (nouvelles versions)
+- Les tickets précédents résolus sont une mine d'or non exploitée (200 000 tickets sur 5 ans)
+- Les clients Enterprise ont un SLA de 2h pour la première réponse
+- Le code source du produit ne doit pas être exposé au LLM (propriété intellectuelle)</p>
+
+<p><strong>À proposer</strong> : architecture complète du système de support automatisé.</p>
+
+<hr />
+
+<h2 id="exercice-2-rag-à-compléter">Exercice 2 — RAG à compléter</h2>
+
+<p>Voici un pipeline RAG incomplet. Complétez les parties marquées <code># TODO</code>.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.text_splitter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIEmbeddings</span><span class="p">,</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">FAISS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.chains</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetrievalQA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectoryLoader</span>
+
+<span class="c1"># ─── CHARGEMENT ───────────────────────────────────────────────────</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DirectoryLoader</span><span class="p">(</span><span class="s2">&quot;./docs/&quot;</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s2">&quot;**/*.txt&quot;</span><span class="p">)</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># TODO 1 : Créer un splitter avec des chunks de 600 tokens</span>
+<span class="c1"># et un chevauchement de 80 tokens. Quel paramètre contrôle</span>
+<span class="c1"># le chevauchement et pourquoi est-il utile ?</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="n">___</span>
+<span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="c1"># TODO 2 : Instancier le modèle d&#39;embedding.</span>
+<span class="c1"># Pourquoi utilise-t-on un modèle d&#39;embedding séparé du LLM ?</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OpenAIEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+
+<span class="c1"># ─── INDEXATION ───────────────────────────────────────────────────</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>
+
+<span class="c1"># Sauvegarder l&#39;index sur disque pour ne pas ré-indexer à chaque démarrage</span>
+<span class="c1"># TODO 3 : Quelle méthode FAISS permet de sauvegarder l&#39;index localement ?</span>
+<span class="n">vectorstore</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="s2">&quot;faiss_index&quot;</span><span class="p">)</span>
+
+<span class="c1"># ─── CHARGEMENT DE L&#39;INDEX EXISTANT ──────────────────────────────</span>
+<span class="c1"># TODO 4 : Comment charger un index FAISS déjà sauvegardé ?</span>
+<span class="c1"># (utile au redémarrage de l&#39;application)</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">___</span><span class="p">(</span>
+    <span class="s2">&quot;faiss_index&quot;</span><span class="p">,</span>
+    <span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">allow_dangerous_deserialization</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># ─── CHAÎNE QA ────────────────────────────────────────────────────</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># TODO 5 : Configurer le retriever pour retourner les 5 chunks les plus proches.</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">qa_chain</span> <span class="o">=</span> <span class="n">RetrievalQA</span><span class="o">.</span><span class="n">from_chain_type</span><span class="p">(</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span>
+    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+    <span class="n">return_source_documents</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># ─── TEST ─────────────────────────────────────────────────────────</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">qa_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;Quelle est la politique de remboursement ?&quot;</span><span class="p">})</span>
+
+<span class="c1"># TODO 6 : Affichez la réponse ET le contenu du premier chunk source utilisé.</span>
+<span class="c1"># Pourquoi est-il important de logger les sources utilisées en production ?</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+
+<span class="c1"># TODO 7 (bonus) : Modifiez la chaîne pour que le LLM réponde UNIQUEMENT</span>
+<span class="c1"># en se basant sur les documents fournis, et dise explicitement</span>
+<span class="c1"># &quot;Je ne trouve pas cette information dans la documentation&quot; si la réponse</span>
+<span class="c1"># n&#39;est pas dans les sources.</span>
+<span class="c1"># Indice : utilisez chain_type=&quot;stuff&quot; avec un prompt personnalisé.</span>
+</code></pre>
+</div>
+
+<p><strong>Questions de compréhension</strong> :
+1. Si vous avez 50 000 documents et que vous augmentez k de 4 à 20, qu'est-ce qui change en termes de qualité et de coût ?
+2. Quelle est la différence entre <code>chunk_size</code> et <code>chunk_overlap</code> ? Donnez un exemple où un overlap trop faible pose problème.
+3. Pourquoi <code>temperature=0</code> pour le LLM dans un RAG de documentation technique ?</p>
+
+<hr />
+
+<h2 id="exercice-3-cas-piège-sur-utilisation-du-llm">Exercice 3 — Cas piège : sur-utilisation du LLM</h2>
+
+<p>Les 4 situations ci-dessous décrivent des systèmes qui utilisent un LLM. Pour chacune, identifiez si le LLM est justifié ou si une approche plus simple (règles, ML classique, regex) ferait le travail mieux/moins cher. Justifiez votre réponse.</p>
+
+<hr />
+
+<p><strong>Cas 3.1 — Extraction de numéros de facture</strong></p>
+
+<p>Une équipe déploie un pipeline RAG + LLM pour extraire des informations d'un format de facture interne strictement standardisé. Chaque facture a exactement la même structure, les mêmes libellés, les mêmes positions. Le LLM coûte 0,02€ par facture × 400 000 factures/an = <strong>8 000€/an</strong>.</p>
+
+<blockquote>
+  <p>Quelle est l'alternative et quel en est le coût estimé ?</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas 3.2 — Classification de sentiment sur des avis produits</strong></p>
+
+<p>Un e-commerce reçoit 10 000 avis clients par jour. Chaque avis est évalué par GPT-4o pour en extraire : sentiment (positif/neutre/négatif), catégorie (livraison, produit, service client), et un résumé en 1 phrase.</p>
+
+<blockquote>
+  <p>Quelles parties peuvent être faites sans LLM ? Laquelle justifie un LLM ?</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas 3.3 — Prédiction de churn</strong></p>
+
+<p>Une startup SaaS utilise Claude pour analyser le comportement des utilisateurs (logs d'événements JSON) et prédire s'ils vont churner dans les 30 jours. Le LLM reçoit le JSON des 30 derniers jours d'activité de chaque utilisateur.</p>
+
+<blockquote>
+  <p>Quels sont les 3 problèmes fondamentaux de cette approche ?</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas 3.4 — Détection d'anomalies dans des séries temporelles</strong></p>
+
+<p>Un opérateur industriel envoie ses données de capteurs (température, pression, vibrations — 1000 mesures/seconde/capteur) à un LLM pour détecter des anomalies en temps réel.</p>
+
+<blockquote>
+  <p>Pourquoi est-ce architecturalement impossible, indépendamment du coût ?</p>
+</blockquote>
+
+<hr />
+
+<h2 id="exercice-4-checkpoint-jour-6">Exercice 4 — Checkpoint Jour 6</h2>
+
+<p>Répondez sans noter, puis comparez aux réponses.</p>
+
+<p><strong>Q1</strong> : Vous construisez un système pour une compagnie d'assurance. Le système reçoit des déclarations de sinistre en texte libre. Décrivez en 4 étapes le pipeline hybride optimal.</p>
+
+<p><strong>Q2</strong> : Un collègue propose de remplacer le vector store FAISS par une table PostgreSQL avec une colonne <code>TEXT</code> pour les embeddings sérialisés en JSON, et de calculer la similarité cosinus en Python après avoir récupéré tous les vecteurs. Pour 500 documents, est-ce acceptable ? Pour 500 000 documents ?</p>
+
+<p><strong>Q3</strong> : Votre chatbot RAG a un faithfulness de 0.62 (sur 10 réponses, 4 contiennent des informations non présentes dans les sources). Proposez 2 actions correctives concrètes.</p>
+
+<p><strong>Q4</strong> : Complétez ce tableau de routing coût/qualité :</p>
+
+<table>
+<thead>
+<tr>
+  <th>Type de question</th>
+  <th>Modèle recommandé</th>
+  <th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>"Bonjour, quel est votre horaire ?"</td>
+  <td>???</td>
+  <td>???</td>
+</tr>
+<tr>
+  <td>"Comparez nos offres Enterprise et Pro sur 8 critères"</td>
+  <td>???</td>
+  <td>???</td>
+</tr>
+<tr>
+  <td>"Quel est le prix du produit X ?" (réponse dans la doc)</td>
+  <td>???</td>
+  <td>???</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Q5</strong> : Dans un pipeline ML + LLM, à quel moment préférez-vous utiliser des règles explicites plutôt que laisser le LLM décider ? Donnez 2 exemples concrets.</p>
+
+<hr />
+
+<p>:::callout-insight
+<strong>Réponses Checkpoint</strong></p>
+
+<p>R1 : (1) LLM extrait les entités du texte (circonstances, dommages, tiers). (2) XGBoost score la probabilité de fraude sur features structurées + entités. (3) Règles métier décident (seuils). (4) Monitoring : faithfulness, hallucination rate, dérive du score fraude.</p>
+
+<p>R2 : 500 documents → acceptable (calcul Python en &lt; 100ms). 500 000 documents → inacceptable (charger 500k × 1536 floats en mémoire + calcul = plusieurs secondes par requête, insoutenable en prod). FAISS est conçu exactement pour ce problème.</p>
+
+<p>R3 : (1) Enrichir le prompt système avec une instruction explicite "Réponds uniquement à partir des sources fournies, cite-les". (2) Augmenter k (récupérer plus de chunks) pour que le contexte pertinent soit plus souvent présent. Bonus : revoir le chunking (chunks trop grands = contexte dilué).</p>
+
+<p>R4 : Horaire → Claude Haiku / GPT-4o-mini (question simple, réponse courte, coût minimal). Comparaison Enterprise/Pro → Claude Opus / GPT-4o (raisonnement multi-critères, qualité &gt; coût). Prix produit doc → Claude Haiku + RAG (retrieval suffit, le LLM n'a besoin que de retranscrire).</p>
+
+<p>R5 : Toujours utiliser des règles pour (1) les décisions à fort enjeu irréversibles (remboursement, bannissement, transaction financière), (2) les contraintes réglementaires qui doivent être auditables (motif de refus de prêt, RGPD). Exemples : seuil de montant pour validation humaine obligatoire ; catégories de produits interdits (liste explicite, pas un LLM).
+:::</p>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

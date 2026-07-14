@@ -1,0 +1,1171 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 3Jour 3 — Séries Temporelles : Prédire le futur structuréCoursThéorieExempl</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 3</div><h1>Jour 3 — <em>Séries Temporelles : Prédire le futur structuré</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!--
+    Layout coordonnées calculées :
+    ROOT       cx=550  cy=45
+    L1 : Décomposition cx=140 cy=150 | statsmodels/ARIMA cx=370 cy=150 | Prophet cx=590 cy=150 | darts cx=810 cy=150 | Évaluation cx=1000 cy=150
+    L2 Décomposition : Tendance cx=70 cy=260 | Saisonnalité cx=200 cy=260 | Résidus cx=100 cy=340
+    L2 ARIMA : AR cx=310 cy=260 | I cx=380 cy=260 | MA cx=450 cy=260 | ADF cx=380 cy=340
+    L2 Prophet : Tendance cx=530 cy=260 | Saisonnalité cx=620 cy=260 | Fériés cx=700 cy=260 | Régresseurs cx=610 cy=340
+    L2 darts : N-BEATS cx=770 cy=260 | TFT cx=850 cy=260 | Multivarié cx=810 cy=340
+    L2 Éval : MAE cx=940 cy=260 | MAPE cx=1020 cy=260 | Walk-forward cx=980 cy=340
+  -->
+
+  <!-- Connecteurs Root → L1 -->
+  <path d="M550,66 C550,108 140,108 140,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 370,108 370,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 L550,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 810,108 810,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 1000,108 1000,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- Connecteurs L1 Décomposition → L2 -->
+  <path d="M140,170 C140,215 70,215 70,242" fill="none" stroke="#9085e9" stroke-width="1.2"/>
+  <path d="M140,170 C140,215 200,215 200,242" fill="none" stroke="#9085e9" stroke-width="1.2"/>
+  <path d="M140,170 C140,215 100,295 100,322" fill="none" stroke="#9085e9" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- Connecteurs L1 ARIMA → L2 -->
+  <path d="M370,170 C370,215 310,215 310,242" fill="none" stroke="#3987e5" stroke-width="1.2"/>
+  <path d="M370,170 L370,242" fill="none" stroke="#3987e5" stroke-width="1.2"/>
+  <path d="M370,170 C370,215 450,215 450,242" fill="none" stroke="#3987e5" stroke-width="1.2"/>
+  <path d="M370,170 C370,295 380,295 380,322" fill="none" stroke="#3987e5" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- Connecteurs L1 Prophet → L2 -->
+  <path d="M590,170 C590,215 530,215 530,242" fill="none" stroke="#1baf7a" stroke-width="1.2"/>
+  <path d="M590,170 C590,215 620,215 620,242" fill="none" stroke="#1baf7a" stroke-width="1.2"/>
+  <path d="M590,170 C590,215 700,215 700,242" fill="none" stroke="#1baf7a" stroke-width="1.2"/>
+  <path d="M590,170 C590,295 610,295 610,322" fill="none" stroke="#1baf7a" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- Connecteurs L1 darts → L2 -->
+  <path d="M810,170 C810,215 770,215 770,242" fill="none" stroke="#e8a600" stroke-width="1.2"/>
+  <path d="M810,170 C810,215 850,215 850,242" fill="none" stroke="#e8a600" stroke-width="1.2"/>
+  <path d="M810,170 C810,295 810,295 810,322" fill="none" stroke="#e8a600" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- Connecteurs L1 Évaluation → L2 -->
+  <path d="M1000,170 C1000,215 940,215 940,242" fill="none" stroke="#e66767" stroke-width="1.2"/>
+  <path d="M1000,170 C1000,215 1020,215 1020,242" fill="none" stroke="#e66767" stroke-width="1.2"/>
+  <path d="M1000,170 C1000,295 980,295 980,322" fill="none" stroke="#e66767" stroke-width="1.1" stroke-dasharray="4,3"/>
+
+  <!-- ROOT -->
+  <rect x="360" y="24" width="380" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">SÉRIES TEMPORELLES</text>
+
+  <!-- L1 Décomposition -->
+  <rect x="52" y="130" width="176" height="40" rx="12" fill="rgba(144,133,233,.16)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="140" y="147" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="800">Décomposition</text>
+  <text x="140" y="162" text-anchor="middle" fill="#9e95b5" font-size="10">tendance · saison · résidus</text>
+
+  <!-- L1 statsmodels/ARIMA -->
+  <rect x="282" y="130" width="176" height="40" rx="12" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="370" y="147" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="800">statsmodels / ARIMA</text>
+  <text x="370" y="162" text-anchor="middle" fill="#9e95b5" font-size="10">modèles statistiques</text>
+
+  <!-- L1 Prophet -->
+  <rect x="502" y="130" width="176" height="40" rx="12" fill="rgba(27,175,122,.16)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="590" y="147" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">Prophet</text>
+  <text x="590" y="162" text-anchor="middle" fill="#9e95b5" font-size="10">Meta 2017 · non-statisticien</text>
+
+  <!-- L1 darts -->
+  <rect x="722" y="130" width="176" height="40" rx="12" fill="rgba(232,166,0,.16)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="810" y="147" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="800">darts</text>
+  <text x="810" y="162" text-anchor="middle" fill="#9e95b5" font-size="10">deep learning · multivarié</text>
+
+  <!-- L1 Évaluation -->
+  <rect x="912" y="130" width="176" height="40" rx="12" fill="rgba(230,103,103,.16)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="1000" y="147" text-anchor="middle" fill="#e66767" font-size="12" font-weight="800">Évaluation</text>
+  <text x="1000" y="162" text-anchor="middle" fill="#9e95b5" font-size="10">MAE · MAPE · walk-forward</text>
+
+  <!-- L2 Décomposition -->
+  <rect x="22" y="242" width="96" height="28" rx="7" fill="rgba(144,133,233,.10)" stroke="#9085e9" stroke-width="1"/>
+  <text x="70" y="261" text-anchor="middle" fill="#9085e9" font-size="11" font-weight="600">Tendance</text>
+  <rect x="150" y="242" width="100" height="28" rx="7" fill="rgba(144,133,233,.10)" stroke="#9085e9" stroke-width="1"/>
+  <text x="200" y="261" text-anchor="middle" fill="#9085e9" font-size="11" font-weight="600">Saisonnalité</text>
+  <rect x="52" y="322" width="96" height="28" rx="7" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="100" y="341" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Résidus</text>
+
+  <!-- L2 ARIMA -->
+  <rect x="275" y="242" width="54" height="28" rx="7" fill="rgba(57,135,229,.10)" stroke="#3987e5" stroke-width="1"/>
+  <text x="302" y="261" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="600">AR</text>
+  <rect x="345" y="242" width="46" height="28" rx="7" fill="rgba(57,135,229,.10)" stroke="#3987e5" stroke-width="1"/>
+  <text x="368" y="261" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="600">I</text>
+  <rect x="407" y="242" width="54" height="28" rx="7" fill="rgba(57,135,229,.10)" stroke="#3987e5" stroke-width="1"/>
+  <text x="434" y="261" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="600">MA</text>
+  <rect x="335" y="322" width="90" height="28" rx="7" fill="rgba(57,135,229,.08)" stroke="#3987e5" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="380" y="341" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Test ADF</text>
+
+  <!-- L2 Prophet -->
+  <rect x="490" y="242" width="80" height="28" rx="7" fill="rgba(27,175,122,.10)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="530" y="261" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="600">Tendance</text>
+  <rect x="577" y="242" width="86" height="28" rx="7" fill="rgba(27,175,122,.10)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="620" y="261" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="600">Saisonnalité</text>
+  <rect x="660" y="242" width="80" height="28" rx="7" fill="rgba(27,175,122,.10)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="700" y="261" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="600">Fériés</text>
+  <rect x="560" y="322" width="100" height="28" rx="7" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="610" y="341" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Régresseurs ext.</text>
+
+  <!-- L2 darts -->
+  <rect x="726" y="242" width="88" height="28" rx="7" fill="rgba(232,166,0,.10)" stroke="#e8a600" stroke-width="1"/>
+  <text x="770" y="261" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="600">N-BEATS</text>
+  <rect x="820" y="242" width="60" height="28" rx="7" fill="rgba(232,166,0,.10)" stroke="#e8a600" stroke-width="1"/>
+  <text x="850" y="261" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="600">TFT</text>
+  <rect x="758" y="322" width="104" height="28" rx="7" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="810" y="341" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Multivarié</text>
+
+  <!-- L2 Évaluation -->
+  <rect x="898" y="242" width="64" height="28" rx="7" fill="rgba(230,103,103,.10)" stroke="#e66767" stroke-width="1"/>
+  <text x="930" y="261" text-anchor="middle" fill="#e66767" font-size="11" font-weight="600">MAE</text>
+  <rect x="970" y="242" width="72" height="28" rx="7" fill="rgba(230,103,103,.10)" stroke="#e66767" stroke-width="1"/>
+  <text x="1006" y="261" text-anchor="middle" fill="#e66767" font-size="11" font-weight="600">MAPE</text>
+  <rect x="920" y="322" width="120" height="28" rx="7" fill="rgba(230,103,103,.08)" stroke="#e66767" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="980" y="341" text-anchor="middle" fill="#9e95b5" font-size="10" font-weight="600">Walk-forward</text>
+
+  <!-- Note bas de page -->
+  <text x="550" y="420" text-anchor="middle" fill="#716989" font-size="10">tirets = composantes secondaires · plein = composantes principales</text>
+</svg></div>
+
+<hr />
+
+<h2 id="section-1-pourquoi-les-séries-temporelles-sont-un-cas-à-part"><span class="h2-num">2</span>Section 1 — Pourquoi les séries temporelles sont un cas à part<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>Une <strong>série temporelle</strong> est une suite d'observations d'une même grandeur, mesurées à intervalles réguliers dans le temps. Exemples : la consommation électrique nationale relevée toutes les demi-heures, le nombre de visiteurs d'un site web par jour, le cours d'une action à la clôture chaque soir.</p>
+
+<p>Ce qui distingue radicalement une série temporelle d'un tableau de données ordinaire, c'est que <strong>l'ordre des lignes n'est pas arbitraire</strong> — il porte de l'information. Retirer une ligne au milieu ou en mélanger l'ordre détruit le sens des données.</p>
+
+<h3 id="lhypothèse-dindépendance-et-pourquoi-elle-est-violée">L'hypothèse d'indépendance, et pourquoi elle est violée</h3>
+
+<p>Tous les algorithmes de ML classique (régression linéaire, Random Forest, SVM…) reposent sur une hypothèse fondamentale : les observations sont <strong>indépendantes les unes des autres</strong>. La ligne 1 ne sait rien de la ligne 2.</p>
+
+<p>Dans une série temporelle, cette hypothèse est fausse par construction. La consommation électrique de demain à 8h est fortement liée à celle d'aujourd'hui à 8h : les Français se lèvent à la même heure, allument la cafetière, etc. Appliquer un Random Forest naïf sur une série temporelle en ignorant cet ordre reviendrait à prédire le temps de demain en mélangeant les données de toutes les saisons.</p>
+
+<h3 id="lautocorrélation-définition-depuis-zéro">L'autocorrélation : définition depuis zéro</h3>
+
+<p><strong>L'autocorrélation</strong> mesure à quel point la valeur d'une série à un instant <em>t</em> est corrélée avec sa propre valeur à un instant passé <em>t − k</em>. Le paramètre <em>k</em> s'appelle le <strong>lag</strong> (décalage).</p>
+
+<ul>
+<li>Lag 1 : la valeur d'hier prédit-elle celle d'aujourd'hui ?</li>
+<li>Lag 7 : la valeur du lundi dernier prédit-elle celle du lundi d'aujourd'hui ?</li>
+<li>Lag 365 : la valeur il y a un an prédit-elle celle d'aujourd'hui ?</li>
+</ul>
+
+<p>Une autocorrélation proche de 1 à lag 7 signifie que la série a un cycle hebdomadaire fort.</p>
+
+<h3 id="acf-et-pacf-deux-outils-visuels">ACF et PACF : deux outils visuels</h3>
+
+<p>Deux graphiques permettent de diagnostiquer l'autocorrélation d'une série sans faire de maths :</p>
+
+<p><strong>ACF (Autocorrelation Function)</strong> : affiche la corrélation entre la série et elle-même pour chaque lag. Si les barres restent hautes et décroissent lentement, la série a une tendance (les valeurs restent proches les unes des autres longtemps). Si les barres sont hautes à certains lags réguliers (7, 14, 21…), la série a une saisonnalité.</p>
+
+<p><strong>PACF (Partial Autocorrelation Function)</strong> : affiche la corrélation <em>directe</em> entre la série à l'instant <em>t</em> et celle à <em>t − k</em>, en retirant l'effet des lags intermédiaires. Utile pour choisir les paramètres d'un modèle ARIMA (voir Section 3).</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.graphics.tsaplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_acf</span><span class="p">,</span> <span class="n">plot_pacf</span>
+
+<span class="c1"># Charger une série de consommation électrique horaire (exemple fictif)</span>
+<span class="n">serie</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>  <span class="c1"># valeurs horaires sur 4 semaines</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">serie</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ACF — corrélations jusqu&#39;à 48 heures&quot;</span><span class="p">)</span>
+<span class="n">plot_pacf</span><span class="p">(</span><span class="n">serie</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;PACF — corrélations directes&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>Sur ce graphique, des pics à lag 24 et lag 48 révèlent un cycle journalier : la consommation à 14h aujourd'hui ressemble à celle à 14h hier et avant-hier.</p>
+
+<p><strong>Situation réelle : RTE, prévision de consommation électrique</strong></p>
+
+<p>RTE (Réseau de Transport d'Électricité) doit anticiper la consommation nationale à J+1 pour équilibrer production et distribution en temps réel. Une erreur de prévision de quelques GW peut forcer l'importation d'électricité à prix spot élevé ou le démarrage d'une centrale en urgence. RTE utilise des modèles de séries temporelles qui exploitent explicitement les autocorrélations journalières et hebdomadaires, combinées à des variables météo (température, ensoleillement).</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qui différencie une série temporelle d'un tableau de données classique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">L'ordre des observations porte de l'information : la valeur au temps t dépend des valeurs précédentes. Mélanger les lignes détruit le sens des données.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que l'autocorrélation à lag k ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La corrélation entre la valeur de la série à l'instant t et sa valeur k pas en arrière (t − k). Un lag 7 fort indique un cycle hebdomadaire.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que montre l'ACF vs la PACF ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">L'ACF montre toutes les corrélations avec les lags passés (directes + indirectes). La PACF isole la corrélation directe en retirant l'effet des lags intermédiaires.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un Random Forest classique échoue-t-il sur une série temporelle sans transformation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Il suppose l'indépendance des observations. Il ignore l'ordre temporel et peut utiliser des données futures pour prédire le passé si le split est mal fait.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="section-2-décomposer-une-série-tendance-saisonnalité-résidus"><span class="h2-num">3</span>Section 2 — Décomposer une série : tendance, saisonnalité, résidus<span class="h2-line"></span></h2>
+
+<h3 id="les-trois-composantes-dune-série-temporelle">Les trois composantes d'une série temporelle</h3>
+
+<p>Toute série temporelle peut être vue comme la superposition de trois phénomènes distincts :</p>
+
+<p><strong>La tendance</strong> est l'évolution lente et durable de la série sur le long terme : une progression régulière (croissance du trafic sur un site), une décroissance (chute des ventes d'une technologie obsolète), ou une stagnation. La tendance ignore les variations de court terme.</p>
+
+<p><strong>La saisonnalité</strong> désigne les variations cycliques qui se répètent à intervalles fixes et prévisibles. Un cycle peut être journalier (pics de trafic à 8h et 18h), hebdomadaire (ralentissement le week-end), mensuel ou annuel (ventes de jouets en décembre). La saisonnalité est <em>régulière</em> : elle revient au même endroit du cycle.</p>
+
+<p><strong>Les résidus</strong> (ou bruit) sont ce qui reste une fois la tendance et la saisonnalité retirées. Ils représentent les fluctuations aléatoires ou les anomalies non expliquées : une grève, une panne informatique, une vague de chaleur exceptionnelle. Un bon modèle laisse des résidus proches d'un bruit blanc (aucune structure exploitable).</p>
+
+<h3 id="décomposition-additive-vs-multiplicative">Décomposition additive vs multiplicative</h3>
+
+<p>Deux façons de combiner ces composantes :</p>
+
+<p><strong>Modèle additif</strong> : <code>série = tendance + saisonnalité + résidus</code>
+La saisonnalité a une amplitude constante quelle que soit la tendance. Exemple : une boutique qui vend toujours 50 unités de plus en décembre qu'en juillet, indépendamment de sa croissance globale.</p>
+
+<p><strong>Modèle multiplicatif</strong> : <code>série = tendance × saisonnalité × résidus</code>
+La saisonnalité est proportionnelle au niveau de la tendance. Exemple : les ventes de jouets à Noël. Si la boutique grandit et vend 1000 unités en moyenne au lieu de 100, le pic de Noël passe de +200 à +2000 — l'amplitude du pic <em>scale</em> avec le niveau. C'est le signe d'une décomposition multiplicative.</p>
+
+<div class="callout rule"><div class="callout-head">&#x2705; Règle d'or</div><p>si l'amplitude des pics et creux augmente avec la tendance → multiplicatif. Si elle reste constante → additif.</p></div>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="350" y="18" text-anchor="middle" fill="#9e95b5" font-size="13" font-weight="700">Décomposition additive d'une série temporelle</text>
+
+  <!-- Axe X partagé labels (mois) -->
+  <text x="120" y="372" fill="#716989" font-size="9">Jan</text>
+  <text x="185" y="372" fill="#716989" font-size="9">Mar</text>
+  <text x="255" y="372" fill="#716989" font-size="9">Mai</text>
+  <text x="320" y="372" fill="#716989" font-size="9">Juil</text>
+  <text x="390" y="372" fill="#716989" font-size="9">Sep</text>
+  <text x="455" y="372" fill="#716989" font-size="9">Nov</text>
+  <text x="520" y="372" fill="#716989" font-size="9">Jan</text>
+  <text x="590" y="372" fill="#716989" font-size="9">Mar</text>
+
+  <!-- === Bande 1 : Série brute (hauteur 78px, y: 28-86) === -->
+  <text x="8" y="48" fill="#c8c0d8" font-size="10" font-weight="600">Série</text>
+  <text x="8" y="60" fill="#c8c0d8" font-size="10" font-weight="600">brute</text>
+  <rect x="110" y="28" width="560" height="58" rx="4" fill="#1a1820"/>
+  <!-- Courbe brute irrégulière avec tendance + saisonnalité + bruit -->
+  <polyline points="115,72 145,58 175,68 205,50 235,62 265,44 295,56 325,48 355,60 385,42 415,54 445,48 475,62 505,44 535,56 565,42 595,52 625,46 655,58 670,44" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <!-- Labels axe Y -->
+  <text x="107" y="32" text-anchor="end" fill="#716989" font-size="9">max</text>
+  <text x="107" y="84" text-anchor="end" fill="#716989" font-size="9">min</text>
+
+  <!-- === Bande 2 : Tendance (y: 98-156) === -->
+  <text x="8" y="120" fill="#e8a600" font-size="10" font-weight="600">Tendance</text>
+  <rect x="110" y="98" width="560" height="58" rx="4" fill="#1a1820"/>
+  <!-- Droite légèrement montante -->
+  <line x1="115" y1="148" x2="670" y2="108" stroke="#e8a600" stroke-width="2"/>
+  <text x="107" y="102" text-anchor="end" fill="#716989" font-size="9">+</text>
+  <text x="107" y="154" text-anchor="end" fill="#716989" font-size="9">−</text>
+
+  <!-- === Bande 3 : Saisonnalité (y: 168-226) === -->
+  <text x="8" y="188" fill="#1baf7a" font-size="10" font-weight="600">Saison-</text>
+  <text x="8" y="200" fill="#1baf7a" font-size="10" font-weight="600">nalité</text>
+  <rect x="110" y="168" width="560" height="58" rx="4" fill="#1a1820"/>
+  <!-- Sinusoïde régulière : centre y=197, amplitude=22, période ~130px -->
+  <polyline points="115,197 128,184 141,175 154,174 167,178 180,187 193,197 206,207 219,216 232,218 245,214 258,206 271,197 284,188 297,179 310,178 323,181 336,190 349,197 362,207 375,216 388,218 401,214 414,206 427,197 440,188 453,179 466,177 479,181 492,190 505,197 518,207 531,216 544,218 557,214 570,205 583,197 596,188 609,179 622,178 635,181 648,190 661,197 670,204" fill="none" stroke="#1baf7a" stroke-width="2"/>
+  <!-- Ligne zéro -->
+  <line x1="110" y1="197" x2="670" y2="197" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- === Bande 4 : Résidus (y: 238-296) === -->
+  <text x="8" y="258" fill="#e66767" font-size="10" font-weight="600">Résidus</text>
+  <rect x="110" y="238" width="560" height="58" rx="4" fill="#1a1820"/>
+  <!-- Bruit faible autour de zéro -->
+  <line x1="110" y1="267" x2="670" y2="267" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+  <polyline points="115,267 135,263 155,270 175,265 195,268 215,263 235,271 255,266 275,269 295,264 315,268 335,272 355,265 375,269 395,264 415,268 435,271 455,265 475,269 495,272 515,264 535,268 555,265 575,270 595,266 615,268 635,264 655,270 670,267" fill="none" stroke="#e66767" stroke-width="1.5"/>
+
+  <!-- Légende -->
+  <line x1="120" y1="352" x2="142" y2="352" stroke="#3987e5" stroke-width="2"/>
+  <text x="147" y="356" fill="#9e95b5" font-size="10">Série brute</text>
+  <line x1="215" y1="352" x2="237" y2="352" stroke="#e8a600" stroke-width="2"/>
+  <text x="242" y="356" fill="#9e95b5" font-size="10">Tendance</text>
+  <line x1="310" y1="352" x2="332" y2="352" stroke="#1baf7a" stroke-width="2"/>
+  <text x="337" y="356" fill="#9e95b5" font-size="10">Saisonnalité</text>
+  <line x1="415" y1="352" x2="437" y2="352" stroke="#e66767" stroke-width="2"/>
+  <text x="442" y="356" fill="#9e95b5" font-size="10">Résidus</text>
+  <text x="350" y="368" text-anchor="middle" fill="#716989" font-size="10">Additif : Série = Tendance + Saisonnalité + Résidus</text>
+</svg>
+</div>
+
+<h3 id="code-décomposer-avec-statsmodels">Code : décomposer avec statsmodels</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.seasonal</span><span class="w"> </span><span class="kn">import</span> <span class="n">seasonal_decompose</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Série mensuelle de fréquentation des trains SNCF (fictive)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="n">frequentation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">dates</span><span class="p">)</span>  <span class="c1"># 48 mois</span>
+
+<span class="c1"># Décomposition additive</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">seasonal_decompose</span><span class="p">(</span><span class="n">frequentation</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;additive&quot;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">observed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Série originale&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">trend</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Tendance&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">seasonal</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Saisonnalité&quot;</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Résidus&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>Le paramètre <code>period=12</code> indique que la saisonnalité est annuelle (12 mois). Pour des données journalières avec cycle hebdomadaire, on utilisera <code>period=7</code>.</p>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège : la décomposition n'est pas un modèle de prévision.</strong> Elle décrit la structure d'une série historique, mais ne prédit pas les valeurs futures. Pour prévoir, on utilise ARIMA, Prophet ou darts (Sections 3, 4, 5).
+:::</p>
+
+<p><strong>Situation réelle : SNCF, prévision de fréquentation</strong></p>
+
+<p>La SNCF anticipe la fréquentation de ses trains plusieurs semaines à l'avance pour ajuster le nombre de rames et optimiser les prix dynamiques. La décomposition révèle trois niveaux de saisonnalité simultanés : un cycle hebdomadaire (lundi/vendredi vs week-end), un cycle annuel (vacances scolaires, été), et une tendance longue terme (croissance du TGV, puis choc Covid). Identifier ces niveaux séparément permet de construire des modèles plus robustes.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre tendance et saisonnalité ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La tendance est l'évolution lente et durable (mois, années). La saisonnalité est un cycle régulier et prévisible qui se répète à intervalles fixes (jours, semaines, années).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment choisir entre décomposition additive et multiplicative ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Si l'amplitude des pics augmente avec le niveau de la série → multiplicatif. Si l'amplitude reste constante → additif.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que représentent les résidus d'une décomposition ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Ce qui reste après avoir retiré tendance et saisonnalité. Ils doivent ressembler à du bruit aléatoire sans structure. Un résidu structuré indique que le modèle a raté quelque chose.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que signifie le paramètre `period` dans `seasonal_decompose` ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le nombre d'observations dans un cycle saisonnier complet. Pour des données mensuelles avec cycle annuel : period=12. Pour des données journalières avec cycle hebdomadaire : period=7.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="section-3-statsmodels-modèles-statistiques-classiques"><span class="h2-num">4</span>Section 3 — statsmodels : modèles statistiques classiques<span class="h2-line"></span></h2>
+
+<h3 id="la-stationnarité-définition-depuis-zéro">La stationnarité : définition depuis zéro</h3>
+
+<p>Un modèle statistique de séries temporelles comme ARIMA fonctionne avec une hypothèse clé : la <strong>stationnarité</strong>. Une série est <strong>stationnaire</strong> si ses propriétés statistiques (moyenne et variance) ne changent pas au fil du temps.</p>
+
+<p>Intuition : si on découpe la série en tranches de 3 mois, chaque tranche devrait avoir à peu près la même moyenne et la même variabilité. Si la série monte régulièrement (tendance) ou si ses oscillations s'amplifient, elle n'est pas stationnaire.</p>
+
+<p>Pourquoi c'est important : ARIMA apprend des patterns sur l'historique et suppose que ces patterns continueront. Si la moyenne de la série change au fil du temps, le modèle ne peut pas extrapoler correctement.</p>
+
+<h3 id="le-test-adf-savoir-si-une-série-est-stationnaire">Le test ADF : savoir si une série est stationnaire</h3>
+
+<p>Le <strong>test ADF (Augmented Dickey-Fuller)</strong> est un test statistique qui répond à la question "cette série a-t-elle une tendance non-stationnaire ?". Il produit une p-value :</p>
+
+<ul>
+<li><strong>p-value &lt; 0.05</strong> : la série est probablement stationnaire (on rejette l'hypothèse nulle de non-stationnarité).</li>
+<li><strong>p-value &gt; 0.05</strong> : la série est probablement non-stationnaire → il faut la différencier.</li>
+</ul>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># before</span>
+<span class="c1"># Tester la stationnarité d&#39;une série brute (consommation d&#39;eau mensuelle)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">adfuller</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">serie_brute</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>  <span class="c1"># données Veolia</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">serie_brute</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Résultat typique sur série avec tendance : p-value = 0.43 → non-stationnaire</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># after</span>
+<span class="c1"># Différencier la série pour la rendre stationnaire</span>
+<span class="n">serie_diff</span> <span class="o">=</span> <span class="n">serie_brute</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">serie_diff</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value après différenciation : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Résultat typique : p-value = 0.003 → stationnaire ✓</span>
+</code></pre>
+</div>
+
+<p>La <strong>différenciation</strong> consiste à remplacer chaque valeur par la différence avec la valeur précédente : <code>y_t − y_{t-1}</code>. Cela retire la tendance linéaire.</p>
+
+<h3 id="arima-les-trois-paramètres-expliqués">ARIMA : les trois paramètres expliqués</h3>
+
+<p>ARIMA est un acronyme qui décrit trois mécanismes combinés :</p>
+
+<p><strong>AR — Auto-Régression (paramètre p)</strong>
+La valeur actuelle est prédite comme une combinaison linéaire des <em>p</em> valeurs précédentes.
+Exemple : <code>y_t = 0.8 × y_{t-1} + 0.1 × y_{t-2} + bruit</code> (AR avec p=2)
+→ "Aujourd'hui ressemble à hier et avant-hier."</p>
+
+<p><strong>I — Intégration (paramètre d)</strong>
+Le <em>d</em> indique combien de fois on différencie la série pour la rendre stationnaire.
+- d=0 : la série est déjà stationnaire.
+- d=1 : on différencie une fois (retire une tendance linéaire).
+- d=2 : on différencie deux fois (retire une tendance quadratique, rare en pratique).</p>
+
+<p><strong>MA — Moyenne Mobile (paramètre q)</strong>
+La valeur actuelle dépend aussi des <em>q</em> erreurs de prédiction passées (les résidus passés).
+Exemple : <code>y_t = bruit_t + 0.5 × bruit_{t-1}</code> (MA avec q=1)
+→ "L'erreur d'hier m'aide à corriger ma prédiction d'aujourd'hui."</p>
+
+<h3 id="sarima-ajouter-la-saisonnalité">SARIMA : ajouter la saisonnalité</h3>
+
+<p>ARIMA seul ne gère pas la saisonnalité. <strong>SARIMA</strong> (Seasonal ARIMA) ajoute un second triplet <code>(P, D, Q, s)</code> pour capturer les patterns saisonniers, où <em>s</em> est la période saisonnière.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.statespace.sarimax</span><span class="w"> </span><span class="kn">import</span> <span class="n">SARIMAX</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Données fictives : consommation d&#39;eau mensuelle (Veolia, 5 ans)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2019-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">tendance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<span class="n">saisonnalite</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+<span class="n">serie</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">tendance</span> <span class="o">+</span> <span class="n">saisonnalite</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">dates</span><span class="p">)</span>
+
+<span class="c1"># Séparer train (4 ans) et test (1 an)</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">serie</span><span class="p">[:</span><span class="s2">&quot;2022-12&quot;</span><span class="p">]</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">serie</span><span class="p">[</span><span class="s2">&quot;2023-01&quot;</span><span class="p">:]</span>
+
+<span class="c1"># Ajuster un modèle SARIMA(1,1,1)(1,1,0,12)</span>
+<span class="c1"># (p,d,q) = (1,1,1) pour la partie non-saisonnière</span>
+<span class="c1"># (P,D,Q,s) = (1,1,0,12) pour la partie saisonnière (période annuelle)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SARIMAX</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">seasonal_order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Prévoir les 12 mois suivants</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Visualisation</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">train</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Historique&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#3987e5&quot;</span><span class="p">)</span>
+<span class="n">test</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Réel (test)&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#9085e9&quot;</span><span class="p">)</span>
+<span class="n">forecast</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Prévision SARIMA&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#1baf7a&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;SARIMA — Prévision consommation eau mensuelle&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Résumé du modèle :</span><span class="se">\n</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="quand-utiliser-arimasarima-plutôt-que-prophet">Quand utiliser ARIMA/SARIMA plutôt que Prophet</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Situation</th>
+  <th>ARIMA/SARIMA</th>
+  <th>Prophet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Données historiques courtes (&lt; 2 ans)</td>
+  <td>✓ meilleur</td>
+  <td>moins fiable</td>
+</tr>
+<tr>
+  <td>Série à une seule saisonnalité simple</td>
+  <td>✓ efficace</td>
+  <td>✓ aussi bon</td>
+</tr>
+<tr>
+  <td>Besoin d'intervalles de confiance calibrés</td>
+  <td>✓ robuste</td>
+  <td>approximatif</td>
+</tr>
+<tr>
+  <td>Utilisateur non-statisticien</td>
+  <td>complexe</td>
+  <td>✓ recommandé</td>
+</tr>
+<tr>
+  <td>Données manquantes nombreuses</td>
+  <td>difficile</td>
+  <td>✓ gère bien</td>
+</tr>
+<tr>
+  <td>Événements ponctuels (fériés, promos)</td>
+  <td>manuel</td>
+  <td>✓ intégré</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Situation réelle : Veolia, prévision de consommation d'eau</strong></p>
+
+<p>Veolia anticipe la demande en eau potable au niveau de chaque commune pour optimiser le pompage, le traitement et la distribution. La consommation présente une saisonnalité forte (pics estivaux, jardinage), une tendance liée à la démographie, et des résidus liés aux événements locaux (festival, canicule exceptionnelle). SARIMA permet de quantifier l'incertitude de prévision avec des intervalles de confiance, ce qui alimente directement les décisions d'infrastructure (dimensionner les réservoirs tampon).</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la stationnarité d'une série temporelle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une série est stationnaire si sa moyenne et sa variance restent constantes dans le temps. Une tendance croissante ou des oscillations qui s'amplifient indiquent une non-stationnarité.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que signifient les paramètres (p, d, q) d'ARIMA ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">p = nombre de valeurs passées utilisées (AR), d = nombre de différenciations pour rendre stationnaire (I), q = nombre d'erreurs passées utilisées (MA).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment interpréter une p-value de 0.62 au test ADF ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La série est probablement non-stationnaire. Il faut la différencier (d ≥ 1) avant d'ajuster un modèle ARIMA.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre ARIMA et SARIMA ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">SARIMA ajoute un second triplet (P, D, Q, s) pour modéliser la composante saisonnière. Le paramètre s indique la période du cycle (12 pour annuel sur données mensuelles).</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="section-4-prophet-prévision-pour-les-non-statisticiens"><span class="h2-num">5</span>Section 4 — Prophet : prévision pour les non-statisticiens<span class="h2-line"></span></h2>
+
+<h3 id="contexte-de-création">Contexte de création</h3>
+
+<div class="callout insight"><div class="callout-head">&#x1f3d7; Contexte de création</div><p>Prophet est une bibliothèque open-source publiée par Meta (Facebook) en 2017. Elle est née d'un problème concret chez Meta : des centaines d'équipes métier devaient prévoir des métriques (engagement, publicité, infrastructure) sans avoir de data scientists spécialisés en séries temporelles. L'objectif de Prophet est que quelqu'un sans formation en statistique puisse obtenir une prévision raisonnable en quelques lignes de code, tout en permettant à un expert de l'affiner.</p></div>
+
+<h3 id="ce-que-prophet-fait-concrètement">Ce que Prophet fait concrètement</h3>
+
+<p>Prophet modélise une série comme la somme de trois composantes séparées et indépendantes :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">y(t) = tendance(t) + saisonnalité(t) + effets_fériés(t) + bruit
+</code></pre></div>
+
+<p><strong>La tendance</strong> peut être linéaire (croissance constante) ou logistique (croissance avec un plafond saturant). Si la série représente des abonnés à un service avec un marché fini, la tendance logistique est plus réaliste.</p>
+
+<p><strong>La saisonnalité</strong> est modélisée par des séries de Fourier : des sinusoïdes de différentes fréquences superposées. Prophet gère plusieurs niveaux de saisonnalité simultanément (journalier, hebdomadaire, annuel) sans configuration manuelle.</p>
+
+<p><strong>Les effets des jours fériés</strong> sont traités comme des indicateurs binaires auxquels le modèle associe automatiquement un coefficient d'impact.</p>
+
+<h3 id="régresseurs-externes-ajouter-de-la-connaissance-métier">Régresseurs externes : ajouter de la connaissance métier</h3>
+
+<p>Par défaut, Prophet ne se base que sur l'historique de la série elle-même. La fonctionnalité <code>add_regressor()</code> permet d'injecter une variable externe connue à la fois dans le passé et dans le futur.</p>
+
+<p>Exemples concrets :
+- Ajouter la météo prévue (température) pour améliorer les prévisions de ventes de glaces.
+- Ajouter un indicateur "campagne promotionnelle" (0/1) pour les ventes Decathlon.
+- Ajouter le prix du carburant pour les prévisions de fréquentation des transports.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Données fictives : ventes mensuelles Decathlon par magasin</span>
+<span class="c1"># La colonne &#39;ds&#39; (datestamp) et &#39;y&#39; (valeur) sont imposées par Prophet</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">450</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span> <span class="mi">420</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">780</span><span class="p">,</span> <span class="mi">890</span><span class="p">,</span> <span class="mi">850</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">490</span><span class="p">,</span> <span class="mi">430</span><span class="p">,</span> <span class="mi">820</span><span class="p">,</span>
+          <span class="mi">470</span><span class="p">,</span> <span class="mi">395</span><span class="p">,</span> <span class="mi">445</span><span class="p">,</span> <span class="mi">535</span><span class="p">,</span> <span class="mi">645</span><span class="p">,</span> <span class="mi">805</span><span class="p">,</span> <span class="mi">920</span><span class="p">,</span> <span class="mi">875</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">850</span><span class="p">,</span>
+          <span class="mi">490</span><span class="p">,</span> <span class="mi">410</span><span class="p">,</span> <span class="mi">460</span><span class="p">,</span> <span class="mi">555</span><span class="p">,</span> <span class="mi">660</span><span class="p">,</span> <span class="mi">820</span><span class="p">,</span> <span class="mi">945</span><span class="p">,</span> <span class="mi">895</span><span class="p">,</span> <span class="mi">740</span><span class="p">,</span> <span class="mi">525</span><span class="p">,</span> <span class="mi">465</span><span class="p">,</span> <span class="mi">870</span><span class="p">],</span>
+    <span class="s2">&quot;promo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
+              <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
+              <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="c1"># Initialiser Prophet avec saisonnalité annuelle</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span>
+    <span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># données mensuelles, pas de cycle hebdo</span>
+    <span class="n">daily_seasonality</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># Ajouter le régresseur &quot;campagne promotionnelle&quot;</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_regressor</span><span class="p">(</span><span class="s2">&quot;promo&quot;</span><span class="p">)</span>
+
+<span class="c1"># Entraîner sur les 30 premiers mois</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">30</span><span class="p">]</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="c1"># Préparer le futur : 6 mois à prévoir</span>
+<span class="c1"># On DOIT fournir les valeurs futures du régresseur (on les connaît à l&#39;avance)</span>
+<span class="n">futur</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="n">futur</span><span class="p">[</span><span class="s2">&quot;promo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">futur</span><span class="p">)]</span>
+
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span>
+
+<span class="c1"># Afficher les composantes séparées</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">plot_components</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Afficher la prévision avec intervalles de confiance</span>
+<span class="n">fig2</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Prophet — Ventes Decathlon avec régresseur promotionnel&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<h3 id="la-validation-croisée-temporelle-pourquoi-on-ne-peut-pas-mélanger">La validation croisée temporelle : pourquoi on ne peut pas mélanger</h3>
+
+<p>En ML classique, on fait souvent un split aléatoire : 80% des lignes au hasard pour l'entraînement, 20% pour le test. <strong>Sur une série temporelle, c'est une erreur grave.</strong></p>
+
+<p>Le problème s'appelle le <strong>data leakage temporel</strong> : si on entraîne un modèle sur un mélange incluant des données de décembre 2023 pour prédire des données de mars 2023, le modèle a accès à des informations du futur pendant l'entraînement. Sa performance sur le jeu de test sera artificiellement bonne. En production, il n'aura jamais accès au futur — et s'effondrera.</p>
+
+<p><strong>La règle absolue</strong> : le jeu d'entraînement doit toujours être strictement antérieur au jeu de test.</p>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="350" y="18" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Split aléatoire vs Split temporel</text>
+
+  <!-- === GAUCHE : Split aléatoire (FAUX) === -->
+  <text x="175" y="38" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">Split aléatoire — FAUX ✗</text>
+
+  <!-- Frise chronologique gauche -->
+  <rect x="20" y="48" width="310" height="28" rx="14" fill="#26232f" stroke="#2e2b3a" stroke-width="1"/>
+  <text x="25" y="62" fill="#716989" font-size="9">Jan 2022</text>
+  <text x="295" y="62" text-anchor="end" fill="#716989" font-size="9">Déc 2023</text>
+  <!-- Flèche -->
+  <line x1="320" y1="62" x2="335" y2="62" stroke="#716989" stroke-width="1" marker-end="url(#arr-time-l)"/>
+
+  <!-- Points mélangés (train=bleu, test=rouge, dispersés) -->
+  <circle cx="45" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="65" cy="62" r="5" fill="#e66767"/>
+  <circle cx="85" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="105" cy="62" r="5" fill="#e66767"/>
+  <circle cx="125" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="145" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="165" cy="62" r="5" fill="#e66767"/>
+  <circle cx="185" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="205" cy="62" r="5" fill="#e66767"/>
+  <circle cx="225" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="245" cy="62" r="5" fill="#e66767"/>
+  <circle cx="265" cy="62" r="5" fill="#3987e5"/>
+  <circle cx="285" cy="62" r="5" fill="#e66767"/>
+  <circle cx="305" cy="62" r="5" fill="#3987e5"/>
+
+  <!-- Annotation problème -->
+  <text x="175" y="100" text-anchor="middle" fill="#e66767" font-size="10">Train et test mélangés dans le temps</text>
+  <text x="175" y="114" text-anchor="middle" fill="#e66767" font-size="10">→ le modèle voit le futur pendant l'entraînement !</text>
+  <text x="175" y="134" text-anchor="middle" fill="#716989" font-size="9">Métriques artificiellement bonnes</text>
+  <text x="175" y="147" text-anchor="middle" fill="#716989" font-size="9">→ effondrement en production</text>
+
+  <!-- Légende gauche -->
+  <circle cx="115" cy="175" r="5" fill="#3987e5"/>
+  <text x="125" y="179" fill="#9e95b5" font-size="10">Train (80%)</text>
+  <circle cx="195" cy="175" r="5" fill="#e66767"/>
+  <text x="205" y="179" fill="#9e95b5" font-size="10">Test (20%)</text>
+
+  <!-- Séparateur -->
+  <line x1="355" y1="30" x2="355" y2="190" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- === DROITE : Split temporel (CORRECT) === -->
+  <text x="525" y="38" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="700">Split temporel — CORRECT ✓</text>
+
+  <!-- Frise chronologique droite -->
+  <rect x="370" y="48" width="310" height="28" rx="14" fill="#26232f" stroke="#2e2b3a" stroke-width="1"/>
+  <text x="375" y="62" fill="#716989" font-size="9">Jan 2022</text>
+  <text x="645" y="62" text-anchor="end" fill="#716989" font-size="9">Déc 2023</text>
+  <line x1="666" y1="62" x2="681" y2="62" stroke="#716989" stroke-width="1" marker-end="url(#arr-time-r)"/>
+
+  <!-- Bloc train (bleu) à gauche -->
+  <rect x="373" y="51" width="198" height="22" rx="11" fill="rgba(57,135,229,0.3)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="472" y="65" text-anchor="middle" fill="#3987e5" font-size="9" font-weight="600">TRAIN — Jan 2022 → Sep 2023</text>
+
+  <!-- Bloc test (rouge) à droite -->
+  <rect x="575" y="51" width="101" height="22" rx="11" fill="rgba(230,103,103,0.3)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="626" y="65" text-anchor="middle" fill="#e66767" font-size="9" font-weight="600">TEST — Oct-Déc 2023</text>
+
+  <!-- Séparation temporelle -->
+  <line x1="575" y1="45" x2="575" y2="84" stroke="#e8a600" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="575" y="95" text-anchor="middle" fill="#e8a600" font-size="9">coupure</text>
+
+  <!-- Annotation correct -->
+  <text x="525" y="114" text-anchor="middle" fill="#1baf7a" font-size="10">Train toujours antérieur au test</text>
+  <text x="525" y="128" text-anchor="middle" fill="#1baf7a" font-size="10">→ simulation réaliste des conditions de prod</text>
+  <text x="525" y="148" text-anchor="middle" fill="#716989" font-size="9">Le modèle ne voit jamais le futur</text>
+  <text x="525" y="161" text-anchor="middle" fill="#716989" font-size="9">→ métriques fiables</text>
+
+  <!-- Marqueurs -->
+  <defs>
+    <marker id="arr-time-l" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#716989"/>
+    </marker>
+    <marker id="arr-time-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#716989"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># before</span>
+<span class="c1"># MAUVAIS : split aléatoire sur une série temporelle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># features (lags)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>  <span class="c1"># valeurs à prédire</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="c1"># Problème : X_train contient des observations futures par rapport à X_test !</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># after</span>
+<span class="c1"># BON : TimeSeriesSplit — les folds respectent l&#39;ordre temporel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeriesSplit</span>
+
+<span class="n">tscv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="p">(</span><span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tscv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fold </span><span class="si">{</span><span class="n">fold</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> — Train: </span><span class="si">{</span><span class="n">train_idx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">→</span><span class="si">{</span><span class="n">train_idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> | Test: </span><span class="si">{</span><span class="n">test_idx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">→</span><span class="si">{</span><span class="n">test_idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Le test est toujours postérieur au train ✓</span>
+
+<span class="c1"># Fold 1 — Train: 0→16  | Test: 17→33</span>
+<span class="c1"># Fold 2 — Train: 0→33  | Test: 34→50</span>
+<span class="c1"># Fold 3 — Train: 0→50  | Test: 51→66</span>
+<span class="c1"># Fold 4 — Train: 0→66  | Test: 67→83</span>
+<span class="c1"># Fold 5 — Train: 0→83  | Test: 84→99</span>
+</code></pre>
+</div>
+
+<p><strong>Situation réelle : Decathlon, prévision de ventes par magasin</strong></p>
+
+<p>Decathlon exploite des centaines de magasins avec des profils de vente très différents selon la région (côte → vêtements nautiques, montagne → ski). Prophet s'y impose parce qu'il gère nativement les jours fériés nationaux et régionaux, les soldes, et les régresseurs comme la météo locale — sans exiger qu'un statisticien configure un modèle ARIMA par magasin. Un data scientist peut déployer une prévision pour 500 magasins en quelques heures.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est l'architecture interne de Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">y(t) = tendance(t) + saisonnalité(t) + effets_fériés(t) + bruit. Trois composantes séparables, chacune estimée indépendamment.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">À quoi sert `add_regressor()` dans Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">À injecter une variable externe connue à l'avance (météo, indicateur promo). Elle doit être disponible aussi bien dans l'historique que dans la fenêtre de prévision.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le data leakage temporel ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Quand des données futures contaminent l'entraînement (par un split aléatoire). Le modèle voit des informations qu'il n'aurait pas en production, ce qui gonfle artificiellement ses métriques.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utiliser TimeSeriesSplit plutôt que train_test_split ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">TimeSeriesSplit respecte l'ordre chronologique : chaque fold de test est strictement postérieur au fold d'entraînement, ce qui simule les conditions réelles de prévision.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="section-5-darts-la-boîte-à-outils-complète"><span class="h2-num">6</span>Section 5 — darts : la boîte à outils complète<span class="h2-line"></span></h2>
+
+<h3 id="ce-que-darts-apporte-que-prophet-et-statsmodels-nont-pas">Ce que darts apporte que Prophet et statsmodels n'ont pas</h3>
+
+<p><strong>darts</strong> est une bibliothèque Python open-source (Unit8, 2020) conçue pour unifier dans une même interface tous les types de modèles de séries temporelles : des statistiques classiques (ARIMA, Theta) aux modèles deep learning spécialisés (N-BEATS, TFT, LightGBM temporal).</p>
+
+<p>La valeur ajoutée de darts s'exprime dans trois scénarios que ni Prophet ni statsmodels ne couvrent bien :</p>
+
+<p><strong>1. Séries multivariées</strong> : prévoir simultanément plusieurs KPIs en capturant leurs interactions. Par exemple, prévoir à la fois la production éolienne et la production solaire, sachant qu'elles dépendent toutes deux de la même météo. darts gère les <code>TimeSeries</code> multivariées comme objets natifs.</p>
+
+<p><strong>2. Très longues séries avec patterns complexes</strong> : des modèles comme N-BEATS (Neural Basis Expansion Analysis) apprennent des patterns sur des milliers d'observations et surpassent souvent ARIMA sur des horizons longs.</p>
+
+<p><strong>3. Intervalles de confiance calibrés</strong> : darts propose des méthodes de quantile regression et de conformal prediction pour produire des intervalles de prévision statistiquement calibrés, ce que Prophet approxime seulement.</p>
+
+<h3 id="n-beats-et-tft-les-deux-architectures-clés">N-BEATS et TFT : les deux architectures clés</h3>
+
+<p><strong>N-BEATS (2020, Element AI)</strong> est un réseau de neurones profond conçu uniquement pour les séries temporelles. Son architecture en "blocs" force le modèle à séparer explicitement tendance et saisonnalité, ce qui le rend interprétable malgré sa profondeur.</p>
+
+<p><strong>TFT — Temporal Fusion Transformer (2021, Google)</strong> est un transformer adapté aux séries temporelles. Il gère nativement les variables covariantes (variables extérieures connues dans le futur), les séries multivariées, et produit des prévisions multi-horizons avec intervalles de confiance.</p>
+
+<h3 id="code-comparatif-prophet-vs-darts-sur-le-même-problème">Code comparatif : Prophet vs darts sur le même problème</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># before</span>
+<span class="c1"># Prophet — approche standard</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span>  <span class="c1"># production éolienne journalière EDF</span>
+<span class="p">})</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">600</span><span class="p">])</span>
+<span class="n">future</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+<span class="c1"># Prophet : une seule série, pas de gestion native du multivarié</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># after</span>
+<span class="c1"># darts — même problème avec gestion multivariée et intervalles calibrés</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBEATSModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mae</span><span class="p">,</span> <span class="n">mape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.dataprocessing.transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Scaler</span>
+
+<span class="c1"># Créer une TimeSeries darts à partir d&#39;un DataFrame</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">production_eolienne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+<span class="n">vitesse_vent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+
+<span class="c1"># TimeSeries multivariée : production + vent en entrée covariante</span>
+<span class="n">serie_target</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">from_times_and_values</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">production_eolienne</span><span class="p">)</span>
+<span class="n">serie_covariate</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">from_times_and_values</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">vitesse_vent</span><span class="p">)</span>
+
+<span class="c1"># Normaliser (obligatoire pour les modèles deep learning)</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">Scaler</span><span class="p">()</span>
+<span class="n">serie_target_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">serie_target</span><span class="p">)</span>
+
+<span class="c1"># Séparer train/test (temporellement !)</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">serie_target_scaled</span><span class="p">[:</span><span class="mi">600</span><span class="p">],</span> <span class="n">serie_target_scaled</span><span class="p">[</span><span class="mi">600</span><span class="p">:]</span>
+
+<span class="c1"># Modèle N-BEATS</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NBEATSModel</span><span class="p">(</span>
+    <span class="n">input_chunk_length</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>   <span class="c1"># fenêtre d&#39;entrée : 60 jours d&#39;historique</span>
+    <span class="n">output_chunk_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># horizon de prévision : 30 jours</span>
+    <span class="n">n_epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Prévision avec intervalles de confiance (quantile regression)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Métriques sur le jeu de validation</span>
+<span class="n">pred_val</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+<span class="n">val_orig</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="p">(</span><span class="n">val_orig</span><span class="p">,</span><span class="w"> </span><span class="n">pred_val</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAPE : </span><span class="si">{</span><span class="n">mape</span><span class="p">(</span><span class="n">val_orig</span><span class="p">,</span><span class="w"> </span><span class="n">pred_val</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="quand-choisir-darts-vs-prophet-vs-statsmodels">Quand choisir darts vs Prophet vs statsmodels</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Critère</th>
+  <th>statsmodels</th>
+  <th>Prophet</th>
+  <th>darts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Facilité de prise en main</td>
+  <td>moyen</td>
+  <td>✓ facile</td>
+  <td>moyen</td>
+</tr>
+<tr>
+  <td>Séries multivariées</td>
+  <td>✗</td>
+  <td>✗</td>
+  <td>✓</td>
+</tr>
+<tr>
+  <td>Intervalles calibrés</td>
+  <td>✓</td>
+  <td>approximatif</td>
+  <td>✓</td>
+</tr>
+<tr>
+  <td>Longues séries (&gt; 5 ans quotidien)</td>
+  <td>lent</td>
+  <td>correct</td>
+  <td>✓</td>
+</tr>
+<tr>
+  <td>Événements ponctuels</td>
+  <td>manuel</td>
+  <td>✓</td>
+  <td>via covariates</td>
+</tr>
+<tr>
+  <td>Interprétabilité des composantes</td>
+  <td>✓</td>
+  <td>✓</td>
+  <td>partielle (N-BEATS)</td>
+</tr>
+</tbody>
+</table>
+
+<p>:::limit
+<strong class="lbl-limit">&#x26d4; Quand ne pas l'utiliser</strong> : Si la série contient moins de 500 observations, les modèles deep learning de darts (N-BEATS, TFT) n'ont pas assez de données pour converger. Utiliser SARIMA ou Prophet dans ce cas. darts propose aussi des modèles statistiques (ExponentialSmoothing, ARIMA) utilisables sur petits volumes.
+:::</p>
+
+<p><strong>Situation réelle : EDF, prévision de production éolienne multivariée</strong></p>
+
+<p>EDF exploite un parc éolien réparti sur tout le territoire. La production de chaque éolienne dépend de la vitesse du vent, de la direction, de la température (densité de l'air), et de l'état de maintenance. Prévoir la production à J+2 est essentiel pour équilibrer le réseau : une erreur de 10% sur 5 GW d'éolien représente 500 MW à compenser en urgence. darts permet de construire un modèle TFT multivarié qui ingère simultanément la météo prévue (covariate future connue) et l'historique de production, surpassant les modèles univariés de 15 à 20% sur l'erreur de prévision.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence principale entre darts et Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">darts gère les séries multivariées nativement et propose des modèles deep learning (N-BEATS, TFT). Prophet est univarié et conçu pour la simplicité d'usage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que N-BEATS ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un réseau de neurones profond pour séries temporelles dont l'architecture force la décomposition explicite tendance/saisonnalité. Interprétable et performant sur longues séries.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi normaliser les données avant NBEATSModel ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les réseaux de neurones sont sensibles aux échelles. Sans normalisation, des valeurs de production en GWh (milliers) écraseraient les gradients et bloqueraient l'apprentissage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand darts s'impose face à Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Séries multivariées (plusieurs KPIs liés), très longues séries (> 5 ans quotidien), besoin d'intervalles de confiance calibrés statistiquement, ou besoin de benchmarker plusieurs architectures sur le même problème.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="section-6-évaluer-une-prévision-de-série-temporelle"><span class="h2-num">7</span>Section 6 — Évaluer une prévision de série temporelle<span class="h2-line"></span></h2>
+
+<h3 id="les-métriques-derreur-définitions-depuis-zéro">Les métriques d'erreur : définitions depuis zéro</h3>
+
+<p>Toute prévision produit des erreurs : la valeur réelle diffère de la valeur prédite. Les métriques suivantes quantifient ces erreurs de façon différente, chacune avec ses cas d'usage.</p>
+
+<p><strong>MAE — Mean Absolute Error (Erreur Absolue Moyenne)</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">MAE = (1/n) × Σ |réel_t − prédit_t|
+</code></pre></div>
+
+<p>Interprétation intuitive : en moyenne, ma prévision se trompe de X unités. Pour une prévision de consommation électrique en MW, un MAE de 50 MW signifie qu'on se trompe de 50 MW en moyenne, indépendamment du sens de l'erreur (sur ou sous-estimation).</p>
+
+<p><strong>Avantage</strong> : facile à interpréter dans l'unité de la série. <strong>Limite</strong> : ne permet pas de comparer des séries d'échelles différentes.</p>
+
+<p><strong>RMSE — Root Mean Square Error</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">RMSE = √[(1/n) × Σ (réel_t − prédit_t)²]
+</code></pre></div>
+
+<p>Interprétation intuitive : similaire au MAE, mais les grandes erreurs sont pénalisées plus fort (le carré amplifie les déviations importantes). Un RMSE de 80 MW sur la même série indique que les erreurs ponctuelles sont importantes, même si la moyenne semble acceptable.</p>
+
+<p><strong>Avantage</strong> : sensible aux erreurs extrêmes, utile quand une grosse erreur ponctuelle est inacceptable. <strong>Limite</strong> : même unité que MAE, mais plus difficile à interpréter directement.</p>
+
+<p><strong>MAPE — Mean Absolute Percentage Error (Erreur Pourcentage Absolue Moyenne)</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">MAPE = (100/n) × Σ |réel_t − prédit_t| / |réel_t|
+</code></pre></div>
+
+<p>Interprétation intuitive : en moyenne, ma prévision se trompe de X% de la valeur réelle. Un MAPE de 5% signifie que les prévisions sont en moyenne à 5% de la réalité.</p>
+
+<p><strong>Avantage</strong> : sans unité, permet de comparer des modèles sur des séries différentes. <strong>Limite critique</strong> : explose quand <code>réel_t</code> est proche de zéro (si la vraie valeur est 1 et qu'on prédit 2, MAPE = 100%). Inutilisable sur des séries avec des valeurs nulles ou proches de zéro.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mape</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="c1"># Éviter la division par zéro</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">y_true</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">/</span> <span class="n">y_true</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span>
+
+<span class="n">y_reel</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">115</span><span class="p">])</span>
+<span class="n">y_predit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">105</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">112</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="p">(</span><span class="n">y_reel</span><span class="p">,</span><span class="w"> </span><span class="n">y_predit</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>    <span class="c1"># 4.17</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE : </span><span class="si">{</span><span class="n">rmse</span><span class="p">(</span><span class="n">y_reel</span><span class="p">,</span><span class="w"> </span><span class="n">y_predit</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>   <span class="c1"># 4.69</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAPE : </span><span class="si">{</span><span class="n">mape</span><span class="p">(</span><span class="n">y_reel</span><span class="p">,</span><span class="w"> </span><span class="n">y_predit</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>  <span class="c1"># 3.72%</span>
+</code></pre>
+</div>
+
+<h3 id="le-piège-du-backtesting-naïf">Le piège du backtesting naïf</h3>
+
+<p>Le <strong>backtesting naïf</strong> consiste à entraîner un modèle sur la totalité de l'historique, puis à mesurer son erreur sur un sous-ensemble de ce même historique. C'est circulaire : le modèle a vu les données de test pendant l'entraînement.</p>
+
+<p>L'erreur apparente est toujours meilleure que l'erreur réelle en production. On appelle cela l'<strong>overfitting in-sample</strong> : le modèle a mémorisé les données au lieu d'apprendre leurs patterns.</p>
+
+<h3 id="walk-forward-validation-la-seule-méthode-correcte">Walk-forward validation : la seule méthode correcte</h3>
+
+<p>La <strong>walk-forward validation</strong> (aussi appelée expanding window validation) simule fidèlement les conditions de production : on entraîne toujours sur le passé, on prédit toujours le futur immédiat.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># example</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
+
+<span class="c1"># Série de 36 mois</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2021-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+<span class="n">valeurs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">valeurs</span><span class="p">})</span>
+
+<span class="c1"># Walk-forward validation sur 6 rounds</span>
+<span class="c1"># Entraîner sur les N premiers mois, prévoir le mois suivant</span>
+<span class="n">erreurs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">horizon</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># prévoir 3 mois à l&#39;avance</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">33</span><span class="p">):</span>  <span class="c1"># de 24 mois d&#39;historique à 32 mois</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">horizon</span><span class="p">]</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+    <span class="n">futur</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="n">horizon</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;ME&quot;</span><span class="p">)</span>
+    <span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">futur</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="n">horizon</span><span class="p">)</span>
+
+    <span class="n">mae_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+    <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mae_fold</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train jusqu&#39;au mois </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> → MAE sur mois </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> à </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="n">horizon</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">mae_fold</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MAE moyen walk-forward : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">erreurs</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="quand-une-bonne-métrique-in-sample-masque-une-mauvaise-généralisation">Quand une bonne métrique in-sample masque une mauvaise généralisation</h3>
+
+<p>Un modèle peut afficher un MAPE de 2% sur son historique d'entraînement et 18% en production. Plusieurs causes :</p>
+
+<ol>
+<li><strong>Overfitting</strong> : trop de paramètres ajustés sur l'historique (par exemple, un SARIMA avec beaucoup d'ordres).</li>
+<li><strong>Rupture de structure</strong> (concept drift) : un événement externe change durablement les patterns. L'exemple le plus fort est la pandémie Covid-19 de 2020.</li>
+</ol>
+
+<p><strong>Situation réelle : Prophet parfait sur 2 ans, échec en production post-Covid</strong></p>
+
+<p>Un retailer e-commerce construit en janvier 2020 un modèle Prophet entraîné sur 2019 et 2018. MAE de 3% sur le backtesting. En mars 2020, la demande explose sur certaines catégories (hygiène, épicerie) et s'effondre sur d'autres (voyage, événementiel). Le modèle, entraîné sur un monde pré-Covid, ne peut pas extrapoler ce choc externe. La métrique in-sample de 3% n'avait aucune valeur prédictive pour les mois suivants.</p>
+
+<p>La leçon opérationnelle : <strong>une bonne métrique historique est nécessaire mais pas suffisante</strong>. En production, surveiller la dérive des erreurs en temps réel (monitoring) et prévoir un mécanisme de réentraînement déclenché par une dégradation détectée.</p>
+
+<p>:::callout-insight
+<strong class="lbl-rule">&#x2705; Règle d'or de l'évaluation</strong> : toujours rapporter la métrique obtenue par walk-forward validation, avec l'horizon de prévision explicité. "MAE de 4% sur un horizon de 7 jours, mesuré par walk-forward sur les 12 derniers mois" est une métrique opérationnelle. "MAE de 2% sur le backtesting" est une métrique trompeuse.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence pratique entre MAE et MAPE ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">MAE est dans l'unité de la série (MW, €, litres) — facile à interpréter. MAPE est en pourcentage — permet de comparer des séries d'échelles différentes mais explose si la série contient des valeurs proches de zéro.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la walk-forward validation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">On entraîne sur les T premiers mois, on prédit les mois T+1 à T+H, puis on avance d'un pas et on répète. Cela simule exactement les conditions de production et évite le data leakage temporel.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un modèle avec MAE=2% in-sample peut-il donner MAE=18% en production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Soit overfitting (trop ajusté sur l'historique), soit rupture de structure (concept drift) : un événement externe change durablement les patterns que le modèle a appris.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le concept drift dans les séries temporelles ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un changement durable dans la distribution des données : une crise économique, une pandémie, un changement de comportement utilisateur. Le modèle, entraîné sur l'ancien monde, ne generalise plus sur le nouveau.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="résumé-du-jour-3"><span class="h2-num">8</span>Résumé du Jour 3<span class="h2-line"></span></h2>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">╔══════════════════════════════════════════════════════════════════╗
+║           JOUR 3 — SÉRIES TEMPORELLES : SYNTHÈSE                ║
+╠══════════════════════════════════════════════════════════════════╣
+║  1. SPÉCIFICITÉ          L'ordre des observations porte de       ║
+║                          l'information → hypothèse d'indépen-   ║
+║                          dance violée → outils dédiés requis     ║
+╠══════════════════════════════════════════════════════════════════╣
+║  2. DÉCOMPOSITION        Tendance + Saisonnalité + Résidus        ║
+║                          Additif si amplitude constante,         ║
+║                          multiplicatif si amplitude ∝ niveau     ║
+╠══════════════════════════════════════════════════════════════════╣
+║  3. ARIMA/SARIMA         AR + I (stationnarité) + MA             ║
+║                          Test ADF pour choisir d                 ║
+║                          ACF/PACF pour choisir p et q            ║
+╠══════════════════════════════════════════════════════════════════╣
+║  4. PROPHET              Tendance + Saisonnalité + Fériés        ║
+║                          Régresseurs externes via add_regressor  ║
+║                          TimeSeriesSplit obligatoire             ║
+╠══════════════════════════════════════════════════════════════════╣
+║  5. DARTS                Multivarié · N-BEATS · TFT              ║
+║                          Intervalles calibrés                    ║
+║                          Quand &gt; 500 obs et séries liées         ║
+╠══════════════════════════════════════════════════════════════════╣
+║  6. ÉVALUATION           MAE (unité) · MAPE (%) · RMSE (extrêmes)║
+║                          Walk-forward validation uniquement      ║
+║                          Surveiller le concept drift en prod.    ║
+╚══════════════════════════════════════════════════════════════════╝
+</code></pre></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

@@ -1,0 +1,955 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 8Jour 8 — Régression approfondie : Ridge, Lasso et relations non-linéairesC</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 8</div><h1>Jour 8 — <em>Régression approfondie : Ridge, Lasso et relations non-linéaires</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Connecteurs ROOT → L1 -->
+  <path d="M550,66 C550,110 150,110 150,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 380,110 380,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 620,110 620,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 850,110 850,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,110 1010,110 1010,137" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- L1 → L2 -->
+  <path d="M150,175 C150,220 80,220 80,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M150,175 C150,220 220,220 220,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M380,175 C380,220 310,220 310,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M380,175 C380,220 450,220 450,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M620,175 C620,220 560,220 560,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M620,175 C620,220 690,220 690,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M850,175 C850,220 790,220 790,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M850,175 C850,220 920,220 920,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M1010,175 C1010,220 960,220 960,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M1010,175 C1010,220 1060,220 1060,247" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+
+  <!-- ROOT -->
+  <rect x="310" y="24" width="480" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">RÉGRESSION APPROFONDIE</text>
+
+  <!-- L1 : LINÉAIRE -->
+  <rect x="50" y="137" width="200" height="38" rx="12" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="150" y="161" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="800">LINÉAIRE</text>
+
+  <!-- L1 : OVERFITTING -->
+  <rect x="270" y="137" width="220" height="38" rx="12" fill="rgba(230,103,103,.14)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="380" y="161" text-anchor="middle" fill="#e66767" font-size="12" font-weight="800">BIAIS / VARIANCE</text>
+
+  <!-- L1 : RIDGE -->
+  <rect x="510" y="137" width="220" height="38" rx="12" fill="rgba(144,133,233,.16)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="620" y="161" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="800">RIDGE (L2)</text>
+
+  <!-- L1 : LASSO -->
+  <rect x="740" y="137" width="220" height="38" rx="12" fill="rgba(27,175,122,.16)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="850" y="161" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">LASSO (L1)</text>
+
+  <!-- L1 : POLYNOMIALE -->
+  <rect x="920" y="137" width="180" height="38" rx="12" fill="rgba(232,166,0,.14)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="1010" y="161" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="800">POLYNOMIALE</text>
+
+  <!-- L2 LINÉAIRE -->
+  <rect x="30" y="247" width="100" height="30" rx="8" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="80" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Résidus</text>
+  <rect x="160" y="247" width="120" height="30" rx="8" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="220" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Coefficients</text>
+
+  <!-- L2 OVERFITTING -->
+  <rect x="250" y="247" width="110" height="30" rx="8" fill="rgba(230,103,103,.1)" stroke="#e66767" stroke-width="1.2"/>
+  <text x="305" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Biais fort</text>
+  <rect x="375" y="247" width="150" height="30" rx="8" fill="rgba(230,103,103,.1)" stroke="#e66767" stroke-width="1.2"/>
+  <text x="450" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Variance forte</text>
+
+  <!-- L2 RIDGE -->
+  <rect x="500" y="247" width="110" height="30" rx="8" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="555" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Alpha = 0→∞</text>
+  <rect x="625" y="247" width="130" height="30" rx="8" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="690" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Tend vers 0</text>
+
+  <!-- L2 LASSO -->
+  <rect x="730" y="247" width="110" height="30" rx="8" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="785" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Sparse</text>
+  <rect x="855" y="247" width="130" height="30" rx="8" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="920" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Atteint 0</text>
+
+  <!-- L2 POLY -->
+  <rect x="910" y="247" width="95" height="30" rx="8" fill="rgba(232,166,0,.1)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="957" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Degré 2/3</text>
+  <rect x="1015" y="247" width="70" height="30" rx="8" fill="rgba(232,166,0,.1)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="1050" y="267" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">Feature eng.</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-régression-linéaire-ce-quelle-fait-vraiment"><span class="h2-num">2</span>1 — Régression linéaire : ce qu'elle fait vraiment<span class="h2-line"></span></h2>
+
+<p>La <strong>régression linéaire</strong> répond à une question précise : parmi toutes les droites (ou hyperplans) qu'on peut tracer à travers un nuage de points, laquelle colle le mieux aux données ?</p>
+
+<p><strong>Hyperplan</strong> : en 2D c'est une droite, en 3D c'est un plan, au-delà c'est un hyperplan — tous ces mots désignent la même idée : la surface plate la plus simple possible dans l'espace des données.</p>
+
+<p><strong>Résidu</strong> : la différence entre ce que le modèle prédit et la valeur réelle. Si un appartement vaut 350 000 € et que le modèle prédit 320 000 €, le résidu est −30 000 €. Les résidus peuvent être positifs ou négatifs.</p>
+
+<p><strong>L'objectif de la régression</strong> : trouver les coefficients qui minimisent la <strong>somme des résidus au carré</strong> (on met au carré pour que les erreurs positives et négatives ne se compensent pas, et pour pénaliser davantage les grosses erreurs).</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- fond -->
+  <rect width="600" height="340" rx="12" fill="#1e1c24"/>
+  <!-- axes -->
+  <line x1="60" y1="280" x2="560" y2="280" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="60" y1="40" x2="60" y2="280" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- labels axes -->
+  <text x="300" y="318" text-anchor="middle" fill="#716989" font-size="12">Surface (m²)</text>
+  <text x="20" y="165" text-anchor="middle" fill="#716989" font-size="12" transform="rotate(-90,20,165)">Prix (€)</text>
+  <!-- droite de régression : y = 0.65x + 60 (coords SVG) -->
+  <line x1="80" y1="228" x2="540" y2="48" stroke="#1baf7a" stroke-width="2.2"/>
+  <!-- Points (x_svg, y_svg) et résidus -->
+  <!-- Point 1 : (100,210) → prédit ~(100,217) résidu vers le bas -->
+  <line x1="120" y1="200" x2="120" y2="216" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="120" cy="200" r="5" fill="#3987e5"/>
+  <!-- Point 2 -->
+  <line x1="180" y1="185" x2="180" y2="197" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="180" cy="185" r="5" fill="#3987e5"/>
+  <!-- Point 3 -->
+  <line x1="230" y1="155" x2="230" y2="177" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="230" cy="155" r="5" fill="#3987e5"/>
+  <!-- Point 4 -->
+  <line x1="290" y1="148" x2="290" y2="157" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="290" cy="148" r="5" fill="#3987e5"/>
+  <!-- Point 5 -->
+  <line x1="340" y1="120" x2="340" y2="138" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="340" cy="120" r="5" fill="#3987e5"/>
+  <!-- Point 6 -->
+  <line x1="390" y1="128" x2="390" y2="118" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="390" cy="128" r="5" fill="#3987e5"/>
+  <!-- Point 7 -->
+  <line x1="440" y1="95" x2="440" y2="99" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="440" cy="95" r="5" fill="#3987e5"/>
+  <!-- Point 8 -->
+  <line x1="500" y1="72" x2="500" y2="80" stroke="#e66767" stroke-width="1.8" stroke-dasharray="4,2"/>
+  <circle cx="500" cy="72" r="5" fill="#3987e5"/>
+  <!-- légende -->
+  <circle cx="90" cy="308" r="5" fill="#3987e5"/>
+  <text x="102" y="313" fill="#9e95b5" font-size="11">Données réelles</text>
+  <line x1="200" y1="308" x2="225" y2="308" stroke="#1baf7a" stroke-width="2"/>
+  <text x="232" y="313" fill="#9e95b5" font-size="11">Droite de régression</text>
+  <line x1="360" y1="303" x2="360" y2="313" stroke="#e66767" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="368" y="313" fill="#9e95b5" font-size="11">Résidus</text>
+  <!-- titre -->
+  <text x="300" y="26" text-anchor="middle" fill="#ddd8ee" font-size="13" font-weight="700">Régression linéaire — résidus visualisés</text>
+</svg></p>
+
+<h3 id="situation-réelle-nexity">Situation réelle — Nexity</h3>
+
+<p>Le groupe immobilier Nexity entraîne un modèle pour prédire le prix de vente d'un appartement à partir de trois variables : la surface en m², l'étage, et la distance à la station de métro la plus proche.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1"># Données fictives mais réalistes</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;surface_m2&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">130</span><span class="p">],</span>
+    <span class="s2">&quot;etage&quot;</span><span class="p">:</span>           <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>   <span class="mi">10</span> <span class="p">],</span>
+    <span class="s2">&quot;dist_metro_m&quot;</span><span class="p">:</span>    <span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span>  <span class="mi">150</span><span class="p">],</span>
+    <span class="s2">&quot;prix_euros&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">220000</span><span class="p">,</span> <span class="mi">310000</span><span class="p">,</span> <span class="mi">340000</span><span class="p">,</span> <span class="mi">420000</span><span class="p">,</span>
+                        <span class="mi">510000</span><span class="p">,</span> <span class="mi">390000</span><span class="p">,</span> <span class="mi">620000</span><span class="p">,</span> <span class="mi">750000</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;surface_m2&quot;</span><span class="p">,</span> <span class="s2">&quot;etage&quot;</span><span class="p">,</span> <span class="s2">&quot;dist_metro_m&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;prix_euros&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Lire les coefficients</span>
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Constante&#39;</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">intercept_</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="c1"># surface_m2           → +5 200.0 €  (chaque m² supplémentaire ajoute ~5 200 €)</span>
+<span class="c1"># etage                → +8 500.0 €  (chaque étage ajoute ~8 500 €)</span>
+<span class="c1"># dist_metro_m         →   -120.0 €  (chaque mètre de distance enlève ~120 €)</span>
+</code></pre>
+</div>
+
+<p><strong>Lire un coefficient</strong> : le coefficient de <code>surface_m2</code> (+5 200 €) signifie "toutes autres choses égales, un m² supplémentaire est associé à un prix plus élevé de 5 200 €". Ce n'est pas une causalité, c'est une corrélation apprise sur les données.</p>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 1</strong></p>
+  
+  <p><strong>Q : Qu'est-ce qu'un résidu ?</strong>
+  R : La différence entre la valeur réelle et la valeur prédite par le modèle.</p>
+  
+  <p><strong>Q : Pourquoi minimise-t-on les résidus au carré et pas leur somme simple ?</strong>
+  R : Parce que les résidus positifs et négatifs se compenseraient. Mettre au carré force tous les termes à être positifs, et pénalise davantage les grosses erreurs.</p>
+  
+  <p><strong>Q : Que signifie un coefficient négatif dans une régression linéaire ?</strong>
+  R : Que lorsque cette variable augmente, la prédiction diminue (toutes autres variables égales par ailleurs).</p>
+  
+  <p><strong>Q : À quoi sert l'ordonnée à l'origine (constante) dans une régression ?</strong>
+  R : C'est la prédiction quand toutes les variables valent zéro — un point de départ théorique.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="2-le-problème-de-loverfitting-en-régression"><span class="h2-num">3</span>2 — Le problème de l'overfitting en régression<span class="h2-line"></span></h2>
+
+<p>Un modèle apprend sur un jeu de données d'entraînement. Le vrai objectif est qu'il généralise — qu'il soit utile sur des données qu'il n'a jamais vues. Deux types d'erreurs peuvent empêcher cela.</p>
+
+<p><strong>Biais</strong> : erreur systématique due à un modèle trop simple. Le modèle n'a pas assez de flexibilité pour capturer la vraie relation dans les données. Il fait des erreurs même sur les données d'entraînement. On parle d'<strong>underfitting</strong> (sous-ajustement).</p>
+
+<p><strong>Variance</strong> : erreur due à un modèle trop sensible aux détails du jeu d'entraînement. Le modèle a appris les données par cœur — y compris le bruit et les coïncidences. Il performe très bien sur l'entraînement mais échoue sur de nouvelles données. On parle d'<strong>overfitting</strong> (sur-ajustement).</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 300" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="860" height="300" rx="12" fill="#1e1c24"/></p>
+
+<p><!-- === PANNEAU 1 : Underfitting === -->
+  <text x="143" y="26" text-anchor="middle" fill="#e66767" font-size="12" font-weight="700">Underfitting (biais fort)</text>
+  <line x1="30" y1="260" x2="256" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="30" y1="50" x2="30" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <!-- points en courbe de parabole -->
+  <circle cx="50" cy="230" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="75" cy="195" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="100" cy="170" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="125" cy="160" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="150" cy="165" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="175" cy="182" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="200" cy="210" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="230" cy="245" r="4" fill="#3987e5" opacity=".8"/>
+  <!-- droite trop simple -->
+  <line x1="40" y1="240" x2="245" y2="195" stroke="#e66767" stroke-width="2.2"/>
+  <text x="143" y="285" text-anchor="middle" fill="#e66767" font-size="10">Droite — ne suit pas la courbe</text></p>
+
+<p><!-- === PANNEAU 2 : Good fit === -->
+  <text x="430" y="26" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Bon ajustement</text>
+  <line x1="310" y1="260" x2="546" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="310" y1="50" x2="310" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <!-- mêmes points -->
+  <circle cx="330" cy="230" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="355" cy="195" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="380" cy="170" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="405" cy="160" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="430" cy="165" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="455" cy="182" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="480" cy="210" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="510" cy="245" r="4" fill="#3987e5" opacity=".8"/>
+  <!-- parabole ajustée -->
+  <path d="M325,235 Q430,140 520,248" fill="none" stroke="#1baf7a" stroke-width="2.2"/>
+  <text x="430" y="285" text-anchor="middle" fill="#1baf7a" font-size="10">Parabole — suit la tendance</text></p>
+
+<p><!-- === PANNEAU 3 : Overfitting === -->
+  <text x="715" y="26" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Overfitting (variance forte)</text>
+  <line x1="590" y1="260" x2="840" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="590" y1="50" x2="590" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <!-- mêmes points -->
+  <circle cx="610" cy="230" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="635" cy="195" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="660" cy="170" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="685" cy="160" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="710" cy="165" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="735" cy="182" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="760" cy="210" r="4" fill="#3987e5" opacity=".8"/>
+  <circle cx="790" cy="245" r="4" fill="#3987e5" opacity=".8"/>
+  <!-- courbe qui passe par tous les points en ondulant -->
+  <path d="M605,238 C615,225 625,205 635,195 C645,185 650,162 660,170 C668,176 675,152 685,160 C693,167 700,172 710,165 C720,158 728,188 735,182 C743,176 752,218 760,210 C768,202 780,253 790,245 C798,238 808,248 822,252" fill="none" stroke="#9085e9" stroke-width="2.2"/>
+  <text x="715" y="285" text-anchor="middle" fill="#9085e9" font-size="10">Courbe degree-7 — mémorise le bruit</text>
+</svg></p>
+
+<h3 id="situation-réelle-axa">Situation réelle — AXA</h3>
+
+<p>Une équipe data chez AXA construit un modèle de prédiction du coût des sinistres automobiles. Le modèle atteint 99 % de précision sur les données d'entraînement. En production, il tombe à 61 %. Diagnostic : le modèle a mémorisé les particularités des données historiques (accidents survenus une année précise, effets saisonniers locaux, anomalies de saisie) au lieu d'apprendre la relation générale entre le profil du conducteur et le risque. C'est de l'overfitting.</p>
+
+<p>La solution ne consiste pas à ajouter plus de données au hasard — elle consiste à <strong>contraindre</strong> le modèle pour qu'il ne puisse pas mémoriser. C'est exactement ce que font Ridge et Lasso.</p>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 2</strong></p>
+  
+  <p><strong>Q : Quelle est la différence entre biais et variance ?</strong>
+  R : Le biais est une erreur systématique (modèle trop simple, rate la tendance). La variance est une sensibilité excessive aux données d'entraînement (modèle trop complexe, mémorise le bruit).</p>
+  
+  <p><strong>Q : Un modèle à 99% sur le train et 61% en prod, c'est quoi ?</strong>
+  R : De l'overfitting — variance trop forte.</p>
+  
+  <p><strong>Q : Comment reconnaître l'underfitting sur une courbe ?</strong>
+  R : Le modèle fait des erreurs importantes même sur les données d'entraînement.</p>
+  
+  <p><strong>Q : Pourquoi augmenter la complexité du modèle n'est pas toujours la bonne réponse ?</strong>
+  R : Parce qu'au-delà d'un certain point, la complexité supplémentaire sert à mémoriser le bruit plutôt qu'à apprendre la vraie structure.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="3-ridge-l2-pénaliser-les-grands-coefficients"><span class="h2-num">4</span>3 — Ridge (L2) : pénaliser les grands coefficients<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>La régression ordinaire cherche les coefficients qui minimisent les erreurs sur les données d'entraînement. Ridge fait la même chose, mais ajoute une <strong>pénalité</strong> : chaque coefficient qui prend une grande valeur "coûte" quelque chose lors de l'entraînement.</p>
+
+<p>Cette pénalité est proportionnelle au <strong>carré</strong> de chaque coefficient — d'où le nom L2 (norme L2 = racine de la somme des carrés). Le modèle arrive donc à un compromis : réduire les erreurs sur les données, mais en évitant les coefficients très grands.</p>
+
+<p><strong>Paramètre alpha</strong> : c'est vous qui décidez du poids de cette pénalité.
+- <code>alpha = 0</code> : pas de pénalité — identique à la régression ordinaire
+- <code>alpha = 0.1</code> : légère pénalité — les coefficients sont légèrement réduits
+- <code>alpha = 100</code> : pénalité forte — tous les coefficients sont tassés près de zéro</p>
+
+<p><strong>Ce que Ridge ne fait pas</strong> : il ne met jamais un coefficient exactement à zéro. Toutes les variables restent dans le modèle, mais avec des coefficients plus petits.</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="600" height="320" rx="12" fill="#1e1c24"/>
+  <!-- axes -->
+  <line x1="70" y1="270" x2="560" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="70" y1="30" x2="70" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- axe y : 0 au milieu -->
+  <line x1="65" y1="150" x2="560" y2="150" stroke="#4a4360" stroke-width="1" stroke-dasharray="4,4" opacity=".5"/>
+  <!-- labels axe x -->
+  <text x="90" y="288" fill="#716989" font-size="10">0.001</text>
+  <text x="185" y="288" fill="#716989" font-size="10">0.01</text>
+  <text x="275" y="288" fill="#716989" font-size="10">0.1</text>
+  <text x="360" y="288" fill="#716989" font-size="10">1</text>
+  <text x="445" y="288" fill="#716989" font-size="10">10</text>
+  <text x="530" y="288" fill="#716989" font-size="10">100</text>
+  <text x="300" y="310" text-anchor="middle" fill="#716989" font-size="11">Alpha →</text>
+  <!-- label axe y -->
+  <text x="15" y="155" fill="#716989" font-size="11" transform="rotate(-90,15,155)">Coefficients</text>
+  <text x="55" y="154" text-anchor="end" fill="#716989" font-size="10">0</text>
+  <!-- Courbes Ridge : descendent vers 0 mais ne l'atteignent pas -->
+  <!-- Feature 1 (bleu) : commence haut, descend doucement -->
+  <path d="M88,62 C130,65 185,72 275,98 C360,122 445,139 540,148" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <!-- Feature 2 (violet) : commence plus bas -->
+  <path d="M88,88 C130,93 185,102 275,120 C360,136 445,146 540,151" fill="none" stroke="#9085e9" stroke-width="2"/>
+  <!-- Feature 3 (aqua) : coefficient négatif -->
+  <path d="M88,215 C130,213 185,207 275,192 C360,176 445,162 540,153" fill="none" stroke="#1baf7a" stroke-width="2"/>
+  <!-- Feature 4 (yellow) : coefficient négatif plus grand -->
+  <path d="M88,245 C130,238 185,228 275,206 C360,183 445,165 540,153" fill="none" stroke="#e8a600" stroke-width="2"/>
+  <!-- Feature 5 (red) : petit coefficient -->
+  <path d="M88,140 C130,141 185,143 275,146 C360,148 445,150 540,151" fill="none" stroke="#e66767" stroke-width="2"/>
+  <!-- annotation clé -->
+  <rect x="380" y="40" width="200" height="36" rx="8" fill="rgba(57,135,229,.12)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="480" y="57" text-anchor="middle" fill="#9e95b5" font-size="11">Ridge : tend vers 0</text>
+  <text x="480" y="70" text-anchor="middle" fill="#9e95b5" font-size="11">mais ne l'atteint jamais</text>
+  <!-- légende -->
+  <line x1="80" y1="300" x2="100" y2="300" stroke="#3987e5" stroke-width="2"/>
+  <text x="106" y="304" fill="#9e95b5" font-size="10">surface</text>
+  <line x1="160" y1="300" x2="180" y2="300" stroke="#9085e9" stroke-width="2"/>
+  <text x="186" y="304" fill="#9e95b5" font-size="10">étage</text>
+  <line x1="230" y1="300" x2="250" y2="300" stroke="#1baf7a" stroke-width="2"/>
+  <text x="256" y="304" fill="#9e95b5" font-size="10">dist_metro</text>
+  <line x1="340" y1="300" x2="360" y2="300" stroke="#e8a600" stroke-width="2"/>
+  <text x="366" y="304" fill="#9e95b5" font-size="10">ancien/neuf</text>
+  <line x1="440" y1="300" x2="460" y2="300" stroke="#e66767" stroke-width="2"/>
+  <text x="466" y="304" fill="#9e95b5" font-size="10">étage²</text>
+  <!-- titre -->
+  <text x="300" y="20" text-anchor="middle" fill="#ddd8ee" font-size="13" font-weight="700">Ridge — évolution des coefficients selon alpha</text>
+</svg></p>
+
+<h3 id="quand-choisir-ridge">Quand choisir Ridge</h3>
+
+<ul>
+<li>Toutes les variables semblent utiles (on ne veut pas en éliminer)</li>
+<li>Les variables sont corrélées entre elles — par exemple, la surface et le nombre de pièces se ressemblent. Sans Ridge, la régression ordinaire peut donner un coefficient très grand à l'une et très négatif à l'autre pour se "compenser", ce qui est instable. Ridge calme ce comportement.</li>
+</ul>
+
+<p>Ce phénomène s'appelle la <strong>multicolinéarité</strong> : deux variables qui mesurent presque la même chose. Ridge la gère élégamment.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="c1"># IMPORTANT : Ridge est sensible à l&#39;échelle des variables.</span>
+<span class="c1"># On normalise d&#39;abord (StandardScaler) pour que chaque variable</span>
+<span class="c1"># parte sur un pied d&#39;égalité.</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;scaler&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s2">&quot;ridge&quot;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">10.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">ridge_model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;ridge&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">ridge_model</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Choisir alpha</strong> : on utilise la validation croisée. sklearn propose <code>RidgeCV</code> qui teste plusieurs valeurs d'alpha automatiquement :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">RidgeCV</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>  <span class="c1"># 50 valeurs de 0.001 à 1000</span>
+<span class="n">model_cv</span> <span class="o">=</span> <span class="n">RidgeCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">model_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Meilleur alpha : </span><span class="si">{</span><span class="n">model_cv</span><span class="o">.</span><span class="n">alpha_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 3</strong></p>
+  
+  <p><strong>Q : Que signifie "pénalité L2" dans Ridge ?</strong>
+  R : On ajoute à la fonction de perte le carré de chaque coefficient, multiplié par alpha. Les grands coefficients deviennent coûteux à apprendre.</p>
+  
+  <p><strong>Q : Ridge peut-il mettre un coefficient exactement à 0 ?</strong>
+  R : Non — Ridge réduit les coefficients vers 0 mais ne les annule jamais complètement.</p>
+  
+  <p><strong>Q : Qu'est-ce que la multicolinéarité et pourquoi Ridge la gère-t-elle bien ?</strong>
+  R : Multicolinéarité = deux features très corrélées. La régression ordinaire devient instable. Ridge répartit les coefficients de façon équilibrée entre ces features.</p>
+  
+  <p><strong>Q : Pourquoi faut-il normaliser les données avant Ridge ?</strong>
+  R : Parce que Ridge pénalise les grands coefficients numériquement. Une variable en milliers (prix) aurait un coefficient plus petit qu'une variable en unités (étages) — sans normalisation, la pénalité est injuste.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="4-lasso-l1-sélection-automatique-de-features"><span class="h2-num">5</span>4 — Lasso (L1) : sélection automatique de features<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>Lasso (<strong>L</strong>east <strong>A</strong>bsolute <strong>S</strong>hrinkage and <strong>S</strong>election <strong>O</strong>perator) fonctionne comme Ridge mais avec une pénalité différente : au lieu de pénaliser le <strong>carré</strong> des coefficients (L2), il pénalise leur <strong>valeur absolue</strong> (L1 = somme des valeurs absolues).</p>
+
+<p>Cette différence, qui semble mineure, a une conséquence radicale : <strong>Lasso peut forcer des coefficients exactement à zéro</strong>. Il fait donc de la sélection de features automatique — certaines variables sont complètement exclues du modèle.</p>
+
+<p>Un modèle avec beaucoup de coefficients à zéro est dit <strong>sparse</strong> (creux) — il n'utilise qu'un sous-ensemble des variables disponibles.</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 320" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="860" height="320" rx="12" fill="#1e1c24"/></p>
+
+<p><!-- === PANNEAU RIDGE === -->
+  <text x="215" y="22" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Ridge (L2) — tend vers 0</text>
+  <line x1="40" y1="270" x2="400" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="40" y1="30" x2="40" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="35" y1="150" x2="400" y2="150" stroke="#4a4360" stroke-width="1" stroke-dasharray="4,4" opacity=".4"/>
+  <text x="28" y="154" text-anchor="end" fill="#716989" font-size="9">0</text>
+  <!-- labels x -->
+  <text x="60" y="285" fill="#716989" font-size="9">0.001</text>
+  <text x="118" y="285" fill="#716989" font-size="9">0.01</text>
+  <text x="185" y="285" fill="#716989" font-size="9">0.1</text>
+  <text x="248" y="285" fill="#716989" font-size="9">1</text>
+  <text x="308" y="285" fill="#716989" font-size="9">10</text>
+  <text x="368" y="285" fill="#716989" font-size="9">100</text>
+  <!-- Courbes Ridge -->
+  <path d="M60,70 C100,75 160,88 240,112 C310,133 365,145 392,149" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <path d="M60,95 C100,102 160,115 240,130 C310,143 365,149 392,151" fill="none" stroke="#9085e9" stroke-width="2"/>
+  <path d="M60,210 C100,207 160,200 240,185 C310,172 365,157 392,152" fill="none" stroke="#1baf7a" stroke-width="2"/>
+  <path d="M60,240 C100,234 160,223 240,201 C310,179 365,161 392,153" fill="none" stroke="#e8a600" stroke-width="2"/>
+  <path d="M60,143 C100,144 160,146 240,148 C310,149 365,150 392,151" fill="none" stroke="#e66767" stroke-width="2"/>
+  <!-- annotation -->
+  <text x="215" y="305" text-anchor="middle" fill="#9085e9" font-size="10">Les courbes s'approchent de 0 sans l'atteindre</text></p>
+
+<p><!-- séparateur -->
+  <line x1="430" y1="20" x2="430" y2="290" stroke="#4a4360" stroke-width="1" stroke-dasharray="6,4"/></p>
+
+<p><!-- === PANNEAU LASSO === -->
+  <text x="645" y="22" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Lasso (L1) — atteint 0</text>
+  <line x1="460" y1="270" x2="840" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="460" y1="30" x2="460" y2="270" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="455" y1="150" x2="840" y2="150" stroke="#4a4360" stroke-width="1" stroke-dasharray="4,4" opacity=".4"/>
+  <text x="448" y="154" text-anchor="end" fill="#716989" font-size="9">0</text>
+  <!-- labels x -->
+  <text x="478" y="285" fill="#716989" font-size="9">0.001</text>
+  <text x="536" y="285" fill="#716989" font-size="9">0.01</text>
+  <text x="600" y="285" fill="#716989" font-size="9">0.1</text>
+  <text x="663" y="285" fill="#716989" font-size="9">1</text>
+  <text x="720" y="285" fill="#716989" font-size="9">10</text>
+  <text x="780" y="285" fill="#716989" font-size="9">100</text>
+  <!-- Courbes Lasso : tombent brutalement à 0 et restent à 0 -->
+  <!-- Feature 1 : tombe à 0 vers alpha=1 -->
+  <path d="M478,70 C520,80 575,105 650,138 C680,150 695,150 810,150" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <!-- Feature 2 : tombe à 0 vers alpha=0.5 -->
+  <path d="M478,95 C520,107 575,125 630,142 C648,150 660,150 810,150" fill="none" stroke="#9085e9" stroke-width="2"/>
+  <!-- Feature 3 (neg) : tombe à 0 -->
+  <path d="M478,210 C520,200 575,185 625,158 C643,150 660,150 810,150" fill="none" stroke="#1baf7a" stroke-width="2"/>
+  <!-- Feature 4 (neg grande) : tombe plus tard -->
+  <path d="M478,242 C530,228 590,205 660,160 C682,150 700,150 810,150" fill="none" stroke="#e8a600" stroke-width="2"/>
+  <!-- Feature 5 (petit) : tombe très tôt -->
+  <path d="M478,143 C500,146 520,149 540,150 C550,150 560,150 810,150" fill="none" stroke="#e66767" stroke-width="2"/>
+  <!-- zone "= 0" -->
+  <rect x="688" y="135" width="130" height="30" rx="6" fill="rgba(27,175,122,.12)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="753" y="155" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="700">= 0 (éliminées)</text>
+  <!-- annotation -->
+  <text x="645" y="305" text-anchor="middle" fill="#1baf7a" font-size="10">Les features tombent à exactement 0 — sélection automatique</text>
+</svg></p>
+
+<h3 id="quand-choisir-lasso">Quand choisir Lasso</h3>
+
+<ul>
+<li>Vous avez beaucoup de variables et suspectez que seules quelques-unes comptent vraiment</li>
+<li>Vous souhaitez un modèle interprétable avec peu de variables retenues</li>
+<li>Exemple : une étude médicale avec 500 marqueurs biologiques — Lasso en garde peut-être 20</li>
+</ul>
+
+<h3 id="code-sklearn-avec-lecture-des-variables-éliminées">Code sklearn avec lecture des variables éliminées</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">LassoCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Trouver le meilleur alpha par validation croisée</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">lasso_cv</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">alphas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">lasso_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Meilleur alpha : </span><span class="si">{</span><span class="n">lasso_cv</span><span class="o">.</span><span class="n">alpha_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Lire les coefficients et identifier les variables éliminées</span>
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">lasso_cv</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;ÉLIMINÉE&quot;</span> <span class="k">if</span> <span class="n">coef</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 4</strong></p>
+  
+  <p><strong>Q : Quelle est la différence mathématique entre Ridge et Lasso ?</strong>
+  R : Ridge pénalise le carré des coefficients (L2), Lasso pénalise leur valeur absolue (L1).</p>
+  
+  <p><strong>Q : Pourquoi Lasso peut-il mettre un coefficient à exactement 0 et pas Ridge ?</strong>
+  R : La pénalité en valeur absolue crée une discontinuité géométrique (coin du losange) qui force des solutions exactement à 0. Le cercle de Ridge n'a pas ce coin.</p>
+  
+  <p><strong>Q : Qu'est-ce qu'un modèle "sparse" ?</strong>
+  R : Un modèle dont beaucoup de coefficients valent 0 — il n'utilise qu'un sous-ensemble des variables disponibles.</p>
+  
+  <p><strong>Q : Dans quel cas Lasso est-il préférable à Ridge ?</strong>
+  R : Quand on a beaucoup de features dont une grande partie sont probablement inutiles, et qu'on veut un modèle sélectif et interprétable.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="5-régression-polynomiale-modéliser-les-courbes"><span class="h2-num">6</span>5 — Régression polynomiale : modéliser les courbes<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>Certaines relations entre variables ne sont pas linéaires. La consommation électrique d'un logement en fonction de la température forme une courbe en U : elle augmente quand il fait très froid (chauffage) et quand il fait très chaud (climatisation). Une droite ne peut pas capturer cela.</p>
+
+<p>La <strong>régression polynomiale</strong> résout ce problème sans changer d'algorithme : on crée de nouvelles variables à partir des variables existantes (x², x³, x⁴...), puis on fait une régression linéaire sur ces nouvelles variables. On appelle ça du <strong>feature engineering</strong> — l'art de créer des variables utiles à partir de celles qu'on a.</p>
+
+<p><strong>Feature engineering</strong> : transformer ou combiner les variables existantes pour donner plus d'information au modèle. La régression polynomiale en est l'exemple le plus simple.</p>
+
+<p>Ce n'est pas un nouvel algorithme : le modèle final reste une régression linéaire — mais sur des variables transformées.</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 320" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="860" height="320" rx="12" fill="#1e1c24"/></p>
+
+<p><!-- axes communs (3 panneaux) -->
+  <!-- PANNEAU 1 : Degré 1 -->
+  <line x1="30" y1="260" x2="265" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="30" y1="40" x2="30" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <text x="148" y="18" text-anchor="middle" fill="#e66767" font-size="12" font-weight="700">Degré 1 — Underfitting</text>
+  <!-- nuage de points en U -->
+  <circle cx="50" cy="220" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="75" cy="175" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="100" cy="140" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="130" cy="122" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="155" cy="128" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="180" cy="148" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="210" cy="185" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="240" cy="230" r="4" fill="#3987e5" opacity=".85"/>
+  <!-- droite (trop simple) -->
+  <line x1="40" y1="215" x2="255" y2="185" stroke="#e66767" stroke-width="2.2"/>
+  <text x="148" y="286" text-anchor="middle" fill="#716989" font-size="10">Droite — rate la courbe en U</text></p>
+
+<p><!-- PANNEAU 2 : Degré 2 -->
+  <line x1="300" y1="260" x2="560" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="300" y1="40" x2="300" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <text x="430" y="18" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Degré 2 — Bon ajustement</text>
+  <!-- mêmes points décalés -->
+  <circle cx="320" cy="220" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="345" cy="175" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="370" cy="140" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="400" cy="122" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="425" cy="128" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="450" cy="148" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="480" cy="185" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="510" cy="230" r="4" fill="#3987e5" opacity=".85"/>
+  <!-- parabole bien ajustée -->
+  <path d="M312,228 Q430,100 525,235" fill="none" stroke="#1baf7a" stroke-width="2.2"/>
+  <text x="430" y="286" text-anchor="middle" fill="#716989" font-size="10">Parabole — capture le U</text></p>
+
+<p><!-- PANNEAU 3 : Degré 10 -->
+  <line x1="590" y1="260" x2="840" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <line x1="590" y1="40" x2="590" y2="260" stroke="#4a4360" stroke-width="1.2"/>
+  <text x="715" y="18" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Degré 10 — Overfitting</text>
+  <!-- mêmes points décalés -->
+  <circle cx="610" cy="220" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="635" cy="175" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="660" cy="140" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="688" cy="122" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="715" cy="128" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="740" cy="148" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="768" cy="185" r="4" fill="#3987e5" opacity=".85"/>
+  <circle cx="800" cy="230" r="4" fill="#3987e5" opacity=".85"/>
+  <!-- courbe degré 10 : ondule entre les points -->
+  <path d="M605,228 C612,210 620,200 635,175 C648,155 652,135 660,140 C668,145 676,115 688,122 C698,128 706,135 715,128 C724,122 732,155 740,148 C750,140 758,190 768,185 C778,180 788,238 800,230 C810,222 820,238 832,240" fill="none" stroke="#9085e9" stroke-width="2.2"/>
+  <text x="715" y="286" text-anchor="middle" fill="#716989" font-size="10">Ondule partout — mémorise le bruit</text>
+  <!-- annotation overfitting -->
+  <rect x="600" y="295" width="240" height="20" rx="5" fill="rgba(144,133,233,.1)"/>
+  <text x="720" y="308" text-anchor="middle" fill="#9085e9" font-size="10">Performant sur train, catastrophique en prod</text>
+</svg></p>
+
+<h3 id="code-sklearn-avec-polynomialfeatures-expliqué">Code sklearn avec PolynomialFeatures expliqué</h3>
+
+<p><code>PolynomialFeatures</code> est un transformateur : il prend une variable x et crée x, x², x³... jusqu'au degré demandé. Si on a deux variables x₁ et x₂, il crée aussi les <strong>interactions</strong> x₁·x₂ (une interaction = le produit de deux variables, pour capturer l'effet combiné de l'une sur l'autre).</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolynomialFeatures</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Données EDF fictives : température (°C) et consommation (kWh/jour)</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="n">consommation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">85</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">temperatures</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">consommation</span>
+
+<span class="c1"># Pipeline :</span>
+<span class="c1"># 1. PolynomialFeatures(degree=2) transforme [x] en [1, x, x²]</span>
+<span class="c1"># 2. Ridge régularise pour éviter l&#39;overfitting</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;poly&quot;</span><span class="p">,</span>  <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Vérifier les nouvelles features créées</span>
+<span class="n">poly</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;poly&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Features créées :&quot;</span><span class="p">,</span> <span class="n">poly</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">([</span><span class="s2">&quot;temperature&quot;</span><span class="p">]))</span>
+<span class="c1"># [&#39;temperature&#39;, &#39;temperature^2&#39;]</span>
+
+<span class="c1"># Prédire la consommation à 22°C</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">([[</span><span class="mi">22</span><span class="p">]])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Consommation prédite à 22°C : </span><span class="si">{</span><span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> kWh/jour&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="situation-réelle-edf">Situation réelle — EDF</h3>
+
+<p>EDF modélise la consommation électrique journalière de la France en fonction de la température. La relation est bien en U : sous 15°C le chauffage s'emballe, au-dessus de 25°C la climatisation prend le relais. Une régression linéaire prédirait une consommation monotone (toujours plus ou toujours moins avec la température) — complètement fausse. Un polynôme de degré 2 capture cette réalité avec un R² supérieur à 0.92, contre 0.41 pour la droite.</p>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 5</strong></p>
+  
+  <p><strong>Q : Qu'est-ce que le "feature engineering" dans le contexte de la régression polynomiale ?</strong>
+  R : On crée de nouvelles variables (x², x³, produits de variables) à partir des variables existantes pour permettre à un modèle linéaire de capturer des relations non-linéaires.</p>
+  
+  <p><strong>Q : Pourquoi la régression polynomiale reste-t-elle une "régression linéaire" ?</strong>
+  R : Parce que le modèle est linéaire en ses coefficients — il fait la somme pondérée de ses variables d'entrée. Les variables d'entrée sont juste x, x², x³ plutôt que x seulement.</p>
+  
+  <p><strong>Q : Quel est le danger d'utiliser un degré trop élevé ?</strong>
+  R : Overfitting sévère — la courbe ondule pour passer par chaque point d'entraînement et devient inutilisable sur de nouvelles données.</p>
+  
+  <p><strong>Q : Comment limiter l'overfitting en régression polynomiale ?</strong>
+  R : Combiner PolynomialFeatures avec Ridge ou Lasso, et choisir le degré par validation croisée.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="6-choisir-entre-les-modèles-de-régression"><span class="h2-num">7</span>6 — Choisir entre les modèles de régression<span class="h2-line"></span></h2>
+
+<h3 id="tableau-de-décision">Tableau de décision</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Situation</th>
+  <th>Modèle recommandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Relation linéaire, peu de features, pas de corrélation</td>
+  <td>Régression linéaire ordinaire</td>
+</tr>
+<tr>
+  <td>Toutes les features semblent utiles, corrélation possible</td>
+  <td><strong>Ridge</strong></td>
+</tr>
+<tr>
+  <td>Beaucoup de features, la plupart probablement inutiles</td>
+  <td><strong>Lasso</strong></td>
+</tr>
+<tr>
+  <td>Relation en courbe visible dans les données</td>
+  <td><strong>Polynomiale + Ridge</strong></td>
+</tr>
+<tr>
+  <td>Incertitude totale</td>
+  <td>Tester Ridge et Lasso avec CV, comparer</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="courbes-dapprentissage-détecter-underfitting-et-overfitting">Courbes d'apprentissage — détecter underfitting et overfitting</h3>
+
+<p>Une <strong>courbe d'apprentissage</strong> montre la performance du modèle en fonction de la taille du jeu d'entraînement, séparément pour les données d'entraînement et de validation. C'est l'outil de diagnostic le plus utile pour savoir si un problème vient du modèle ou des données.</p>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="760" height="300" rx="12" fill="#1e1c24"/></p>
+
+<p><!-- === PANNEAU UNDERFITTING === -->
+  <text x="185" y="22" text-anchor="middle" fill="#e66767" font-size="12" font-weight="700">Underfitting</text>
+  <line x1="40" y1="250" x2="360" y2="250" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="40" y1="40" x2="40" y2="250" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- labels -->
+  <text x="195" y="272" text-anchor="middle" fill="#716989" font-size="10">Taille du jeu d'entraînement →</text>
+  <text x="12" y="145" text-anchor="middle" fill="#716989" font-size="10" transform="rotate(-90,12,145)">Score</text>
+  <!-- haut = bon score, bas = mauvais score -->
+  <text x="35" y="55" text-anchor="end" fill="#716989" font-size="9">1.0</text>
+  <text x="35" y="145" text-anchor="end" fill="#716989" font-size="9">0.7</text>
+  <text x="35" y="250" text-anchor="end" fill="#716989" font-size="9">0.4</text>
+  <!-- Train curve : commence haute puis descend et se stabilise bas -->
+  <path d="M60,65 C100,90 160,135 220,155 C280,165 330,168 350,170" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <!-- Val curve : commence basse et monte peu, reste basse -->
+  <path d="M60,215 C100,200 160,185 220,180 C280,176 330,174 350,173" fill="none" stroke="#e66767" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- les deux courbes proches et basses -->
+  <text x="275" y="162" fill="#3987e5" font-size="10">Train</text>
+  <text x="275" y="185" fill="#e66767" font-size="10">Validation</text>
+  <rect x="80" y="195" width="200" height="32" rx="6" fill="rgba(230,103,103,.1)" stroke="#e66767" stroke-width="1"/>
+  <text x="180" y="208" text-anchor="middle" fill="#e66767" font-size="10">Les deux courbes restent basses</text>
+  <text x="180" y="222" text-anchor="middle" fill="#716989" font-size="10">→ modèle trop simple</text></p>
+
+<p><!-- séparateur -->
+  <line x1="395" y1="20" x2="395" y2="270" stroke="#4a4360" stroke-width="1" stroke-dasharray="6,4"/></p>
+
+<p><!-- === PANNEAU OVERFITTING === -->
+  <text x="575" y="22" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Overfitting</text>
+  <line x1="420" y1="250" x2="740" y2="250" stroke="#4a4360" stroke-width="1.5"/>
+  <line x1="420" y1="40" x2="420" y2="250" stroke="#4a4360" stroke-width="1.5"/>
+  <text x="578" y="272" text-anchor="middle" fill="#716989" font-size="10">Taille du jeu d'entraînement →</text>
+  <text x="392" y="55" text-anchor="end" fill="#716989" font-size="9">1.0</text>
+  <text x="392" y="145" text-anchor="end" fill="#716989" font-size="9">0.7</text>
+  <text x="392" y="250" text-anchor="end" fill="#716989" font-size="9">0.4</text>
+  <!-- Train : reste haute -->
+  <path d="M440,52 C480,53 540,55 600,57 C650,59 710,60 730,60" fill="none" stroke="#3987e5" stroke-width="2"/>
+  <!-- Val : monte mais reste très en dessous du train -->
+  <path d="M440,215 C480,195 540,175 600,165 C650,158 710,155 730,154" fill="none" stroke="#9085e9" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- flèche écart -->
+  <line x1="710" y1="62" x2="710" y2="153" stroke="#e8a600" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="718" y="110" fill="#e8a600" font-size="10">Gap</text>
+  <text x="545" y="50" fill="#3987e5" font-size="10">Train (haute)</text>
+  <text x="545" y="175" fill="#9085e9" font-size="10">Validation (basse)</text>
+  <rect x="445" y="195" width="240" height="32" rx="6" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1"/>
+  <text x="565" y="208" text-anchor="middle" fill="#9085e9" font-size="10">Grand écart train / validation</text>
+  <text x="565" y="222" text-anchor="middle" fill="#716989" font-size="10">→ modèle mémorise, pas généralise</text>
+</svg></p>
+
+<h3 id="métriques-dévaluation">Métriques d'évaluation</h3>
+
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <rect width="700" height="200" rx="12" fill="#1e1c24"/></p>
+
+<p><!-- RMSE -->
+  <rect x="20" y="20" width="200" height="160" rx="10" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.3"/>
+  <text x="120" y="44" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800">RMSE</text>
+  <text x="120" y="62" text-anchor="middle" fill="#716989" font-size="10">Root Mean Squared Error</text>
+  <text x="120" y="90" text-anchor="middle" fill="#ddd8ee" font-size="14" font-weight="700">√( Σ(y−ŷ)² / n )</text>
+  <text x="120" y="118" text-anchor="middle" fill="#9e95b5" font-size="10">Dans la même unité que y</text>
+  <text x="120" y="136" text-anchor="middle" fill="#9e95b5" font-size="10">Pénalise les grosses erreurs</text>
+  <text x="120" y="162" text-anchor="middle" fill="#716989" font-size="10">0 = parfait ; plus bas = mieux</text></p>
+
+<p><!-- MAE -->
+  <rect x="250" y="20" width="200" height="160" rx="10" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.3"/>
+  <text x="350" y="44" text-anchor="middle" fill="#1baf7a" font-size="13" font-weight="800">MAE</text>
+  <text x="350" y="62" text-anchor="middle" fill="#716989" font-size="10">Mean Absolute Error</text>
+  <text x="350" y="90" text-anchor="middle" fill="#ddd8ee" font-size="14" font-weight="700">Σ|y−ŷ| / n</text>
+  <text x="350" y="118" text-anchor="middle" fill="#9e95b5" font-size="10">Dans la même unité que y</text>
+  <text x="350" y="136" text-anchor="middle" fill="#9e95b5" font-size="10">Robuste aux outliers</text>
+  <text x="350" y="162" text-anchor="middle" fill="#716989" font-size="10">0 = parfait ; plus bas = mieux</text></p>
+
+<p><!-- R² -->
+  <rect x="480" y="20" width="200" height="160" rx="10" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.3"/>
+  <text x="580" y="44" text-anchor="middle" fill="#9085e9" font-size="13" font-weight="800">R²</text>
+  <text x="580" y="62" text-anchor="middle" fill="#716989" font-size="10">Coefficient de détermination</text>
+  <text x="580" y="90" text-anchor="middle" fill="#ddd8ee" font-size="14" font-weight="700">1 − SS<em>res / SS</em>tot</text>
+  <text x="580" y="118" text-anchor="middle" fill="#9e95b5" font-size="10">Sans unité, entre −∞ et 1</text>
+  <text x="580" y="136" text-anchor="middle" fill="#9e95b5" font-size="10">1 = parfait ; 0 = inutile</text>
+  <text x="580" y="162" text-anchor="middle" fill="#716989" font-size="10">Proportion de variance expliquée</text>
+</svg></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">350000</span><span class="p">,</span> <span class="mi">420000</span><span class="p">,</span> <span class="mi">510000</span><span class="p">,</span> <span class="mi">620000</span><span class="p">]</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">330000</span><span class="p">,</span> <span class="mi">445000</span><span class="p">,</span> <span class="mi">495000</span><span class="p">,</span> <span class="mi">640000</span><span class="p">]</span>
+
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="n">mae</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">r2</span>   <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE : </span><span class="si">{</span><span class="n">rmse</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>   <span class="c1"># Erreur quadratique moyenne</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>    <span class="c1"># Erreur absolue moyenne</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R²   : </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>        <span class="c1"># Proportion de variance expliquée</span>
+</code></pre>
+</div>
+
+<hr />
+
+<blockquote>
+  <p><strong>Flashcards Section 6</strong></p>
+  
+  <p><strong>Q : Sur une courbe d'apprentissage, comment reconnaît-on l'underfitting ?</strong>
+  R : Les deux courbes (train et validation) restent basses — le modèle est trop simple pour les deux.</p>
+  
+  <p><strong>Q : Quelle est la différence entre RMSE et MAE ?</strong>
+  R : RMSE met au carré avant de faire la moyenne, ce qui pénalise davantage les grosses erreurs. MAE traite toutes les erreurs proportionnellement à leur taille.</p>
+  
+  <p><strong>Q : Un R² de 0.85 veut dire quoi ?</strong>
+  R : Le modèle explique 85% de la variance de la variable cible. Les 15% restants sont du bruit ou des facteurs non capturés.</p>
+  
+  <p><strong>Q : Si le score train est 0.97 et le score validation 0.62, que faire en priorité ?</strong>
+  R : Réduire la complexité du modèle ou augmenter la régularisation (alpha plus grand dans Ridge ou Lasso).</p>
+</blockquote>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

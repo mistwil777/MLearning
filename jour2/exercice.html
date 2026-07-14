@@ -1,0 +1,527 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 2Jour 2 — Exercices : ML ClassiqueExercicesCas clientsAuto-évaluation</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 2</div><h1>Jour 2 — <em>Exercices : ML Classique</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<hr />
+
+<h2 id="exercice-1-choix-dalgorithme">Exercice 1 — Choix d'algorithme</h2>
+
+<p>Quatre briefs clients. Pour chacun, identifie : le type de problème ML, l'algorithme recommandé, et la métrique principale d'évaluation. Justifie chaque choix en une ou deux phrases.</p>
+
+<hr />
+
+<p><strong>Brief A — Mutuelle santé</strong></p>
+
+<p>Une mutuelle veut prédire si un adhérent va résilier son contrat dans les 3 prochains mois, en se basant sur : l'âge, le type de contrat, les remboursements des 12 derniers mois, la fréquence des appels au service client, et la région. Le dataset contient 500 000 adhérents. 8% ont résilié lors de la période précédente.</p>
+
+<hr />
+
+<p><strong>Brief B — Cabinet médical</strong></p>
+
+<p>Un cabinet de radiologie veut classer automatiquement des comptes-rendus médicaux en texte libre (250 000 documents) selon leur degré d'urgence (urgent / non urgent). Les radiologues ont déjà annoté 2000 documents à la main.</p>
+
+<hr />
+
+<p><strong>Brief C — Promoteur immobilier</strong></p>
+
+<p>Un promoteur veut estimer le prix de vente de 500 nouvelles maisons individuelles, en se basant sur la surface habitable, la localisation (code postal), le nombre de pièces, la présence d'un jardin, et l'année de construction. Il dispose de 15 000 ventes passées avec les prix réels.</p>
+
+<hr />
+
+<p><strong>Brief D — Opérateur télécom</strong></p>
+
+<p>Un opérateur télécom veut détecter les appels frauduleux (SIM swapping) en temps réel. Les appels frauduleux représentent moins de 0.01% du trafic. Le modèle doit décider en moins de 50ms par appel. La pénalité pour bloquer un appel légitime (faux positif) est très élevée.</p>
+
+<hr />
+
+<p><details>
+<summary>Réponses commentées (à lire après avoir répondu)</summary></p>
+
+<p><strong>Brief A — Mutuelle santé : Churn prediction</strong></p>
+
+<ul>
+<li><strong>Type de problème</strong> : Classification binaire supervisée (résilié / non résilié)</li>
+<li><strong>Algorithme recommandé</strong> : XGBoost</li>
+<li><strong>Métrique principale</strong> : AUC-ROC (les classes sont déséquilibrées : 8% de résiliations — accuracy serait trompeuse). Compléter avec le rappel si le coût de retenir un client est élevé.</li>
+<li><strong>Justification</strong> : 500 000 lignes, features hétérogènes (montants, catégories, fréquences) → XGBoost. Les relations entre features (ex : adhérent jeune + peu de remboursements + beaucoup d'appels = profil résiliation spécifique) sont non-linéaires. Commencer quand même par une régression logistique pour avoir un baseline et vérifier que les features encodées sont correctes.</li>
+<li><strong class="lbl-warn">&#x26a1; Piège</strong> : ne pas utiliser l'accuracy comme métrique principale (8% de résiliations → un modèle qui dit "reste" à chaque fois obtient 92% d'accuracy sans valeur).</li>
+</ul>
+
+<hr />
+
+<p><strong>Brief B — Cabinet médical : Classification de texte</strong></p>
+
+<ul>
+<li><strong>Type de problème</strong> : Classification supervisée sur données non structurées (texte)</li>
+<li><strong>Algorithme recommandé</strong> : CamemBERT fine-tuné (HuggingFace Transformers) — pas XGBoost</li>
+<li><strong>Métrique principale</strong> : Rappel (ne pas manquer un document urgent = faux négatif potentiellement grave). Compléter avec F1 pour l'équilibre.</li>
+<li><strong>Justification</strong> : les données sont du texte libre médical en français — XGBoost ne comprend pas le texte. CamemBERT est pré-entraîné sur le français, il suffit de le fine-tuner sur les 2000 documents annotés. C'est un problème qui sort du ML classique (Jour 5 du programme).</li>
+<li><strong class="lbl-warn">&#x26a1; Piège</strong> : ne pas essayer de "transformer le texte en features manuellement" (comptage de mots, TF-IDF) — sous-optimal pour la nuance médicale. Et surtout ne pas utiliser XGBoost sur du texte brut — ça ne fonctionnerait pas.</li>
+</ul>
+
+<hr />
+
+<p><strong>Brief C — Promoteur immobilier : Estimation de prix</strong></p>
+
+<ul>
+<li><strong>Type de problème</strong> : Régression supervisée (prédire un nombre continu — le prix)</li>
+<li><strong>Algorithme recommandé</strong> : XGBoost (régresseur), avec régression linéaire comme baseline</li>
+<li><strong>Métrique principale</strong> : RMSE (les grosses erreurs de prix sont coûteuses pour un promoteur — RMSE pénalise davantage les écarts importants). Afficher aussi le MAE pour la communication au métier ("en moyenne, on se trompe de X €").</li>
+<li><strong>Justification</strong> : 15 000 exemples, features hétérogènes (surface numérique, code postal catégoriel, booléen jardin) → pipeline sklearn + XGBoostRegressor. La localisation (code postal) va nécessiter un encodage — OneHotEncoder si peu de codes postaux distincts, encodage par fréquence ou target encoding si beaucoup.</li>
+<li><strong class="lbl-warn">&#x26a1; Piège</strong> : ne pas oublier de passer <code>XGBRegressor</code> (pas <code>XGBClassifier</code>) et d'utiliser <code>scoring='neg_root_mean_squared_error'</code> dans cross<em>val</em>score.</li>
+</ul>
+
+<hr />
+
+<p><strong>Brief D — Opérateur télécom : Détection de fraude temps réel</strong></p>
+
+<ul>
+<li><strong>Type de problème</strong> : Classification binaire supervisée, très déséquilibrée, contrainte de latence</li>
+<li><strong>Algorithme recommandé</strong> : Régression logistique (contrainte 50ms) — pas XGBoost</li>
+<li><strong>Métrique principale</strong> : Précision (la pénalité pour bloquer un appel légitime est très élevée — minimiser les faux positifs). Fixer un seuil de décision bas sur la probabilité.</li>
+<li><strong>Justification</strong> : XGBoost peut prendre 10-50ms par prédiction selon la configuration — risqué pour 50ms max. La régression logistique prédit en moins de 1ms. De plus, avec 0.01% de fraudes, les données sont extrêmement déséquilibrées : utiliser <code>class_weight='balanced'</code> ou sur-échantillonner les fraudes avec SMOTE.</li>
+<li><strong class="lbl-warn">&#x26a1; Piège</strong> : optimiser le rappel au détriment de la précision bloquerait des dizaines de milliers d'appels légitimes par jour — désastreux pour l'opérateur. La contrainte métier (coût des faux positifs élevé) impose de prioriser la précision.</li>
+</ul>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-2-débogage-de-pipeline">Exercice 2 — Débogage de pipeline</h2>
+
+<p>Le code suivant contient <strong>3 erreurs classiques</strong>. Identifie-les, explique pourquoi chacune est un problème, et propose la correction.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">OrdinalEncoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.impute</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+
+<span class="c1"># Dataset : prédire le défaut de crédit</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;credit_data.csv&#39;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;defaut&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;defaut&#39;</span><span class="p">]</span>
+
+<span class="n">features_numeriques</span>   <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;revenu&#39;</span><span class="p">,</span> <span class="s1">&#39;anciennete&#39;</span><span class="p">]</span>
+<span class="n">features_categoriques</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="s1">&#39;type_emploi&#39;</span><span class="p">,</span> <span class="s1">&#39;niveau_etudes&#39;</span><span class="p">]</span>
+
+<span class="c1"># Pipeline</span>
+<span class="n">preprocesseur</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>         <span class="c1"># Erreur 1</span>
+    <span class="p">(</span><span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># Entraînement</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">preprocesseur</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_train_prep</span> <span class="o">=</span> <span class="n">preprocesseur</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_prep</span> <span class="o">=</span> <span class="n">preprocesseur</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_prep</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Évaluation — Erreur 2</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_train_prep</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score moyen : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Prédiction sur nouvelles données — Erreur 3</span>
+<span class="n">nouveau_client</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([{</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;revenu&#39;</span><span class="p">:</span> <span class="mi">2500</span><span class="p">,</span> <span class="s1">&#39;anciennete&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;region&#39;</span><span class="p">:</span> <span class="s1">&#39;Bretagne&#39;</span><span class="p">,</span> <span class="s1">&#39;type_emploi&#39;</span><span class="p">:</span> <span class="s1">&#39;Salarié&#39;</span><span class="p">,</span> <span class="s1">&#39;niveau_etudes&#39;</span><span class="p">:</span> <span class="s1">&#39;Bac+5&#39;</span>
+<span class="p">}])</span>
+<span class="n">preprocesseur_nouveau</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+<span class="p">])</span>
+<span class="n">preprocesseur_nouveau</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">nouveau_client</span><span class="p">)</span>  <span class="c1"># Erreur 3</span>
+<span class="n">X_nouveau_prep</span> <span class="o">=</span> <span class="n">preprocesseur_nouveau</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">nouveau_client</span><span class="p">)</span>
+<span class="n">proba</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_nouveau_prep</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probabilité de défaut : </span><span class="si">{</span><span class="n">proba</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><details>
+<summary>Corrections commentées</summary></p>
+
+<p><strong>Erreur 1 — Ordre des étapes dans le pipeline</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Problème : StandardScaler est appliqué AVANT l&#39;imputation et l&#39;encodage</span>
+<span class="n">preprocesseur</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>     <span class="c1"># ← plante sur les valeurs NaN et les catégories textuelles</span>
+    <span class="p">(</span><span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+<span class="p">])</span>
+</code></pre>
+</div>
+
+<p>L'ordre doit être : imputer d'abord (combler les NaN), encoder ensuite (convertir le texte en nombres), scaler en dernier (normaliser les nombres). StandardScaler avant imputation plante car il ne peut pas calculer une moyenne sur des NaN. StandardScaler avant encodage plante car il ne peut pas normaliser du texte.</p>
+
+<p>De plus, ce pipeline applique le même traitement à toutes les colonnes — les catégories ne doivent pas être normalisées avec StandardScaler.</p>
+
+<p><strong>Correction</strong> :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.compose</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnTransformer</span>
+
+<span class="n">preprocesseur_num</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">preprocesseur_cat</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;imputer&#39;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;most_frequent&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">))</span>  <span class="c1"># OneHotEncoder, pas OrdinalEncoder pour région/type_emploi</span>
+<span class="p">])</span>
+
+<span class="n">preprocesseur</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span> <span class="n">preprocesseur_num</span><span class="p">,</span> <span class="n">features_numeriques</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">preprocesseur_cat</span><span class="p">,</span> <span class="n">features_categoriques</span><span class="p">)</span>
+<span class="p">])</span>
+</code></pre>
+</div>
+
+<hr />
+
+<p><strong>Erreur 2 — Cross-validation sur données déjà transformées, avec la mauvaise métrique</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Problème 1 : on fait la cross-validation sur X_train_prep (déjà transformé)</span>
+<span class="c1"># alors que le preprocesseur a été fit uniquement sur X_train.</span>
+<span class="c1"># En cross-validation, chaque fold doit re-fitter le preprocesseur sur son propre train</span>
+<span class="c1"># pour éviter la fuite d&#39;information (data leakage entre folds).</span>
+
+<span class="c1"># Problème 2 : scoring=&#39;accuracy&#39; sur un problème de crédit (classes déséquilibrées)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_train_prep</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>La cross-validation doit être faite sur le <strong>pipeline complet</strong> (preprocessing + modèle), pas sur les données déjà transformées. En transformant X<em>train avant la cross-validation, les statistiques (médiane, écart-type) ont été calculées sur tout X</em>train, y compris les données qui serviront de "test" dans chaque fold — c'est du data leakage.</p>
+
+<p><strong>Correction</strong> :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">pipeline_complet</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;preprocessing&#39;</span><span class="p">,</span> <span class="n">preprocesseur</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;modele&#39;</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># La cross-validation re-fit le preprocesseur à chaque fold — pas de leakage</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline_complet</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC moyen : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<p><strong>Erreur 3 — Recréation et re-fit du preprocesseur sur les nouvelles données</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Problème : on crée un nouveau preprocesseur et on le fit sur nouveau_client</span>
+<span class="n">preprocesseur_nouveau</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>
+<span class="n">preprocesseur_nouveau</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">nouveau_client</span><span class="p">)</span>  <span class="c1"># ← catastrophique</span>
+</code></pre>
+</div>
+
+<p>Le preprocesseur doit être le <strong>même objet</strong> que celui fité sur X_train. Refitter sur une seule ligne calcule une médiane sur un seul exemple (inutile), une normalisation sur un seul exemple (l'écart-type vaut 0 → division par zéro). Les transformations appliquées seront totalement différentes de celles appliquées pendant l'entraînement → le modèle reçoit des données dans un format qu'il n'a jamais vu.</p>
+
+<p><strong>Correction</strong> :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Le pipeline_complet encapsule déjà le preprocesseur fité sur X_train</span>
+<span class="c1"># Il suffit d&#39;appeler predict_proba directement</span>
+<span class="n">proba</span> <span class="o">=</span> <span class="n">pipeline_complet</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">nouveau_client</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probabilité de défaut : </span><span class="si">{</span><span class="n">proba</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-3-interprétation-de-métriques">Exercice 3 — Interprétation de métriques</h2>
+
+<p>Un data scientist livre les résultats suivants d'un modèle de détection de fraudes bancaires (1.5% des transactions sont des fraudes dans le dataset) :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">=== Rapport d'évaluation ===
+Accuracy   : 0.987
+AUC-ROC    : 0.731
+F1-score   : 0.421
+
+              precision    recall  f1-score   support
+    Normal       0.99      1.00      0.99     98500
+    Fraude       0.72      0.27      0.39      1500
+
+=== Cross-validation (5 folds) ===
+AUC scores : [0.729, 0.733, 0.728, 0.736, 0.727]
+Moyenne    : 0.731
+Std        : 0.003
+
+=== Feature importances (top 5) ===
+montant_transaction         : 0.312
+heure_transaction           : 0.187
+pays_destination            : 0.156
+frequence_7j                : 0.098
+nb_transactions_meme_compte : 0.071
+</code></pre></div>
+
+<p>Réponds aux questions suivantes :</p>
+
+<ol>
+<li><p>Le data scientist présente les résultats au client en mettant en avant l'accuracy de 98.7%. Est-ce honnête ? Que lui réponds-tu ?</p></li>
+<li><p>Le rappel est à 0.27. Que signifie concrètement ce chiffre pour la banque ?</p></li>
+<li><p>L'AUC de 0.731 est-elle satisfaisante pour ce type de problème ? Que suggères-tu pour l'améliorer ?</p></li>
+<li><p>L'écart-type de la cross-validation est 0.003. Que t'indique cette valeur ?</p></li>
+<li><p>La feature <code>montant_transaction</code> a une importance de 0.312. Est-ce une information suffisante pour expliquer un refus à un client ?</p></li>
+</ol>
+
+<p><details>
+<summary>Réponses commentées</summary></p>
+
+<p><strong>Question 1 — L'accuracy de 98.7% est-elle honnête ?</strong></p>
+
+<p>Non. C'est le paradoxe classique des classes déséquilibrées. 98.5% des transactions sont normales — un modèle qui dit "normal" à chaque fois obtient déjà 98.5% d'accuracy sans détecter une seule fraude. L'accuracy de 98.7% ne prouve qu'une chose : le modèle dit "normal" presque tout le temps.</p>
+
+<p>Ce qu'il faut dire au client : "L'accuracy est à 98.7% parce que 98.5% des transactions sont normales. La métrique pertinente est le rappel : notre modèle ne détecte que 27% des fraudes réelles. Sur 1 500 fraudes dans votre dataset de test, il en a manqué 1 095."</p>
+
+<hr />
+
+<p><strong>Question 2 — Le rappel à 0.27 concrètement</strong></p>
+
+<p>Sur 1 500 vraies fraudes dans les données de test, le modèle en a détecté 27% = 405 fraudes détectées. Il en a <strong>manqué 1 095</strong> (faux négatifs). Pour une banque, chaque fraude manquée est une perte financière directe. Un rappel de 0.27 est très insuffisant pour un système de détection de fraude opérationnel — une cible raisonnable serait 0.70+.</p>
+
+<hr />
+
+<p><strong>Question 3 — L'AUC de 0.731 : satisfaisante ?</strong></p>
+
+<p>Passable mais insuffisante pour un déploiement. Un score de 0.731 signifie que le modèle classe correctement 73.1% des paires (une vraie fraude, une transaction normale) — c'est mieux que le hasard (0.5) mais un bon modèle de détection de fraude devrait atteindre 0.85+.</p>
+
+<p>Pistes d'amélioration :
+- <strong>Rééquilibrer les classes</strong> : ajouter <code>scale_pos_weight</code> dans XGBoost (ratio négatifs/positifs = 98.5/1.5 ≈ 66) ou utiliser SMOTE pour sur-échantillonner les fraudes.
+- <strong>Enrichir les features</strong> : la fréquence sur 7 jours est une bonne idée — ajouter aussi des features de vélocité (montant inhabituel pour ce compte spécifiquement).
+- <strong>Ajuster le seuil de décision</strong> : au lieu du seuil par défaut 0.5, chercher le seuil qui maximise le rappel tout en maintenant une précision acceptable.</p>
+
+<hr />
+
+<p><strong>Question 4 — L'écart-type de 0.003</strong></p>
+
+<p>Très faible variance entre les folds — le modèle est stable. Il ne performe pas bien sur un fold particulier et mal sur d'autres. C'est une bonne nouvelle sur la robustesse : le problème n'est pas l'instabilité mais le niveau de performance général (AUC 0.731 trop bas).</p>
+
+<hr />
+
+<p><strong>Question 5 — L'importance de <code>montant_transaction</code> à 0.312 suffit-elle ?</strong></p>
+
+<p>Non. L'importance dans XGBoost mesure combien cette feature est utilisée pour construire les arbres — pas son impact sur une décision individuelle. Deux problèmes :</p>
+
+<ol>
+<li>Une importance élevée peut signifier que la feature est utilisée souvent pour des divisions mineures, pas qu'elle explique les grosses décisions.</li>
+<li>On ne sait pas si un montant élevé <em>augmente</em> ou <em>diminue</em> le score de fraude — ni de combien.</li>
+</ol>
+
+<p>Pour expliquer un refus à un client, il faut les <strong>SHAP values</strong> : elles donnent la contribution de chaque feature pour <strong>chaque prédiction individuelle</strong> ("votre transaction de 4 500€ à 3h du matin vers un pays à risque a ajouté +0.43 au score de fraude").</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shap</span>
+<span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="n">X_test_prep</span><span class="p">)</span>
+<span class="n">shap</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">waterfall</span><span class="p">(</span><span class="n">shap_values</span><span class="p">[</span><span class="n">exemple_fraude</span><span class="p">])</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="exercice-4-checkpoint-avant-le-jour-3">Exercice 4 — Checkpoint avant le Jour 3</h2>
+
+<p>Avant de passer aux séries temporelles (Jour 3), vérifie que tu peux répondre à chaque point sans hésiter.</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">ALGORITHMES
+□ Je peux expliquer la différence entre régression logistique et XGBoost
+  en une phrase compréhensible par un client non-technique.
+
+□ Je sais pourquoi on entraîne toujours une régression logistique
+  avant d'essayer XGBoost.
+
+□ Je peux expliquer le bagging (Random Forest) et le boosting (XGBoost)
+  en utilisant l'analogie "experts indépendants vs experts qui se corrigent".
+
+□ Je comprends pourquoi un arbre sans contrainte de profondeur
+  overfitte toujours.
+
+PIPELINE
+□ Je sais dans quel ordre appliquer les étapes :
+  imputation → encodage → normalisation → modèle.
+
+□ Je peux expliquer pourquoi refitter le preprocesseur sur les
+  nouvelles données en production est une erreur.
+
+□ Je sais quand utiliser OneHotEncoder vs OrdinalEncoder (et le critère
+  de décision : y a-t-il un ordre naturel ?).
+
+□ Je peux expliquer ce que fait cross_val_score et pourquoi on l'utilise
+  sur le pipeline complet et non sur les données déjà transformées.
+
+MÉTRIQUES
+□ Je peux citer le paradoxe des classes déséquilibrées et donner un exemple.
+
+□ Je sais définir précision et rappel, et expliquer le dilemme entre les deux
+  avec un cas concret (fraude ou spam).
+
+□ Je comprends l'intuition de l'AUC-ROC sans la formule mathématique.
+
+□ Je sais quand utiliser RMSE vs MAE (et le critère : les grosses erreurs
+  coûtent-elles plus que les petites ?).
+
+RÉFLEXES PROFESSIONNELS
+□ Avant tout modèle complexe : baseline régression logistique.
+
+□ Avant toute évaluation : cross-validation sur le pipeline complet.
+
+□ Sur dataset déséquilibré : ne jamais présenter l'accuracy comme
+  métrique principale.
+
+□ Sur refus de crédit : proposer SHAP values plutôt que feature importances
+  pour l'explicabilité réglementaire.
+</code></pre></div>
+
+<p>Si au moins 3 cases restent non cochées sur le même thème, relis la section correspondante du cours avant de continuer.</p>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 7Jour 7 — Exercice Capstone : Architecturer de A à ZExercicesCas clientsAut</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 7</div><h1>Jour 7 — <em>Exercice Capstone : Architecturer de A à Z</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<hr />
+
+<h2 id="exercice-unique-malakoff-humanis-réduire-le-taux-de-résiliation">Exercice unique — Malakoff Humanis : Réduire le taux de résiliation</h2>
+
+<h3 id="le-brief-client">Le brief client</h3>
+
+<p>Malakoff Humanis est une mutuelle de santé. Leur taux de résiliation annuel est de 8,2%, en hausse depuis 3 ans. Chaque point de résiliation représente environ 15M€ de primes perdues. La direction veut "utiliser l'IA pour retenir les clients qui vont partir".</p>
+
+<p><strong>Ce que vous avez :</strong>
+- 2 millions de contrats actifs avec 5 ans d'historique complet
+- Données de sinistres : fréquence de remboursement, type (médecin, hospitalisation, dentaire, optique), montants
+- Données d'appels au service client : nombre, durée, motif (réclamation / information / résiliation directe), résolution
+- Données de changements de situation : changement d'employeur, départ en retraite, changement de situation familiale, déménagement
+- Données économiques : variation du revenu estimé (source DSN — Déclaration Sociale Nominative)
+- Données de navigation sur l'espace client en ligne</p>
+
+<p><strong>L'équipe :</strong>
+- 3 data scientists (dont vous, junior)
+- 1 data engineer
+- Pas de MLOps dédié</p>
+
+<p><strong>Contrainte réglementaire :</strong> toute décision commerciale basée sur ce modèle (appel de rétention, offre personnalisée) doit être explicable. La CNIL et le code des assurances imposent que le client puisse comprendre pourquoi il a été contacté.</p>
+
+<hr />
+
+<h3 id="ce-que-vous-devez-produire">Ce que vous devez produire</h3>
+
+<p>Répondez aux 5 parties ci-dessous. Chaque partie a une réponse commentée que vous pouvez déplier après votre tentative.</p>
+
+<hr />
+
+<h3 id="partie-1-reformuler-le-problème-métier">Partie 1 — Reformuler le problème métier</h3>
+
+<p><strong>Question :</strong> "Réduire le taux de résiliation via l'IA" est une intention, pas un problème ML. Reformulez-le en problème ML valide (rappel : variable à prédire, contexte d'utilisation, critère de succès mesurable).</p>
+
+<p>Notez votre reformulation ici avant de déplier la correction.</p>
+
+<p><details>
+<summary>Réponse commentée — Partie 1</summary></p>
+
+<p><strong>Reformulation correcte :</strong></p>
+
+<p>Prédire, pour chaque contrat actif, la probabilité de résiliation dans les 90 prochains jours, afin de déclencher une action de rétention personnalisée (appel, offre de rachat, amélioration de garanties) auprès des contrats à risque élevé, <strong>avant</strong> que la résiliation soit initiée.</p>
+
+<p><strong>Pourquoi 90 jours et pas 30 ou 12 mois ?</strong></p>
+
+<ul>
+<li>30 jours : trop court pour déclencher une intervention (traitement de l'alerte, formation des conseillers, temps d'appel) — on serait en réaction.</li>
+<li>12 mois : trop long — la plupart des événements déclencheurs n'ont pas encore eu lieu, le modèle prédit du vent.</li>
+<li>90 jours : fenêtre standard dans le secteur assurance. Assez long pour agir, assez court pour que les signaux soient pertinents.</li>
+</ul>
+
+<p><strong>Variable cible :</strong> résiliation dans les 90 prochains jours (binaire : 0 = reste, 1 = résilie)</p>
+
+<p><strong>Contexte d'utilisation :</strong> scoring hebdomadaire de l'ensemble du portefeuille, résultat envoyé aux équipes de rétention sous forme de liste priorisée</p>
+
+<p><strong>Critère de succès métier :</strong> réduire le taux de résiliation de 8,2% à 6,5% sur les contrats "traités" par l'équipe de rétention (attention : pas du taux global — les 3 data scientists ne peuvent pas traiter 2M de contrats)</p>
+
+<p><strong>Critère de succès technique :</strong> AUC &gt; 0.80 en validation, recall sur les 10% de contrats les plus à risque &gt; 70%</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="partie-2-audit-des-données">Partie 2 — Audit des données</h3>
+
+<p><strong>Question :</strong> Parmi les sources de données disponibles, identifiez :
+1. Deux sources qui seront probablement de haute valeur prédictive
+2. Deux risques concrets sur la qualité ou la légalité des données
+3. Un signal qui manque et qui serait précieux</p>
+
+<p><details>
+<summary>Réponse commentée — Partie 2</summary></p>
+
+<p><strong>Sources à haute valeur prédictive :</strong></p>
+
+<p><strong>1. Données d'appels au service client</strong>
+C'est le signal le plus fort. Un client qui appelle pour une réclamation non résolue, puis rappelle deux semaines plus tard, puis appelle directement le service résiliation : ce pattern de 3 appels en 30 jours prédit la résiliation avec une précision très élevée dans tous les datasets du secteur assurance. Le motif "résiliation directe" est presque un label en lui-même.</p>
+
+<p><strong>2. Données de changements de situation</strong>
+Le départ en retraite est un événement massif : le contrat collectif d'entreprise ne suit pas. La personne doit souscrire un contrat individuel — souvent chez un concurrent plus agressif commercialement. Même logique pour un déménagement en zone de faible couverture réseau médecin. Ces événements ont un fort pouvoir prédictif car ils créent une fenêtre de vulnérabilité contractuelle.</p>
+
+<p><strong>Deux risques identifiés :</strong></p>
+
+<p><strong>Risque 1 — Qualité des motifs d'appel</strong>
+Les motifs sont saisis manuellement par les conseillers. En pratique, "réclamation" et "information" sont souvent confondus, et certains conseillers utilisent "autre" pour tout ce qui prend du temps à catégoriser. Une feature construite sur des motifs mal encodés introduit du bruit. Il faut auditer la distribution de chaque motif par conseiller.</p>
+
+<p><strong>Risque 2 — Biais de sélection dans les labels</strong>
+On n'observe la résiliation que pour les clients qui l'ont initiée. Mais des clients insatisfaits qui n'ont pas encore résilié sont dans les négatifs (y=0). Si on entraîne le modèle sans distinguer "satisfait" de "insatisfait qui n'a pas encore agi", on sous-estime le risque de ce deuxième groupe. Le modèle sera moins performant sur les silencieux.</p>
+
+<p><strong>Signal manquant précieux :</strong>
+Les <strong>données de comparaison en ligne</strong> — est-ce que le client a consulté des comparateurs d'assurance (ASSUREo, LeLynx) récemment ? Ce signal n'est pas disponible directement, mais il pourrait être approximé par des partenariats de données ou des enquêtes NPS envoyées au bon moment. Son absence est un vrai angle mort du modèle.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="partie-3-architecture-technique">Partie 3 — Architecture technique</h3>
+
+<p><strong>Question :</strong> Proposez une architecture complète. Justifiez explicitement :
+- Pourquoi vous utilisez (ou n'utilisez pas) un LLM
+- Pourquoi vous choisissez l'algorithme de scoring central
+- Comment vous gérez la contrainte d'explicabilité réglementaire</p>
+
+<p><details>
+<summary>Réponse commentée — Partie 3</summary></p>
+
+<p><strong>Architecture proposée :</strong></p>
+
+<div class="mindmap">           ┌─────────────────────────────────────────────────┐
+           │      PIPELINE RÉTENTION MALAKOFF HUMANIS         │
+           └─────────────────────────┬───────────────────────┘
+                                     │
+        ┌────────────────────────────┼────────────────────┐
+        ▼                            ▼                    ▼
+┌──────────────────┐       ┌──────────────────┐   ┌─────────────────┐
+│ Feature engineering│     │ Modèle de scoring │   │ Explicabilité   │
+│ hebdomadaire      │     │ XGBoost           │   │ SHAP par contrat│
+│                   │     │ (classification   │   │                 │
+│ - Agrégations 30j │     │  binaire : résilié│   │ Top 3 raisons   │
+│ - Tendances       │     │  dans 90j)        │   │ par client      │
+│ - Encodage events │     │                   │   │                 │
+└────────┬──────────┘     └────────┬──────────┘   └────────┬────────┘
+         └────────────────────────┬┘             ┌─────────┘
+                                  ▼              ▼
+                      ┌──────────────────────────────┐
+                      │  Score de risque 0-100        │
+                      │  + Top 3 raisons textuelles   │
+                      └──────────────────┬────────────┘
+                                         │
+                  ┌──────────────────────┼──────────────────┐
+                  ▼                      ▼                   ▼
+         ┌────────────────┐   ┌──────────────────┐  ┌─────────────────┐
+         │ Score &gt; 70 :   │   │ Score 40-70 :    │  │ Score &lt; 40 :    │
+         │ Appel conseiller│   │ Email personnalisé│  │ Pas d'action    │
+         │ prioritaire    │   │ offre améliorée   │  │ (monitoring)    │
+         └────────────────┘   └──────────────────┘  └─────────────────┘
+</div>
+
+<p><strong>Pourquoi XGBoost et pas un LLM ou un réseau de neurones ?</strong></p>
+
+<p>La contrainte réglementaire est déterminante. La CNIL impose l'explicabilité des décisions automatisées impactant les personnes (Article 22 du RGPD). XGBoost avec SHAP permet de produire pour chaque contrat les 3 facteurs qui contribuent le plus au score — texte compréhensible par un conseiller et présentable au client.</p>
+
+<p>Un réseau de neurones profond serait plus performant en AUC (+2-3 points estimés) mais ininterprétable nativement. Un LLM ajouterait de la latence, du coût, et ne s'entraîne pas sur des données tabulaires structurées.</p>
+
+<p><strong>Pourquoi pas de règles seules ?</strong>
+Les règles simples ("si &gt; 3 appels en 30 jours → alerte") ont un rappel faible. Elles ne capturent pas les patterns multivariés : un client avec 2 appels ET un déménagement ET une baisse de remboursement est plus à risque qu'un client avec 4 appels et aucun autre signal.</p>
+
+<p><strong>Comment SHAP produit les explications :</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xgb</span>
+
+<span class="n">modele</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">modele</span><span class="p">)</span>
+<span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">expliquer_contrat</span><span class="p">(</span><span class="n">contrat_id</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="n">feature_names</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retourne les 3 facteurs principaux pour un contrat.&quot;&quot;&quot;</span>
+    <span class="n">sv</span> <span class="o">=</span> <span class="n">shap_values</span><span class="p">[</span><span class="n">contrat_id</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">top3_idx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sv</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="o">-</span><span class="mi">3</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">explications</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">top3_idx</span><span class="p">:</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">contribution</span> <span class="o">=</span> <span class="n">sv</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;augmente&quot;</span> <span class="k">if</span> <span class="n">contribution</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;réduit&quot;</span>
+        <span class="n">explications</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&#39; </span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2"> le risque de résiliation&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">explications</span>
+
+<span class="c1"># Exemple de sortie :</span>
+<span class="c1"># [&#39;nb_appels_30j=4 augmente le risque de résiliation&#39;,</span>
+<span class="c1">#  &#39;motif_dernier_appel=reclamation augmente le risque&#39;,</span>
+<span class="c1">#  &#39;remboursements_dentaire_12m=0 augmente le risque&#39;]</span>
+</code></pre>
+</div>
+
+<p>Ce texte est directement utilisable par le conseiller lors de l'appel de rétention.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="partie-4-métriques-de-succès">Partie 4 — Métriques de succès</h3>
+
+<p><strong>Question :</strong> Définissez les métriques que vous proposez à la direction, en distinguant métriques techniques et métriques métier. Justifiez pourquoi vous ne proposez pas l'exactitude (accuracy) comme métrique principale.</p>
+
+<p><details>
+<summary>Réponse commentée — Partie 4</summary></p>
+
+<p><strong>Pourquoi l'exactitude est trompeuse ici :</strong></p>
+
+<p>Le taux de résiliation est de 8,2% — donc 91,8% des contrats ne résilient pas. Un modèle stupide qui prédit "jamais de résiliation" atteint une accuracy de 91,8%. C'est excellent sur papier et complètement inutile en pratique.</p>
+
+<p><strong>Métriques techniques :</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Métrique</th>
+  <th>Valeur cible</th>
+  <th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>AUC-ROC</strong></td>
+  <td>&gt; 0.80</td>
+  <td>Mesure la capacité du modèle à distinguer les résilient des non-résiliant, indépendamment du seuil de décision</td>
+</tr>
+<tr>
+  <td><strong>Recall sur les 10% de contrats les plus à risque</strong></td>
+  <td>&gt; 65%</td>
+  <td>On veut être sûr de capturer la majorité des "vrais" résiliants dans le top du classement — c'est ce que l'équipe de rétention traitera</td>
+</tr>
+<tr>
+  <td><strong>Precision@top10%</strong></td>
+  <td>&gt; 35%</td>
+  <td>Au moins 35% des contrats alertés doivent être de "vrais" résiliants — pour que l'équipe ne passe pas 65% de son temps sur des faux positifs</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Pourquoi recall et precision@k plutôt que F1 global ?</strong></p>
+
+<p>Parce que l'équipe de rétention ne peut pas appeler 2M de contrats. Elle appelle les 5 à 10 000 contrats avec le score le plus élevé. Ce qui compte n'est pas la performance globale du modèle mais sa performance <strong>dans ce sous-ensemble</strong>. C'est ce que capture le recall et la precision sur les top-k contrats.</p>
+
+<p><strong>Métriques métier :</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Métrique</th>
+  <th>Baseline</th>
+  <th>Cible</th>
+  <th>Mesure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Taux de résiliation sur contrats "traités"</td>
+  <td>8,2%</td>
+  <td>5,5%</td>
+  <td>Comparer le taux de résiliation à 90j sur les contrats contactés vs non-contactés (A/B test interne)</td>
+</tr>
+<tr>
+  <td>ROI de la campagne de rétention</td>
+  <td>—</td>
+  <td>&gt; 3×</td>
+  <td>Primes conservées / coût des actions de rétention (appels, offres)</td>
+</tr>
+<tr>
+  <td>Taux de conversion des offres de rétention</td>
+  <td>—</td>
+  <td>&gt; 20%</td>
+  <td>Parmi les contrats contactés, % qui renouvellent avec une offre améliorée</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Indicateur de vigilance :</strong></p>
+
+<p>Taux de faux positifs traités — si les conseillers passent trop de temps sur des faux positifs (clients qui ne résiliaient pas), ils perdront confiance dans le modèle. Ce taux doit être suivi mensuellement et partagé avec l'équipe.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="partie-5-plan-de-mise-en-production">Partie 5 — Plan de mise en production</h3>
+
+<p><strong>Question :</strong> Proposez un plan de mise en production réaliste pour une équipe de 3 data scientists + 1 data engineer, sans MLOps dédié. Incluez les outils, la cadence, et ce que vous monitorez.</p>
+
+<p><details>
+<summary>Réponse commentée — Partie 5</summary></p>
+
+<p><strong>Contrainte principale :</strong> pas de MLOps dédié = pas de Kubernetes, pas d'infrastructure complexe à maintenir. Chaque heure passée à maintenir l'infra est une heure de moins sur le modèle.</p>
+
+<p><strong>Phase 1 — POC (semaines 1-4)</strong></p>
+
+<p>Objectif : prouver que le modèle a un AUC &gt; 0.80 sur données historiques. Pas de déploiement, pas de pipeline automatisé. Un notebook reproductible suffit.</p>
+
+<p>Livrable : rapport avec AUC, matrice de confusion, top features SHAP, estimation du ROI. Ce rapport convainc ou non la direction d'investir en phase 2.</p>
+
+<p><strong>Phase 2 — Déploiement minimal (semaines 5-10)</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Chaque lundi à 3h du matin :
+  1. Airflow déclenche un DAG
+  2. Le DAG extrait les données de la semaine (SQL → CSV)
+  3. Le DAG applique le modèle XGBoost pré-entraîné
+  4. Le DAG génère une liste CSV : contrat_id, score, top3_raisons
+  5. Le CSV atterrit dans un Google Sheet partagé avec l'équipe rétention
+  6. L'équipe rétention appelle les N contrats les plus à risque
+</code></pre></div>
+
+<p>Pourquoi Google Sheet ? Parce que l'équipe rétention n'a pas accès à un outil de CRM avancé aujourd'hui. La simplicité garantit l'adoption.</p>
+
+<p><strong>Phase 3 — Ré-entraînement (mois 3+)</strong></p>
+
+<p>Le modèle est ré-entraîné mensuellement sur les données cumulées. Un modèle challenger est entraîné en parallèle et comparé au champion en validation avant déploiement.</p>
+
+<p>MLflow pour tracker chaque expérience (paramètres, métriques, version du dataset).</p>
+
+<p><strong>Outils retenus :</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Besoin</th>
+  <th>Outil</th>
+  <th>Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Orchestration</td>
+  <td>Apache Airflow</td>
+  <td>Standard, cloud-native, gratuit en self-hosted</td>
+</tr>
+<tr>
+  <td>Tracking expériences</td>
+  <td>MLflow</td>
+  <td>Open source, intégration native XGBoost</td>
+</tr>
+<tr>
+  <td>Stockage modèles</td>
+  <td>MLflow Model Registry</td>
+  <td>Versionning, pas besoin d'infra dédiée</td>
+</tr>
+<tr>
+  <td>Explicabilité</td>
+  <td>SHAP</td>
+  <td>Natif XGBoost, rapide</td>
+</tr>
+<tr>
+  <td>Monitoring dérive</td>
+  <td>Evidently AI</td>
+  <td>Open source, alertes email simples</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Ce que vous monitorez :</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Signal</th>
+  <th>Outil</th>
+  <th>Seuil d'alerte</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Distribution du score moyen</td>
+  <td>Evidently</td>
+  <td>±15% vs mois précédent</td>
+  <td>Retraining immédiat</td>
+</tr>
+<tr>
+  <td>AUC sur les 4 dernières semaines</td>
+  <td>MLflow</td>
+  <td>&lt; 0.75</td>
+  <td>Investigation + retraining</td>
+</tr>
+<tr>
+  <td>Taux de résiliation réel vs prédit</td>
+  <td>Dashboard Airflow</td>
+  <td>Écart &gt; 2 points</td>
+  <td>Révision des features</td>
+</tr>
+<tr>
+  <td>Qualité des données en entrée</td>
+  <td>Airflow DAG</td>
+  <td>Null &gt; 20% sur une feature clé</td>
+  <td>Alerte data engineer</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Estimation du coût total de l'infrastructure :</strong></p>
+
+<ul>
+<li>Serveur Airflow + MLflow (cloud, instance moyenne) : ~150€/mois</li>
+<li>Stockage données : ~50€/mois</li>
+<li><strong>Total infra : ~200€/mois</strong></li>
+<li>Comparaison : retenir 1% de plus du portefeuille = ~15M€ de primes conservées</li>
+</ul>
+
+<p></details></p>
+
+<hr />
+
+<h2 id="checkpoint-jour-7-programme-complet">Checkpoint Jour 7 / Programme complet</h2>
+
+<p>Cochez chaque case une fois que vous pouvez répondre à la question <strong>sans consulter le cours</strong>.</p>
+
+<h3 id="jour-1-paysage-ml">Jour 1 — Paysage ML</h3>
+
+<ul>
+<li>[ ] Je peux expliquer en 2 phrases pourquoi le ML existe (le problème qu'il résout que les règles ne résolvent pas)</li>
+<li>[ ] Je sais distinguer supervisé, non-supervisé, et génératif par leur type de données et leur objectif</li>
+</ul>
+
+<h3 id="jour-2-algorithmes-classiques">Jour 2 — Algorithmes classiques</h3>
+
+<ul>
+<li>[ ] Je sais expliquer comment un arbre de décision choisit son seuil de séparation</li>
+<li>[ ] Je sais définir l'overfitting et comment le détecter (courbe d'apprentissage)</li>
+</ul>
+
+<h3 id="jour-3-boosting-et-interprétabilité">Jour 3 — Boosting et interprétabilité</h3>
+
+<ul>
+<li>[ ] Je sais expliquer la différence entre Random Forest (bagging) et XGBoost (boosting) en termes de stratégie d'apprentissage</li>
+<li>[ ] Je sais lire un graphe SHAP summary plot et en extraire la feature la plus importante</li>
+</ul>
+
+<h3 id="jour-4-évaluation">Jour 4 — Évaluation</h3>
+
+<ul>
+<li>[ ] Je sais calculer précision et rappel à partir d'une matrice de confusion</li>
+<li>[ ] Je sais choisir entre optimiser le rappel ou la précision selon le contexte métier (fraude vs spam)</li>
+</ul>
+
+<h3 id="jour-5-non-supervisé">Jour 5 — Non-supervisé</h3>
+
+<ul>
+<li>[ ] Je sais expliquer pourquoi K-means peut donner de mauvais résultats sur des clusters non-sphériques</li>
+<li>[ ] Je sais à quoi sert la réduction de dimensionnalité (PCA, t-SNE) et en quoi elles diffèrent</li>
+</ul>
+
+<h3 id="jour-6-pipelines-hybrides">Jour 6 — Pipelines hybrides</h3>
+
+<ul>
+<li>[ ] Je sais expliquer pourquoi un pipeline hybride ML + LLM est souvent préférable à un LLM seul</li>
+<li>[ ] Je sais identifier les 3 critères qui justifient d'ajouter un LLM dans un pipeline existant</li>
+</ul>
+
+<h3 id="jour-7-architecture-projet">Jour 7 — Architecture projet</h3>
+
+<ul>
+<li>[ ] Je sais reformuler un brief client vague en problème ML valide (variable cible, contexte, critère de succès)</li>
+<li>[ ] Je peux justifier le choix de XGBoost vs LLM vs règles pour un nouveau problème</li>
+<li>[ ] Je sais construire un plan de mise en production minimal pour une petite équipe sans MLOps</li>
+</ul>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

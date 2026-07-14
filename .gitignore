@@ -1,0 +1,6 @@
+*.md
+generate_html.py
+.claude/
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 8Jour 8 — ExercicesExercicesCas clientsAuto-évaluation</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 8</div><h1>Jour 8 — <em>Exercices</em></h1><div class="hero-tags"><span class="hero-tag">Exercices</span><span class="hero-tag">Cas clients</span><span class="hero-tag">Auto-évaluation</span></div></div>
+
+<hr />
+
+<h2 id="exercice-1-choisir-le-bon-modèle-de-régression">Exercice 1 — Choisir le bon modèle de régression</h2>
+
+<p>Pour chacun des 4 cas ci-dessous, choisissez parmi : <strong>Régression linéaire</strong>, <strong>Ridge</strong>, <strong>Lasso</strong>, <strong>Polynomiale + Ridge</strong>. Justifiez en une phrase.</p>
+
+<hr />
+
+<p><strong>Cas A — Scoring crédit</strong></p>
+
+<p>Une banque prédit le taux de défaut d'un emprunteur. Elle dispose de 8 variables : revenu mensuel, ancienneté emploi, montant emprunté, durée du crédit, taux d'endettement actuel, historique de paiement, âge, code postal. Toutes les variables semblent contribuer. Certaines sont corrélées (revenu et taux d'endettement sont liés).</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas B — Sélection de marqueurs génétiques</strong></p>
+
+<p>Une équipe de recherche oncologique modélise la survie à 5 ans d'un patient à partir de 800 marqueurs d'expression génique. La grande majorité de ces marqueurs sont probablement non-informatifs. L'objectif est d'identifier les quelques gènes clés.</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas C — Consommation de carburant</strong></p>
+
+<p>Un constructeur automobile prédit la consommation aux 100 km d'un véhicule en fonction de sa masse uniquement. L'ingénieur observe que la relation sur un nuage de points ressemble à une courbe décroissante avec courbure (les petites voitures gagnent beaucoup en efficacité, les grosses peu).</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Cas D — Prix d'un appartement (5 variables)</strong></p>
+
+<p>Un agent immobilier veut un modèle simple pour estimer rapidement le prix d'un appartement : surface, étage, exposition, distance gare, présence parking. Peu de données (200 observations), pas de corrélation évidente entre les variables.</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<hr />
+
+<h3 id="corrigé">Corrigé</h3>
+
+<p><strong>Cas A → Ridge.</strong> Toutes les variables semblent utiles et il y a de la multicolinéarité (revenu / taux d'endettement). Ridge stabilise les coefficients sans éliminer de variable.</p>
+
+<p><strong>Cas B → Lasso.</strong> 800 variables dont la plupart inutiles : Lasso éliminera automatiquement les non-informatives et rendra le modèle interprétable.</p>
+
+<p><strong>Cas C → Polynomiale + Ridge.</strong> La relation est clairement non-linéaire (courbure visible). On ajoute masse² comme feature, et Ridge régularise pour éviter l'overfitting.</p>
+
+<p><strong>Cas D → Régression linéaire ordinaire.</strong> Peu de variables, pas de corrélation, peu de données — inutile de régulariser. La complexité additionnelle de Ridge ou Lasso n'apporte rien ici.</p>
+
+<hr />
+
+<h2 id="exercice-2-interpréter-des-coefficients-ridge">Exercice 2 — Interpréter des coefficients Ridge</h2>
+
+<p>Un modèle Ridge (alpha = 10) a été entraîné sur des données normalisées pour prédire le salaire annuel d'un employé. Voici les coefficients obtenus :</p>
+
+<table>
+<thead>
+<tr>
+  <th>Variable</th>
+  <th>Coefficient Ridge (alpha=10)</th>
+  <th>Coefficient sans régularisation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>années_expérience</td>
+  <td>+12 400</td>
+  <td>+18 900</td>
+</tr>
+<tr>
+  <td>niveau_diplôme</td>
+  <td>+8 200</td>
+  <td>+9 100</td>
+</tr>
+<tr>
+  <td>taille_entreprise</td>
+  <td>+1 800</td>
+  <td>+14 300</td>
+</tr>
+<tr>
+  <td>secteur_tech</td>
+  <td>+6 500</td>
+  <td>+7 200</td>
+</tr>
+<tr>
+  <td>distance_bureau</td>
+  <td>−320</td>
+  <td>−14 800</td>
+</tr>
+<tr>
+  <td>nb_langues</td>
+  <td>+280</td>
+  <td>+16 400</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Questions :</strong></p>
+
+<p><strong>2.1</strong> — Quelle variable a subi la plus forte réduction relative de son coefficient ? Que peut-on en déduire sur sa relation avec les autres variables ?</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<p><strong>2.2</strong> — Les variables <code>distance_bureau</code> et <code>nb_langues</code> ont des coefficients très faibles en Ridge. Que ferait Lasso avec ces variables ?</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<p><strong>2.3</strong> — <code>années_expérience</code> reste le coefficient le plus fort. Que signifie ce coefficient de +12 400 dans le contexte de données normalisées ?</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<p><strong>2.4</strong> — Si on augmente alpha de 10 à 100, comment les coefficients vont-ils évoluer ? Nommez deux risques opposés liés à un alpha trop grand.</p>
+
+<blockquote>
+  <p>Votre réponse :</p>
+</blockquote>
+
+<hr />
+
+<h3 id="corrigé">Corrigé</h3>
+
+<p><strong>2.1</strong> — <code>distance_bureau</code> : de −14 800 à −320 (réduction de 97.8%) et <code>nb_langues</code> : de +16 400 à +280 (réduction de 98.3%). Ces deux variables sont probablement très corrélées avec d'autres (multicolinéarité) — la régression ordinaire leur avait attribué des coefficients instables et extrêmes pour compenser des relations croisées. Ridge les ramène à une contribution plus raisonnable.</p>
+
+<p><strong>2.2</strong> — Lasso les mettrait probablement exactement à 0 — elles seraient éliminées du modèle, ce qui le rendrait plus parcimonieux (uniquement les 4 variables restantes).</p>
+
+<p><strong>2.3</strong> — Sur des données normalisées, le coefficient représente l'effet d'un écart-type d'expérience sur le salaire. Ce n'est pas directement "+12 400 € par année" — c'est "+12 400 € pour un écart-type d'années d'expérience". Il faut multiplier par l'écart-type réel des années d'expérience pour revenir à l'interprétation brute.</p>
+
+<p><strong>2.4</strong> — Tous les coefficients vont diminuer vers 0. Deux risques : (1) <strong>underfitting</strong> si alpha est trop grand — le modèle ne peut plus capturer la vraie structure des données ; (2) <strong>perte d'interprétabilité</strong> — tous les coefficients deviennent si petits qu'on ne peut plus dire quelle variable compte vraiment.</p>
+
+<hr />
+
+<h2 id="exercice-3-détecter-overfitting-et-underfitting">Exercice 3 — Détecter overfitting et underfitting</h2>
+
+<p>Pour chaque description de résultats, indiquez : <strong>Underfitting</strong>, <strong>Overfitting</strong>, ou <strong>Bon ajustement</strong>. Proposez une action corrective.</p>
+
+<hr />
+
+<p><strong>Situation A</strong></p>
+
+<p>Un modèle de régression polynomiale degré 8 est entraîné pour prédire le chiffre d'affaires mensuel.
+- Score R² sur entraînement : 0.98
+- Score R² sur validation : 0.51
+- Les courbes d'apprentissage montrent un grand écart stable entre train et validation.</p>
+
+<blockquote>
+  <p>Diagnostic :
+  Action corrective :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Situation B</strong></p>
+
+<p>Un modèle Ridge prédit la demande en énergie.
+- Score R² entraînement : 0.71
+- Score R² validation : 0.69
+- Les deux courbes d'apprentissage sont proches mais toutes les deux autour de 0.70.</p>
+
+<blockquote>
+  <p>Diagnostic :
+  Action corrective :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Situation C</strong></p>
+
+<p>Un modèle Lasso (alpha = 0.001) prédit le prix d'une voiture d'occasion.
+- Score R² entraînement : 0.94
+- Score R² validation : 0.91
+- En augmentant la taille des données d'entraînement, les deux scores restent stables.</p>
+
+<blockquote>
+  <p>Diagnostic :
+  Action corrective :</p>
+</blockquote>
+
+<hr />
+
+<p><strong>Situation D</strong></p>
+
+<p>Un modèle Ridge (alpha = 1 000) est appliqué sur un problème avec 3 variables.
+- Score R² entraînement : 0.38
+- Score R² validation : 0.36
+- Les deux scores sont proches mais très bas.</p>
+
+<blockquote>
+  <p>Diagnostic :
+  Action corrective :</p>
+</blockquote>
+
+<hr />
+
+<h3 id="corrigé">Corrigé</h3>
+
+<p><strong>Situation A → Overfitting.</strong> Grand écart train/validation stables = le modèle mémorise. Action : réduire le degré du polynôme (essayer degré 2 ou 3) et augmenter la régularisation (Ridge avec alpha plus grand).</p>
+
+<p><strong>Situation B → Underfitting léger.</strong> Les deux courbes sont proches (pas d'overfitting) mais le score est trop bas pour être utile. Action : augmenter la complexité du modèle (ajouter des features, essayer un polynôme degré 2, ou diminuer alpha pour relâcher la contrainte).</p>
+
+<p><strong>Situation C → Bon ajustement.</strong> R² élevé, écart train/validation faible (3 points), stable avec plus de données. Action : rien — le modèle est prêt à être utilisé. Vérifier les métriques métier (RMSE en €).</p>
+
+<p><strong>Situation D → Underfitting par régularisation excessive.</strong> Alpha = 1 000 est trop fort pour seulement 3 variables — tous les coefficients sont tassés si près de 0 que le modèle ne peut rien apprendre. Action : diminuer drastiquement alpha (essayer 0.1, 1, 10) et utiliser LassoCV / RidgeCV pour trouver la valeur optimale.</p>
+
+<hr />
+
+<h2 id="exercice-4-checkpoint-jour-8">Exercice 4 — Checkpoint Jour 8</h2>
+
+<p>Questions courtes — répondre sans regarder le cours.</p>
+
+<p><strong>4.1</strong> — Donnez la définition d'un résidu en une phrase.</p>
+
+<p><strong>4.2</strong> — Quelle est la seule différence entre Ridge et Lasso dans leur formule de pénalité ?</p>
+
+<p><strong>4.3</strong> — Complétez : "Lasso peut forcer un coefficient à ________ ; Ridge ne le peut pas."</p>
+
+<p><strong>4.4</strong> — Un modèle performe à 0.99 sur le train et 0.60 en validation. Le problème est-il lié au biais ou à la variance ? Pourquoi ?</p>
+
+<p><strong>4.5</strong> — Expliquez en une phrase pourquoi il faut normaliser les données avant d'appliquer Ridge ou Lasso.</p>
+
+<p><strong>4.6</strong> — <code>PolynomialFeatures(degree=2)</code> appliqué à une variable x produit quelles nouvelles colonnes ?</p>
+
+<p><strong>4.7</strong> — Sur une courbe d'apprentissage, si les courbes train et validation sont toutes les deux basses et très proches, de quoi s'agit-il ?</p>
+
+<p><strong>4.8</strong> — Quelle métrique d'évaluation est la plus robuste aux valeurs aberrantes (outliers) : RMSE ou MAE ? Pourquoi ?</p>
+
+<hr />
+
+<h3 id="corrigé-checkpoint">Corrigé Checkpoint</h3>
+
+<p><strong>4.1</strong> — Un résidu est la différence entre la valeur réelle observée et la valeur prédite par le modèle (résidu = y<em>réel − y</em>prédit).</p>
+
+<p><strong>4.2</strong> — Ridge pénalise le <strong>carré</strong> des coefficients (L2) ; Lasso pénalise leur <strong>valeur absolue</strong> (L1).</p>
+
+<p><strong>4.3</strong> — Lasso peut forcer un coefficient à <strong>zéro</strong> ; Ridge ne le peut pas.</p>
+
+<p><strong>4.4</strong> — Variance forte (overfitting). Le modèle a mémorisé les données d'entraînement — il généralise très mal. Le biais fort se manifeste par de mauvais scores sur les deux ensembles.</p>
+
+<p><strong>4.5</strong> — Parce que Ridge et Lasso pénalisent numériquement les grands coefficients : sans normalisation, une variable avec des valeurs en milliers aurait un coefficient naturellement petit et subirait moins de pénalité qu'une variable en unités, ce qui fausserait la régularisation.</p>
+
+<p><strong>4.6</strong> — x et x² (plus la constante si <code>include_bias=True</code>).</p>
+
+<p><strong>4.7</strong> — Underfitting — le modèle est trop simple pour capturer la relation dans les données.</p>
+
+<p><strong>4.8</strong> — MAE, parce qu'elle prend la valeur absolue de l'erreur sans la mettre au carré. RMSE met au carré les grandes erreurs, ce qui les amplifie davantage.</p>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>

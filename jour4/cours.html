@@ -1,0 +1,875 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jour 4Jour 4 — Deep Learning &amp; Transfer Learning : Quand et commentCoursThéo</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#16151a;--s1:#1e1c24;--s2:#26232f;--s3:#2e2b38;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#ddd8ee;--ink2:#9e95b5;--ink3:#716989;
+  --blue:#3987e5;--violet:#9085e9;--aqua:#1baf7a;
+  --yellow:#e8a600;--red:#e66767;--orange:#d95926;
+  --blue-bg:rgba(57,135,229,.16);--violet-bg:rgba(144,133,233,.16);
+  --aqua-bg:rgba(27,175,122,.15);--yellow-bg:rgba(232,166,0,.14);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(217,89,38,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:252px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:820px;padding:52px 44px 120px;min-width:0;margin:0 auto}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(57,135,229,.18) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(144,133,233,.12) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(57,135,229,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Jour 4</div><h1>Jour 4 — <em>Deep Learning &amp; Transfer Learning : Quand et comment</em></h1><div class="hero-tags"><span class="hero-tag">Cours</span><span class="hero-tag">Théorie</span><span class="hero-tag">Exemples réels</span></div></div>
+
+<hr />
+
+<h2 id="carte-mentale"><span class="h2-num">1</span>Carte mentale<span class="h2-line"></span></h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6; Plein écran</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Layout :
+    ROOT        cx=550, cy=45
+    Fondamentaux cx=130, cy=150
+    CNN/Vision  cx=370, cy=150
+    NLP/Transfo cx=730, cy=150
+    Transfer    cx=950, cy=150
+    Production  cx=550, cy=310
+    Neurone     cx=80,  cy=255
+    Backprop    cx=220, cy=255
+    ResNet      cx=310, cy=255
+    Attention   cx=650, cy=255
+    BERT        cx=800, cy=255
+    FineTuning  cx=900, cy=255
+    TorchServe  cx=490, cy=400
+    ONNX        cx=620, cy=400
+  -->
+
+  <!-- Connecteurs Root → L1 -->
+  <path d="M550,66 C550,108 130,108 130,132" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 370,108 370,132" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 730,108 730,132" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,66 C550,108 950,108 950,132" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <!-- L1 → L2 -->
+  <path d="M130,172 C130,213 80,213 80,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M130,172 C130,213 220,213 220,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M370,172 L310,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M730,172 C730,213 650,213 650,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M730,172 C730,213 800,213 800,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M950,172 L900,237" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <!-- Production → L3 -->
+  <path d="M550,330 C550,365 490,365 490,382" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <path d="M550,330 C550,365 620,365 620,382" fill="none" stroke="#4a4360" stroke-width="1.3"/>
+  <!-- Root → Production -->
+  <path d="M550,66 L550,292" fill="none" stroke="#4a4360" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- ROOT -->
+  <rect x="370" y="24" width="360" height="42" rx="21" fill="rgba(57,135,229,.16)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="51" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="800" letter-spacing=".08em">DEEP LEARNING &amp; TRANSFER LEARNING</text>
+
+  <!-- L1 — Fondamentaux cx=130 -->
+  <rect x="30" y="132" width="200" height="40" rx="12" fill="rgba(57,135,229,.14)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="130" y="148" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="800">Fondamentaux</text>
+  <text x="130" y="163" text-anchor="middle" fill="#9e95b5" font-size="10">(neurones, couches)</text>
+
+  <!-- L1 — CNN/Vision cx=370 -->
+  <rect x="272" y="132" width="196" height="40" rx="12" fill="rgba(232,166,0,.14)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="370" y="148" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="800">CNN / Vision</text>
+  <text x="370" y="163" text-anchor="middle" fill="#9e95b5" font-size="10">(images, convolutions)</text>
+
+  <!-- L1 — NLP/Transformers cx=730 -->
+  <rect x="630" y="132" width="200" height="40" rx="12" fill="rgba(144,133,233,.16)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="730" y="148" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="800">NLP / Transformers</text>
+  <text x="730" y="163" text-anchor="middle" fill="#9e95b5" font-size="10">(texte, attention)</text>
+
+  <!-- L1 — Transfer Learning cx=950 -->
+  <rect x="850" y="132" width="200" height="40" rx="12" fill="rgba(27,175,122,.14)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="950" y="148" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="800">Transfer Learning</text>
+  <text x="950" y="163" text-anchor="middle" fill="#9e95b5" font-size="10">(fine-tuning, HuggingFace)</text>
+
+  <!-- L2 — Neurone cx=80 -->
+  <rect x="28" y="237" width="104" height="30" rx="7" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="80" y="257" text-anchor="middle" fill="#7ab3f0" font-size="11" font-weight="600">Neurone</text>
+
+  <!-- L2 — Backprop cx=220 -->
+  <rect x="152" y="237" width="136" height="30" rx="7" fill="rgba(57,135,229,.1)" stroke="#3987e5" stroke-width="1.2"/>
+  <text x="220" y="257" text-anchor="middle" fill="#7ab3f0" font-size="11" font-weight="600">Backpropagation</text>
+
+  <!-- L2 — ResNet cx=310 -->
+  <rect x="248" y="237" width="124" height="30" rx="7" fill="rgba(232,166,0,.1)" stroke="#e8a600" stroke-width="1.2"/>
+  <text x="310" y="257" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="600">ResNet / EfficientNet</text>
+
+  <!-- L2 — Attention cx=650 -->
+  <rect x="590" y="237" width="120" height="30" rx="7" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="650" y="257" text-anchor="middle" fill="#c0b8f5" font-size="11" font-weight="600">Attention</text>
+
+  <!-- L2 — CamemBERT cx=800 -->
+  <rect x="738" y="237" width="124" height="30" rx="7" fill="rgba(144,133,233,.1)" stroke="#9085e9" stroke-width="1.2"/>
+  <text x="800" y="257" text-anchor="middle" fill="#c0b8f5" font-size="11" font-weight="600">CamemBERT</text>
+
+  <!-- L2 — Fine-Tuning cx=900 -->
+  <rect x="844" y="237" width="112" height="30" rx="7" fill="rgba(27,175,122,.1)" stroke="#1baf7a" stroke-width="1.2"/>
+  <text x="900" y="257" text-anchor="middle" fill="#56d4a4" font-size="11" font-weight="600">Fine-Tuning</text>
+
+  <!-- L1 — Production cx=550 (centre) -->
+  <rect x="440" y="292" width="220" height="38" rx="12" fill="rgba(230,103,103,.14)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="550" y="308" text-anchor="middle" fill="#e66767" font-size="12" font-weight="800">Production</text>
+  <text x="550" y="322" text-anchor="middle" fill="#9e95b5" font-size="10">(déploiement, optimisation)</text>
+
+  <!-- L3 — TorchServe cx=490 -->
+  <rect x="420" y="382" width="140" height="30" rx="7" fill="rgba(230,103,103,.08)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="490" y="402" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">TorchServe / FastAPI</text>
+
+  <!-- L3 — ONNX cx=620 -->
+  <rect x="560" y="382" width="120" height="30" rx="7" fill="rgba(230,103,103,.08)" stroke="#e66767" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="620" y="402" text-anchor="middle" fill="#9e95b5" font-size="11" font-weight="600">ONNX / Quantization</text>
+</svg></div>
+
+<hr />
+
+<h2 id="1-ce-quest-vraiment-un-réseau-de-neurones"><span class="h2-num">2</span>1. Ce qu'est vraiment un réseau de neurones<span class="h2-line"></span></h2>
+
+<h3 id="définition-le-neurone-artificiel">Définition : le neurone artificiel</h3>
+
+<p>Un <strong>neurone artificiel</strong> est une fonction mathématique simple : il prend plusieurs entrées numériques, les multiplie chacune par un <strong>poids</strong> (un coefficient d'importance), additionne tout, puis applique une <strong>fonction d'activation</strong> non-linéaire pour décider s'il "s'active" ou non.</p>
+
+<p>Formellement : <code>sortie = activation(w1×x1 + w2×x2 + ... + wn×xn + biais)</code></p>
+
+<ul>
+<li>Les <strong>entrées</strong> (x1, x2…) sont les données brutes ou la sortie des neurones précédents.</li>
+<li>Les <strong>poids</strong> (w1, w2…) sont ce que le modèle apprend : ils encodent l'importance de chaque entrée.</li>
+<li>Le <strong>biais</strong> est un terme constant qui déplace la fonction.</li>
+<li>La <strong>fonction d'activation</strong> (ex : ReLU : <code>max(0, x)</code>) introduit la non-linéarité. Sans elle, empiler des couches ne servirait à rien — on obtiendrait juste une régression linéaire plus complexe.</li>
+</ul>
+
+<h3 id="pourquoi-plusieurs-couches">Pourquoi plusieurs couches ?</h3>
+
+<p>Un seul neurone ne peut tracer qu'une frontière linéaire dans les données. On empile des couches pour apprendre des représentations de plus en plus abstraites :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Image (pixels bruts)
+    → Couche 1 : contours, bords
+    → Couche 2 : textures, coins
+    → Couche 3 : formes (cercle, rectangle)
+    → Couche 4 : parties d'objets (roue, oreille)
+    → Couche finale : "chien" / "chat" / "voiture"
+</code></pre></div>
+
+<p>Chaque couche transforme les représentations de la couche précédente en quelque chose de plus abstrait et de plus utile pour la tâche finale. C'est pour ça qu'on appelle ça le <strong>deep</strong> learning : la profondeur (le nombre de couches) crée la richesse des représentations.</p>
+
+<h3 id="backpropagation-lintuition-sans-les-maths">Backpropagation — l'intuition sans les maths</h3>
+
+<p>Le réseau fait une prédiction. Il se trompe. Comment apprend-il ?</p>
+
+<p><strong>Intuition</strong> : imaginez un GPS qui recalcule. Quand vous ratez un virage (erreur), le GPS ne recalcule pas toute la carte — il remonte uniquement les décisions qui ont mené à cette route. La backpropagation fait pareil : elle calcule, pour chaque poids, "de combien cet-te erreur est-ce la faute de ce poids ?", puis ajuste légèrement les poids dans la bonne direction.</p>
+
+<p>Le réglage se fait via le <strong>gradient</strong> (la pente de l'erreur par rapport à chaque poids) et un <strong>learning rate</strong> (taux d'apprentissage) qui contrôle la taille des pas d'ajustement. Un learning rate trop grand → instabilité. Trop petit → apprentissage infiniment lent.</p>
+
+<p>On répète ce cycle sur des <strong>batches</strong> (sous-ensembles des données) pendant plusieurs <strong>epochs</strong> (passages complets sur tout le dataset).</p>
+
+<ul>
+<li><strong>Batch</strong> : un sous-ensemble de données traité ensemble avant une mise à jour des poids. Taille typique : 32 à 256 exemples.</li>
+<li><strong>Epoch</strong> : un passage complet sur l'ensemble du dataset d'entraînement.</li>
+<li><strong>Learning rate</strong> : la taille des pas lors de l'ajustement des poids. Valeur typique : 0.001.</li>
+</ul>
+
+<h3 id="code-pytorch-réseau-simple">Code PyTorch — réseau simple</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># Un réseau à 2 couches cachées pour classifier des données tabulaires</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReseauSimple</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_features</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">couches</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>  <span class="c1"># couche 1 : nb_features → 64 neurones</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>                    <span class="c1"># activation non-linéaire</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>             <span class="c1"># dropout : désactive 30% des neurones aléatoirement</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>           <span class="c1"># couche 2 : 64 → 32 neurones</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>            <span class="c1"># couche sortie : 32 → 1 (classification binaire)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>                 <span class="c1"># sortie entre 0 et 1</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">couches</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Entraînement minimal</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">ReseauSimple</span><span class="p">(</span><span class="n">nb_features</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">optimiseur</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">critere</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCELoss</span><span class="p">()</span>  <span class="c1"># Binary Cross Entropy pour la classification binaire</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">perte</span> <span class="o">=</span> <span class="n">critere</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">optimiseur</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">perte</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>      <span class="c1"># backpropagation : calcul des gradients</span>
+    <span class="n">optimiseur</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>     <span class="c1"># mise à jour des poids</span>
+</code></pre>
+</div>
+
+<p><strong>Dropout</strong> : technique de régularisation. À chaque passage d'entraînement, on "éteint" aléatoirement une fraction des neurones. Cela force le réseau à ne pas sur-spécialiser — chaque partie du réseau doit être capable de travailler indépendamment. Résultat : meilleure généralisation sur de nouvelles données.</p>
+
+<p>:::situation
+<strong>Owkin — analyse de biopsies cancéreuses</strong></p>
+
+<p>Owkin (biotech parisienne, valorisation 1,3 Mrd€) utilise des réseaux de neurones pour analyser des images de biopsies de cancer du poumon. Une image de biopsie peut contenir 100 000 cellules. Un pathologiste en examine quelques centaines manuellement. Le réseau, lui, analyse l'image entière — chaque cellule, chaque interaction spatiale — et prédit la réponse à un traitement de chimiothérapie.</p>
+
+<p>Résultat : 80% de précision contre 63% pour l'analyse clinique standard. La profondeur du réseau (30+ couches) permet de capturer des patterns invisibles à l'œil humain dans l'organisation spatiale des cellules.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un neurone artificiel ? Donnez la formule.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une fonction qui prend des entrées pondérées, les additionne, et applique une activation non-linéaire. `sortie = activation(w1×x1 + w2×x2 + ... + biais)`</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi empile-t-on des couches dans un réseau de neurones ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Chaque couche apprend des représentations de plus en plus abstraites (pixels → contours → formes → objets). Un seul neurone ne peut tracer qu'une frontière linéaire.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le learning rate, le batch et l'epoch ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Learning rate</strong> : taille des pas d'ajustement des poids (trop grand = instabilité, trop petit = lenteur). <strong>Batch</strong> : sous-ensemble de données traité ensemble avant chaque mise à jour. <strong>Epoch</strong> : un passage complet sur tout le dataset.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">À quoi sert le Dropout ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">À désactiver aléatoirement une fraction des neurones à chaque passage d'entraînement, pour forcer le réseau à généraliser et ne pas mémoriser le dataset (overfitting).</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="2-quand-le-deep-learning-simpose-et-quand-il-ne-simpose-pas"><span class="h2-num">3</span>2. Quand le deep learning s'impose — et quand il ne s'impose PAS<span class="h2-line"></span></h2>
+
+<h3 id="la-règle-dor">La règle d'or</h3>
+
+<p>Le deep learning est puissant mais coûteux. Avant de l'utiliser, posez ces quatre questions :
+1. Les données sont-elles en format <strong>non-structuré</strong> (image, texte, audio, vidéo) ?
+2. Avez-vous <strong>plus de 100 000 exemples</strong> étiquetés ?
+3. Avez-vous accès à un <strong>GPU</strong> et du temps de débogage ?
+4. L'opacité du modèle est-elle <strong>acceptable</strong> pour ce contexte métier ?</p>
+
+<p>Si la réponse à l'une de ces questions est "non", reconsidérez.</p>
+
+<h3 id="le-tableau-décisionnel-complet">Le tableau décisionnel complet</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Type de donnée</th>
+  <th>Architecture recommandée</th>
+  <th>Raison</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Image</td>
+  <td>CNN (ResNet, EfficientNet)</td>
+  <td>Les convolutions capturent les patterns spatiaux locaux</td>
+</tr>
+<tr>
+  <td>Texte</td>
+  <td>Transformer (BERT, CamemBERT)</td>
+  <td>L'attention capte les dépendances longue distance</td>
+</tr>
+<tr>
+  <td>Série temporelle longue</td>
+  <td>LSTM ou Temporal Fusion Transformer</td>
+  <td>Mémoire sur les séquences</td>
+</tr>
+<tr>
+  <td><strong>Données tabulaires</strong></td>
+  <td><strong>XGBoost / LightGBM</strong></td>
+  <td><strong>Plus performant, interprétable, rapide</strong></td>
+</tr>
+<tr>
+  <td>Audio</td>
+  <td>CNN sur spectrogramme ou Wav2Vec</td>
+  <td>Conversion signal → représentation 2D</td>
+</tr>
+<tr>
+  <td>Graphe</td>
+  <td>GNN (Graph Neural Network)</td>
+  <td>Structure non-euclidienne</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="pourquoi-xgboost-bat-le-deep-learning-sur-les-tables-structurées">Pourquoi XGBoost bat le deep learning sur les tables structurées</h3>
+
+<p>C'est contre-intuitif, mais c'est un fait démontré par des dizaines de compétitions Kaggle et de publications académiques. Voici pourquoi :</p>
+
+<ul>
+<li><strong>Les données tabulaires ont peu de structure locale exploitable</strong>. CNN et Transformers tirent parti de la structure spatiale (images) ou séquentielle (texte). Une ligne d'un CSV n'a pas de telle structure — l'ordre des colonnes ne porte pas de sens.</li>
+<li><strong>XGBoost est invariant aux features non-informatives</strong>. Un réseau de neurones doit apprendre à les ignorer. XGBoost les écarte naturellement via le gain d'information.</li>
+<li><strong>Le rapport données/paramètres est défavorable</strong>. Un réseau de neurones a des millions de paramètres. Sur 50 000 lignes et 30 colonnes, il y a trop peu de signal pour les contraindre efficacement.</li>
+<li><strong>Les features engineered sont critiques</strong>. L'expert métier sait que "CA mensuel / nombre de clients" est une feature utile. Les arbres l'exploitent directement. Les réseaux de neurones doivent la redécouvrir.</li>
+</ul>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Benchmark concret sur données tabulaires (UCI Adult Dataset, 48K lignes)</span>
+<span class="c1"># XGBoost vs MLP (réseau de neurones multicouche)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="c1"># XGBoost : ~87% accuracy, 0.3s d&#39;entraînement</span>
+<span class="n">xgb</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># 0.3 secondes</span>
+
+<span class="c1"># MLP : ~85% accuracy, 45s d&#39;entraînement (CPU)</span>
+<span class="n">mlp</span> <span class="o">=</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># 45 secondes</span>
+<span class="c1"># XGBoost : plus rapide, plus précis, interprétable avec SHAP</span>
+</code></pre>
+</div>
+
+<h3 id="le-coût-réel-du-deep-learning">Le coût réel du deep learning</h3>
+
+<ul>
+<li><strong>Données</strong> : minimum 10 000 exemples pour des résultats raisonnables, 100 000+ pour des résultats robustes. Sur de l'image médicale annotée par des experts : comptez 50€ à 500€ par image.</li>
+<li><strong>Calcul</strong> : entraîner ResNet50 from scratch sur ImageNet prend 90 heures sur 8 GPU V100. Louer ces GPU : ~2 000 €.</li>
+<li><strong>Débogage</strong> : un réseau qui ne converge pas peut passer des jours à diagnostiquer. Les hyperparamètres (learning rate, architecture, augmentation de données) interagissent de façon imprévisible.</li>
+<li><strong>Opacité</strong> : un réseau de neurones est une boite noire. Dans les secteurs réglementés (crédit, santé, assurance), l'obligation d'expliquabilité peut interdire son usage.</li>
+</ul>
+
+<p>:::situation
+<strong>Lactalis — détection de défauts qualité sur images</strong></p>
+
+<p>Lactalis, groupe laitier (Président, Galbani), contrôle la qualité des emballages en sortie de ligne. Le problème : détecter les défauts (étiquette mal collée, emballage déchiré, date d'expiration illisible) sur 600 emballages par minute, 24h/24.</p>
+
+<p>Un système de règles basé sur des seuils de couleur et de contraste avait un taux de faux positifs de 12% — trop de produits sains écartés. Un CNN EfficientNet entraîné sur 80 000 images annotées (3 semaines de collecte) descend à 0.8% de faux positifs, et détecte des défauts que les règles ne voyaient pas (microfissures, variations de teinte subtiles).</p>
+
+<p><strong>La décision de basculer</strong> : type de données (image) + volume (80K exemples) + ROI quantifiable (12% → 0.8% de rejet abusif sur 600 emballages/minute = économies mesurables) → deep learning justifié.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi XGBoost bat-il généralement un réseau de neurones sur des données tabulaires ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les données tabulaires n'ont pas de structure locale exploitable (contrairement aux images ou au texte). XGBoost est invariant aux features non-informatives, fonctionne avec peu de données, et n'a pas besoin de "redécouvrir" les features engineered par l'expert métier.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelles sont les 4 conditions qui justifient le recours au deep learning ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">1. Données non-structurées (image, texte, audio), 2. Volume suffisant (>100K exemples), 3. Accès à GPU et temps de débogage, 4. Opacité acceptable pour le contexte métier.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle architecture pour chacun : image / texte / série temporelle longue / données tabulaires ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Image → CNN (ResNet). Texte → Transformer (BERT). Série temporelle longue → LSTM ou TFT. Données tabulaires → XGBoost.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="3-transfer-learning-ne-pas-réinventer-la-roue"><span class="h2-num">4</span>3. Transfer Learning : ne pas réinventer la roue<span class="h2-line"></span></h2>
+
+<h3 id="définition">Définition</h3>
+
+<p>Le <strong>transfer learning</strong> (apprentissage par transfert) consiste à prendre un modèle déjà entraîné sur une grande tâche générique, et à réutiliser les représentations qu'il a apprises pour résoudre une tâche spécifique — souvent avec beaucoup moins de données.</p>
+
+<p>L'idée centrale : un modèle entraîné sur 1,2 million d'images (ImageNet) a développé dans ses premières couches une capacité générique à détecter des contours, des textures, des formes. Ces capacités sont <strong>transférables</strong> à n'importe quelle tâche vision, qu'il s'agisse de radiographies, de photos satellites ou d'images industrielles.</p>
+
+<h3 id="la-métaphore-du-médecin">La métaphore du médecin</h3>
+
+<p>Un médecin généraliste qui souhaite devenir cardiologue n'efface pas tout ce qu'il a appris. Il réutilise ses connaissances en anatomie, physiopathologie, pharmacologie, et y ajoute une spécialisation. Cela lui prend 3 ans, pas 10.</p>
+
+<p>Un étudiant qui partirait de zéro directement en cardiologie devrait tout réapprendre : 10 ans, et avec une formation bien moins solide sur les bases générales.</p>
+
+<p>C'est exactement le principe du transfer learning : réutiliser une base solide plutôt que repartir de zéro.</p>
+
+<h3 id="les-deux-stratégies">Les deux stratégies</h3>
+
+<p><strong>Feature extraction (geler les poids)</strong></p>
+
+<p>On utilise le modèle pré-entraîné comme un extracteur de features fixe. On gèle tous ses poids (on ne les modifie pas pendant l'entraînement). On ajoute uniquement une ou deux couches finales que l'on entraîne sur les nouvelles données.</p>
+
+<p>Quand l'utiliser : tâche similaire à la tâche source, très peu de données (&lt; 5 000 exemples), budget GPU limité.</p>
+
+<p><strong>Fine-tuning (réentraîner les dernières couches)</strong></p>
+
+<p>On commence avec les poids pré-entraînés, mais on laisse les dernières couches du modèle se réajuster sur les nouvelles données. Les premières couches restent gelées (représentations génériques), les dernières couches se spécialisent.</p>
+
+<p>Quand l'utiliser : tâche différente de la tâche source, données suffisantes (5 000 à 50 000 exemples), GPU disponible.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># AVANT : entraîner from scratch (impossible avec 5000 images)</span>
+<span class="c1"># class CNN(nn.Module):</span>
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         super().__init__()</span>
+<span class="c1">#         # Des dizaines de couches à initialiser aléatoirement...</span>
+<span class="c1">#         # 25M paramètres à apprendre depuis zéro</span>
+<span class="c1">#         # Nécessite 1M+ d&#39;images pour converger</span>
+
+<span class="c1"># APRÈS : Transfer Learning avec ResNet50 pré-entraîné</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 25M paramètres pré-entraînés sur ImageNet</span>
+
+<span class="c1"># Stratégie 1 — Feature extraction : geler tous les poids</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># aucun poids modifié sauf la tête</span>
+
+<span class="c1"># Remplacer la dernière couche par notre classifieur (2 classes : sain / cancéreux)</span>
+<span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># seule cette couche est entraînée</span>
+
+<span class="c1"># Stratégie 2 — Fine-tuning : réentraîner les dernières couches</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>  <span class="c1"># débloquer la dernière &quot;étape&quot; de ResNet</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># nouvelle tête</span>
+
+<span class="c1"># Entraînement : seulement quelques epochs suffisent</span>
+<span class="n">optimiseur</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">},</span>  <span class="c1"># petite LR pour les couches gelées</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>     <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span>  <span class="c1"># grande LR pour la nouvelle tête</span>
+<span class="p">])</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>Sanofi — classification de cellules cancéreuses avec 5 000 images</strong></p>
+
+<p>Sanofi développe un test diagnostique basé sur l'analyse d'images de cellules. Le dataset disponible : 5 000 images annotées par des pathologistes (coût : ~200€/image → 1M€ de budget annotation). Entraîner un CNN from scratch sur 5 000 images conduirait à de l'overfitting sévère — le modèle mémoriserait les 5 000 exemples sans généraliser.</p>
+
+<p>Solution : ResNet50 pré-entraîné sur ImageNet + fine-tuning des dernières couches sur les 5 000 images. Résultat : 93% d'AUC vs 71% pour un CNN from scratch. L'économie de données et de calcul est massive — là où un entraînement from scratch aurait nécessité 500 000 images, le transfer learning réussit avec 1% de ce volume.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Définissez le transfer learning en une phrase.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Réutiliser les représentations apprises par un modèle pré-entraîné sur une grande tâche générique pour résoudre une tâche spécifique avec beaucoup moins de données.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre feature extraction et fine-tuning ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Feature extraction</strong> : poids pré-entraînés complètement gelés, on entraîne seulement une nouvelle tête de classification. <strong>Fine-tuning</strong> : on laisse les dernières couches du modèle se réajuster, en plus de la nouvelle tête.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand choisir feature extraction plutôt que fine-tuning ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Feature extraction si < 5 000 exemples, tâche similaire à la source, GPU limité. Fine-tuning si tâche différente, 5 000 à 50 000 exemples, GPU disponible.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi le transfer learning permet-il d'obtenir de bons résultats avec peu de données ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les premières couches d'un CNN apprennent des représentations génériques (contours, textures) réutilisables sur n'importe quelle tâche vision. On ne repart pas de zéro — on spécialise une base solide.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="4-huggingface-en-profondeur-du-modèle-à-la-production"><span class="h2-num">5</span>4. HuggingFace en profondeur : du modèle à la production<span class="h2-line"></span></h2>
+
+<h3 id="ce-quest-huggingface">Ce qu'est HuggingFace</h3>
+
+<p><strong>HuggingFace</strong> est une plateforme et une bibliothèque Python qui centralise les modèles de deep learning pré-entraînés, les datasets, et les outils pour les utiliser. En 2024 : 500 000+ modèles, 150 000+ datasets, 200 000+ Spaces (démos interactives).</p>
+
+<p>La proposition de valeur : au lieu de coder une architecture Transformer from scratch (plusieurs semaines de travail), on télécharge un modèle pré-entraîné en une ligne, et on l'adapte à sa tâche.</p>
+
+<h3 id="tokenisation-pourquoi-on-ne-passe-pas-du-texte-brut-à-un-modèle">Tokenisation — pourquoi on ne passe pas du texte brut à un modèle</h3>
+
+<p>Un modèle de language travaille sur des nombres, pas sur des caractères. Il faut d'abord <strong>tokeniser</strong> le texte : le découper en unités (tokens) et associer chaque token à un identifiant numérique.</p>
+
+<p>Un token n'est pas forcément un mot entier. Les modèles modernes utilisent des algorithmes (BPE, WordPiece) qui découpent les mots rares en sous-unités. Ainsi "biotechnologie" peut devenir ["bio", "##techno", "##logie"] selon le vocabulaire du modèle.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+
+<span class="n">texte</span> <span class="o">=</span> <span class="s2">&quot;Le client est très satisfait de la livraison.&quot;</span>
+<span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">texte</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">])</span>
+<span class="c1"># tensor([[5, 72, 3421, 18, 943, 8921, 16, 72, 9823, 6]])</span>
+<span class="c1"># Chaque nombre = un token dans le vocabulaire du modèle (32 000 tokens pour CamemBERT)</span>
+</code></pre>
+</div>
+
+<h3 id="les-pipelines-huggingface-utilisation-immédiate">Les Pipelines HuggingFace — utilisation immédiate</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
+
+<span class="c1"># Classification de sentiment (sans entraînement)</span>
+<span class="n">classifieur</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;text-classification&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+<span class="n">resultat</span> <span class="o">=</span> <span class="n">classifieur</span><span class="p">(</span><span class="s2">&quot;Ce produit est vraiment excellent !&quot;</span><span class="p">)</span>
+<span class="c1"># [{&#39;label&#39;: &#39;POSITIVE&#39;, &#39;score&#39;: 0.98}]</span>
+
+<span class="c1"># Génération de texte</span>
+<span class="n">generateur</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;text-generation&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;mistralai/Mistral-7B-v0.1&quot;</span><span class="p">)</span>
+<span class="n">texte</span> <span class="o">=</span> <span class="n">generateur</span><span class="p">(</span><span class="s2">&quot;La transformation digitale dans la santé&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Question-Réponse</span>
+<span class="n">qa</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;question-answering&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;deepset/roberta-base-squad2&quot;</span><span class="p">)</span>
+<span class="n">qa</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;Qui a fondé BNP Paribas ?&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">&quot;BNP Paribas a été fondé en 1999...&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="fine-tuner-camembert-sur-des-avis-clients-en-français">Fine-tuner CamemBERT sur des avis clients en français</h3>
+
+<p><strong>CamemBERT</strong> est le BERT français : un Transformer entraîné sur 138 Go de texte français (Wikipedia, CommonCrawl, livres). Il comprend la grammaire, le vocabulaire et les nuances du français.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">TrainingArguments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Données : avis clients en français avec labels (0=négatif, 1=positif)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;avis_clients.csv&quot;</span><span class="p">)</span>  <span class="c1"># colonnes : &quot;texte&quot;, &quot;label&quot;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="c1"># AVANT : entraîner from scratch (impraticable sans corpus massif)</span>
+<span class="c1"># model = BertModel(config)  # 110M paramètres initialisés aléatoirement</span>
+
+<span class="c1"># APRÈS : partir de CamemBERT pré-entraîné</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="s2">&quot;camembert-base&quot;</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="mi">2</span>  <span class="c1"># positif / négatif</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tokeniser</span><span class="p">(</span><span class="n">exemples</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">exemples</span><span class="p">[</span><span class="s2">&quot;texte&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="n">dataset_tokenise</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tokeniser</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Configuration de l&#39;entraînement</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./modele_avis&quot;</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>          <span class="c1"># 3 epochs suffisent avec transfer learning</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">2e-5</span><span class="p">,</span>          <span class="c1"># learning rate faible : on ajuste légèrement des poids déjà bons</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">modele</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 3-5 minutes sur GPU, 30-45 minutes sur CPU</span>
+
+<span class="c1"># Inférence</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="s2">&quot;La livraison était en retard et l&#39;emballage abimé&quot;</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>  <span class="c1"># 0 = négatif</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>La Poste — classification automatique des courriers entrants</strong></p>
+
+<p>La Poste reçoit des millions de courriers et d'emails de réclamation par an. Chaque message doit être routé vers le bon service : réclamations livraison, facturation, abonnements, sinistres, ressources humaines. Avant : tri manuel par des agents en centre d'appel. Après : CamemBERT fine-tuné sur 200 000 courriers annotés, 94% de précision sur 23 catégories. Les agents humains traitent les 6% d'ambiguïtés. Gain : 40% de réduction du temps de traitement moyen.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi ne peut-on pas passer du texte brut directement à un Transformer ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un modèle travaille sur des nombres. Il faut tokeniser le texte : le découper en tokens (pas forcément des mots entiers) et associer chaque token à un identifiant numérique dans le vocabulaire du modèle.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que CamemBERT et pourquoi l'utiliser plutôt que BERT anglais pour du NLP français ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">CamemBERT est un BERT entraîné sur 138 Go de texte français. Il connaît les nuances du français (subjonctif, négation, argot). BERT anglais aurait une représentation dégradée des mots français.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utilise-t-on un learning rate très faible (2e-5) lors du fine-tuning ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les poids pré-entraînés sont déjà bons. Un grand learning rate les détruirait (catastrophic forgetting). On les ajuste légèrement pour les spécialiser.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'apporte le Trainer HuggingFace par rapport à une boucle d'entraînement manuelle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Gestion automatique de : l'évaluation par epoch, la sauvegarde du meilleur modèle, la reprise après interruption, le mixed precision training, la distribution multi-GPU.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="5-les-architectures-clés-à-connaître-sans-les-coder"><span class="h2-num">6</span>5. Les architectures clés à connaître sans les coder<span class="h2-line"></span></h2>
+
+<h3 id="cnn-réseaux-de-neurones-convolutifs">CNN — Réseaux de neurones convolutifs</h3>
+
+<p><strong>Définition</strong> : Un CNN applique des <strong>filtres</strong> (petites matrices de poids) qui glissent sur l'image. Chaque filtre détecte un pattern local (un contour horizontal, une couleur particulière). Le <strong>pooling</strong> réduit ensuite la résolution pour garder l'essentiel. En empilant des convolutions + poolings, on passe des pixels bruts à des représentations de plus en plus abstraites.</p>
+
+<p>L'avantage clé : les filtres sont <strong>partagés</strong> sur toute l'image. Un filtre qui détecte un bord oblique en haut à gauche fonctionne aussi en bas à droite. C'est ce qu'on appelle l'invariance par translation — propriété naturelle pour les images.</p>
+
+<p><strong>Cas réel français</strong> : PSA Stellantis utilise des CNN pour inspecter les carrosseries en sortie d'usine à Sochaux. 98% des micro-rayures détectées vs 73% par inspection humaine. Cadence : une inspection complète en 2 secondes.</p>
+
+<h3 id="lstm-gru-mémoire-à-long-terme">LSTM / GRU — Mémoire à long terme</h3>
+
+<p><strong>Définition</strong> : Un LSTM (Long Short-Term Memory) est un réseau récurrent qui maintient une <strong>mémoire interne</strong> entre les étapes de la séquence. À chaque pas, il décide quoi mémoriser, quoi oublier, et quoi laisser passer. Cela lui permet de capturer des dépendances à longue distance dans une séquence.</p>
+
+<p>Le <strong>GRU</strong> (Gated Recurrent Unit) est une version simplifiée du LSTM, plus rapide à entraîner, souvent aussi performant.</p>
+
+<p><strong>Cas réel français</strong> : EDF utilise des LSTM pour prédire la consommation électrique nationale à 72h. Le modèle prend en entrée les 168 dernières heures de consommation (une semaine), la météo, le calendrier (jours fériés, vacances scolaires) et prédit heure par heure les 72 suivantes. Précision : ±1.2% vs ±3.8% pour les méthodes ARIMA classiques.</p>
+
+<h3 id="transformer-amp-attention-pourquoi-tout-le-monde-a-abandonné-les-lstm-pour-le-texte">Transformer &amp; Attention — Pourquoi tout le monde a abandonné les LSTM pour le texte</h3>
+
+<p><strong>Définition</strong> : Le mécanisme d'<strong>attention</strong> permet à chaque mot d'une phrase de "regarder" tous les autres mots simultanément pour calculer sa représentation contextuelle. L'architecture <strong>Transformer</strong> (2017, Google) remplace la récurrence par l'attention pure.</p>
+
+<p>Avantage sur les LSTM : les LSTM traitent les tokens un par un, séquentiellement. Le Transformer traite tous les tokens <strong>en parallèle</strong> → vitesse d'entraînement 10× à 100× supérieure. De plus, l'attention directe entre tokens distants résout le problème de la mémoire à longue distance que les LSTM peinent à gérer.</p>
+
+<p><strong>Cas réel français</strong> : Doctolib utilise des Transformers pour analyser les notes cliniques textuelles (en français) et suggérer des codes CIM-10 aux médecins lors de la facturation. Gain de temps estimé : 8 minutes par consultation.</p>
+
+<h3 id="diffusion-models-la-logique-derrière-stable-diffusion">Diffusion Models — La logique derrière Stable Diffusion</h3>
+
+<p><strong>Définition</strong> : Un modèle de diffusion apprend à <strong>inverser un processus de dégradation progressive</strong>. Pendant l'entraînement : on prend une image réelle, on ajoute du bruit gaussien étape par étape jusqu'à obtenir du bruit pur. Le modèle apprend à <strong>désbruiter</strong> à chaque étape. Lors de la génération : on part de bruit pur et on applique le processus inverse, guidé par un texte (CLIP encoder).</p>
+
+<p>Intuition : le modèle a appris la "physique" de toutes les images du monde. Quand on lui donne du bruit et une description, il sculpte progressivement l'image en partant de ce bruit.</p>
+
+<p><strong>Cas réel</strong> : L'Oréal utilise Stable Diffusion fine-tuné pour générer des visuels de campagne publicitaire en cours de créa, permettant aux équipes créatives de tester 50 directions artistiques en 2 heures au lieu de 3 semaines.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que l'invariance par translation dans un CNN et pourquoi est-ce important pour les images ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les filtres d'un CNN sont partagés sur toute l'image. Un filtre qui détecte un contour en haut à gauche le détecte aussi ailleurs. Un chat reste un chat qu'il soit dans un coin ou au centre de l'image.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi les Transformers ont-ils remplacé les LSTM pour le traitement du texte ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les LSTM traitent les tokens séquentiellement (lent). Les Transformers traitent tous les tokens en parallèle (10-100× plus rapide) et gèrent mieux les dépendances longue distance via l'attention directe entre tokens distants.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Résumez le principe d'un modèle de diffusion en 2 phrases.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Pendant l'entraînement, le modèle apprend à désbruiter des images progressivement dégradées. Lors de la génération, il applique ce processus inverse sur du bruit pur, guidé par une description textuelle.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="6-déployer-un-modèle-pytorch-de-lexpérience-à-la-production"><span class="h2-num">7</span>6. Déployer un modèle PyTorch : de l'expérience à la production<span class="h2-line"></span></h2>
+
+<h3 id="le-gap-notebook-production">Le gap notebook → production</h3>
+
+<p>Un modèle qui "fonctionne" en notebook Jupyter n'est pas un modèle en production. Les problèmes typiques :</p>
+
+<ul>
+<li>Le notebook charge les données depuis un fichier local, pas une API</li>
+<li>Le modèle tient en mémoire d'une session Python mais pas de façon persistante</li>
+<li>Les temps d'inférence ne sont pas mesurés</li>
+<li>Il n'y a pas de gestion des erreurs ni de monitoring</li>
+<li>L'environnement de dépendances n'est pas fixé (versions PyTorch, CUDA…)</li>
+</ul>
+
+<h3 id="sérialisation-sauvegarder-le-modèle">Sérialisation — sauvegarder le modèle</h3>
+
+<p><strong>Définition</strong> : La sérialisation consiste à convertir un objet en mémoire (le modèle et ses poids) en un fichier persistant sur disque.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># Option 1 — torch.save : format natif PyTorch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">modele</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s2">&quot;modele_poids.pt&quot;</span><span class="p">)</span>  <span class="c1"># sauvegarde les poids uniquement</span>
+<span class="n">modele_charge</span> <span class="o">=</span> <span class="n">ReseauSimple</span><span class="p">(</span><span class="n">nb_features</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">modele_charge</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;modele_poids.pt&quot;</span><span class="p">))</span>
+
+<span class="c1"># Option 2 — ONNX : format interopérable (peut tourner sans PyTorch)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.onnx</span>
+<span class="n">dummy_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>  <span class="c1"># exemple d&#39;entrée de même forme que les vraies données</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">onnx</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">modele</span><span class="p">,</span> <span class="n">dummy_input</span><span class="p">,</span> <span class="s2">&quot;modele.onnx&quot;</span><span class="p">)</span>
+<span class="c1"># → Le fichier .onnx tourne sur ONNX Runtime, TensorRT, CoreML, etc.</span>
+<span class="c1"># → Indépendant de PyTorch : utilisable en Java, C++, dans un navigateur (WebAssembly)</span>
+</code></pre>
+</div>
+
+<p><strong>Quand utiliser ONNX</strong> : déploiement sur mobile, edge computing, environnements sans Python, ou quand on veut s'affranchir de la version PyTorch.</p>
+
+<h3 id="inférence-cpu-vs-gpu-le-vrai-coût">Inférence CPU vs GPU — le vrai coût</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Scénario</th>
+  <th>Latence</th>
+  <th>Coût mensuel</th>
+  <th>Cas d'usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>GPU (A100)</td>
+  <td>5-20ms</td>
+  <td>~2 500 €/mois</td>
+  <td>Modèles lourds, batch important</td>
+</tr>
+<tr>
+  <td>GPU (T4)</td>
+  <td>20-50ms</td>
+  <td>~300 €/mois</td>
+  <td>Production standard</td>
+</tr>
+<tr>
+  <td>CPU (32 vCPU)</td>
+  <td>100-500ms</td>
+  <td>~150 €/mois</td>
+  <td>Modèles légers, trafic faible</td>
+</tr>
+<tr>
+  <td>CPU quantifié</td>
+  <td>50-200ms</td>
+  <td>~150 €/mois</td>
+  <td>Compromis idéal pour la plupart</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="optimisation-quantization-et-pruning">Optimisation : quantization et pruning</h3>
+
+<p><strong>Quantization</strong> : réduire la précision numérique des poids du modèle. Au lieu de stocker chaque poids en float32 (32 bits), on utilise int8 (8 bits). Résultat : modèle 4× plus léger, inférence 2-3× plus rapide sur CPU, perte de précision &lt; 1% sur la plupart des tâches.</p>
+
+<p><strong>Pruning</strong> : supprimer les connexions (poids proches de zéro) qui contribuent peu à la sortie. Un réseau entraîné est typiquement sur-paramétré. On peut souvent supprimer 70 à 90% des connexions sans perte significative de performance.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Quantization dynamique (la plus simple, pas besoin de données de calibration)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.quantization</span>
+
+<span class="n">modele_quantifie</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">quantization</span><span class="o">.</span><span class="n">quantize_dynamic</span><span class="p">(</span>
+    <span class="n">modele</span><span class="p">,</span>
+    <span class="p">{</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">},</span>  <span class="c1"># quantifier les couches linéaires</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">qint8</span>
+<span class="p">)</span>
+
+<span class="c1"># Comparaison de taille</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">modele</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s2">&quot;modele_fp32.pt&quot;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">modele_quantifie</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s2">&quot;modele_int8.pt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FP32: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s1">&#39;modele_fp32.pt&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;INT8: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s1">&#39;modele_int8.pt&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+<span class="c1"># FP32: 88.3 MB</span>
+<span class="c1"># INT8: 22.1 MB  ← 4× plus léger</span>
+</code></pre>
+</div>
+
+<h3 id="exposer-le-modèle-avec-fastapi">Exposer le modèle avec FastAPI</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="c1"># Chargement du modèle au démarrage (pas à chaque requête)</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">ReseauSimple</span><span class="p">(</span><span class="n">nb_features</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;modele_poids.pt&quot;</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># mode inférence : désactive le dropout</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RequeteInference</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>  <span class="c1"># liste de 20 features</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/predict&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">predire</span><span class="p">(</span><span class="n">requete</span><span class="p">:</span> <span class="n">RequeteInference</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">requete</span><span class="o">.</span><span class="n">features</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">proba</span> <span class="o">=</span> <span class="n">modele</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;probabilite&quot;</span><span class="p">:</span> <span class="n">proba</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">proba</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)}</span>
+
+<span class="c1"># Lancement : uvicorn main:app --host 0.0.0.0 --port 8000</span>
+</code></pre>
+</div>
+
+<p>:::situation
+<strong>Doctolib — modèle de triage déployé sur 10 millions de requêtes/mois</strong></p>
+
+<p>Doctolib déploie un modèle de triage pour suggérer le bon spécialiste à consulter selon les symptômes décrits en texte libre. Contrainte : répondre en &lt; 200ms pour 10M requêtes/mois, disponibilité 99.9%.</p>
+
+<p>Architecture retenue : CamemBERT quantifié (int8) + FastAPI + Kubernetes. La quantization réduit la latence de 380ms à 95ms sur CPU, rendant le GPU inutile pour ce cas d'usage. Coût infrastructure : 40× moins cher que la solution GPU initiale. Monitoring : 5% des prédictions sont loguées et réévaluées par des médecins chaque semaine pour détecter la dérive du modèle.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre torch.save et ONNX pour la sérialisation d'un modèle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">`torch.save` est le format natif PyTorch, simple mais dépendant de PyTorch. ONNX est interopérable : le fichier tourne sur ONNX Runtime, TensorRT, CoreML — sans PyTorch, en Java, C++, mobile.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la quantization et quel gain typique apporte-t-elle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Réduire la précision des poids de float32 à int8. Résultat : modèle 4× plus léger, inférence 2-3× plus rapide sur CPU, perte de précision < 1%.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi appeler modele.eval() avant l'inférence ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Pour désactiver le Dropout (qui est aléatoire et ne doit pas s'appliquer en production) et la Batch Normalization en mode entraînement. Sans eval(), les prédictions seraient non-déterministes.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quel est le principal avantage de charger le modèle au démarrage du serveur plutôt qu'à chaque requête ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Charger un modèle prend 2 à 10 secondes. Faire ça à chaque requête rendrait l'API inutilisable. On charge une fois en mémoire et on réutilise pour toutes les requêtes.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="résumé-du-jour-4"><span class="h2-num">8</span>Résumé du Jour 4<span class="h2-line"></span></h2>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">╔══════════════════════════════════════════════════════════════════════╗
+║                    DEEP LEARNING — RÉCAPITULATIF                     ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  NEURONE        = entrées pondérées + activation non-linéaire        ║
+║  BACKPROP       = ajuster les poids en remontant l'erreur            ║
+║  BATCH/EPOCH    = sous-ensemble / passage complet sur les données    ║
+║  DROPOUT        = désactiver des neurones → généralisation           ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  QUAND DL ?     Image / Texte / Audio / Vidéo + &gt;100K exemples       ║
+║  QUAND PAS DL ? Données tabulaires → XGBoost (plus rapide, meilleur) ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  TRANSFER       Poids pré-entraînés + adaptation sur tâche cible     ║
+║  FEAT. EXTRACT  Geler tout → entraîner seulement la tête (&lt;5K imgs)  ║
+║  FINE-TUNING    Dégeler dernières couches (5K–50K exemples)          ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  ARCHITECTURES  CNN (image) / LSTM (séquence) / Transformer (texte)  ║
+║  HUGGINGFACE    Tokeniser → pipeline / Trainer → fine-tune en 3 LR   ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  PRODUCTION     torch.save vs ONNX / quantization (-4× taille)       ║
+║                 modele.eval() / charger au démarrage / FastAPI       ║
+╚══════════════════════════════════════════════════════════════════════╝
+</code></pre></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>
