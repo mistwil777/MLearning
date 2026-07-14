@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréFramework de Décision — Architecture IARéférenceFrameworkMi</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML Accéléré — Contexte projetProgramme7 jours3-4h</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,167 +132,161 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Framework de Décision — <em>Architecture IA</em></h1><div class="hero-tags"><span class="hero-tag">Référence</span><span class="hero-tag">Framework</span><span class="hero-tag">Mise à jour continue</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML Accéléré — <em>Contexte projet</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p>Ce document se complète chaque jour. C'est ton outil de travail face à un client.
-  Structure : <strong>Contexte client → Question → Réponse → Pourquoi → Pièges</strong></p>
-</blockquote>
+<h2 id="ce-quest-ce-projet">Ce qu'est ce projet</h2>
+
+<p>Programme d'apprentissage ML en 8 jours pour un étudiant M2 IA (alternance Capgemini). Chaque jour = <code>cours.md</code> + <code>exercice.md</code> dans <code>jour{N}/</code>. Le générateur <code>generate_html.py</code> produit le HTML depuis les markdown.</p>
+
+<p>Le site est déployé sur Vercel via le repo GitHub <code>mistwil777/MLearning</code>.</p>
 
 <hr />
 
-<h2 id="structure-globale">Structure globale</h2>
+<h2 id="état-du-programme">État du programme</h2>
 
-<div class="mindmap">PROBLÈME CLIENT
-      │
-      ▼
-┌─────────────────────────────────────────────┐
-│  1. Est-ce que des règles métier suffisent ? │  ← Jour 1
-│  2. Quel type de ML ?                        │  ← Jour 1
-│  3. Quel algo dans ce type ?                 │  ← Jour 2
-│  4. Séries temporelles ? Quel outil ?        │  ← Jour 3
-│  5. Deep Learning nécessaire ?               │  ← Jour 4
-│  6. Comment déployer et maintenir ?          │  ← Jour 5
-│  7. Architecture hybride ?                  │  ← Jour 6
-└─────────────────────────────────────────────┘
+<table>
+<thead>
+<tr>
+  <th>Jour</th>
+  <th>Thème</th>
+  <th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Paysage ML — taxonomie, bibliothèques, règles vs ML</td>
+  <td>✅ Complet + visualisations</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>ML Classique — régression logistique, RF, XGBoost, pipeline, métriques</td>
+  <td>✅ Complet + visualisations</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Séries temporelles — ARIMA, Prophet, darts, évaluation</td>
+  <td>✅ Complet + visualisations</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Deep Learning &amp; Transfer Learning — PyTorch, HuggingFace, fine-tuning</td>
+  <td>✅ Complet</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>MLOps — MLflow, drift, Airflow/Prefect, FastAPI, Docker, monitoring</td>
+  <td>✅ Complet + visualisations</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Architecture hybride — ML + GenAI, RAG, agents, orchestration</td>
+  <td>✅ Complet</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Capstone — 3 cas complets de A à Z</td>
+  <td>✅ Complet</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Régression approfondie — Ridge, Lasso, polynomiale, courbes d'apprentissage</td>
+  <td>✅ Complet + visualisations</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="architecture-technique">Architecture technique</h2>
+
+<div class="mindmap">ml_accelerated/
+├── generate_html.py     ← générateur central (NE PAS supprimer)
+├── CLAUDE.md            ← ce fichier
+├── README.md + .html    ← page d'accueil / index
+├── index.html           ← copie de README.html pour Vercel
+├── vercel.json          ← config déploiement statique
+├── decision_framework.md + .html
+└── jour{1-8}/
+    ├── cours.md + .html
+    └── exercice.md + .html
 </div>
 
-<hr />
+<h3 id="generate-htmlpy-fonctionnalités-clés">generate_html.py — fonctionnalités clés</h3>
 
-<h2 id="jour-1-paysage-ml-quoi-choisir-et-pourquoi">JOUR 1 — Paysage ML : Quoi choisir et pourquoi</h2>
+<ul>
+<li>Callouts : <code>:::situation</code>, <code>:::problem</code>, <code>:::rule</code>, <code>:::callout-insight</code>, <code>:::warning</code>, <code>:::limit</code></li>
+<li>Mindmaps SVG : <code>:::mindmap &lt;svg...&gt; :::</code></li>
+<li>Flashcards flip : <code>:::flashcards Q:/R: :::</code> — scroll horizontal, flip animé</li>
+<li>Bouton plein écran sur les mindmaps</li>
+<li>Fix overlap SVG automatique (JS au chargement)</li>
+<li>Liens <code>.md</code> → <code>.html</code> automatiquement réécrits</li>
+<li><code>index.html</code> généré automatiquement depuis <code>README.md</code></li>
+</ul>
 
-<h3 id="décision-11-règles-vs-ml">Décision 1.1 — Règles vs ML</h3>
+<h3 id="palette-css">Palette CSS</h3>
 
-<table>
-<thead>
-<tr>
-  <th>Contexte</th>
-  <th>Choisir</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Logique métier explicite, stable, auditée (banque, médical réglementé)</td>
-  <td><strong>Règles</strong></td>
-</tr>
-<tr>
-  <td>Données disponibles, patterns complexes, logique non-formulable</td>
-  <td><strong>ML</strong></td>
-</tr>
-<tr>
-  <td>Règles connues mais exceptions nombreuses</td>
-  <td><strong>Règles + ML en fallback</strong></td>
-</tr>
-</tbody>
-</table>
-
-<div class="callout warning"><div class="callout-head">&#x26a1; Piège</div><p>Automatiquement sauter au ML parce que c'est "plus moderne". Un if/else bien pensé est souvent plus fiable, plus rapide, et moins coûteux.</p>
-
-<p><strong>Exemple réel</strong> : La Société Générale utilise des règles pour le scoring réglementaire Bâle III (auditabilité obligatoire), et du ML pour la détection de fraude (patterns trop complexes pour des règles).</p></div>
-
-<hr />
-
-<h3 id="décision-12-type-de-ml">Décision 1.2 — Type de ML</h3>
-
-<table>
-<thead>
-<tr>
-  <th>Question</th>
-  <th>Réponse</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>J'ai des labels (y) → je veux prédire</td>
-  <td><strong>Supervisé</strong></td>
-</tr>
-<tr>
-  <td>Pas de labels → je veux comprendre la structure</td>
-  <td><strong>Non-supervisé</strong></td>
-</tr>
-<tr>
-  <td>Séquence de décisions, récompense différée</td>
-  <td><strong>RL</strong> (rare en prod client)</td>
-</tr>
-<tr>
-  <td>Texte, image, audio, vidéo</td>
-  <td><strong>Deep Learning</strong> (voir Jour 4)</td>
-</tr>
-<tr>
-  <td>Données tabulaires structurées</td>
-  <td><strong>ML classique d'abord</strong> (voir Jour 2)</td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h3 id="décision-13-ml-classique-vs-deep-learning-vs-genai">Décision 1.3 — ML classique vs Deep Learning vs GenAI</h3>
-
-<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Données tabulaires structurées ?
-    → OUI → ML classique (XGBoost, régression, RF)
-    → NON ↓
-
-Texte/Image/Audio/Vidéo ?
-    → OUI ↓
-
-    Tâche de génération / compréhension complexe ?
-        → OUI → GenAI (LLM, diffusion)
-        → NON → Deep Learning supervisé (CNN, BERT fine-tuné)
-
-Séries temporelles ?
-    → voir Jour 3
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">--bg:#16151a  --s1:#1e1c24  --s2:#26232f
+--blue:#3987e5  --violet:#9085e9  --aqua:#1baf7a
+--yellow:#e8a600  --red:#e66767
 </code></pre></div>
 
-<div class="callout rule"><div class="callout-head">&#x2705; Règle d'or</div><p>Ne jamais sortir l'artillerie lourde (deep/GenAI) si une régression logistique ou un XGBoost fait le job. Coût × Maintenance × Explicabilité.</p></div>
+<hr />
+
+<h2 id="décisions-prises-et-règles-établies">Décisions prises et règles établies</h2>
+
+<h3 id="pédagogie">Pédagogie</h3>
+
+<ul>
+<li><strong>Définition d'abord</strong>, situation réelle ensuite — jamais l'inverse</li>
+<li>Tout terme technique expliqué au premier usage</li>
+<li>Questions instinctives soulevées en conversation = contenu manquant dans le cours</li>
+<li>Ton neutre et publiable — pas de références à "une question posée"</li>
+<li>Titres de sections : déclaratifs, jamais en forme de question implicite</li>
+</ul>
+
+<h3 id="visualisations">Visualisations</h3>
+
+<ul>
+<li>SVG inline obligatoire pour chaque concept clé</li>
+<li>Dark theme, coordonnées calculées manuellement</li>
+<li>Cartes mentales : viewBox minimum 1100×470, bezier connectors, color-coded par famille</li>
+</ul>
+
+<h3 id="contenu">Contenu</h3>
+
+<ul>
+<li>Jamais surcharger un cours existant — ouvrir un nouveau jour si nécessaire</li>
+<li>Ridge/Lasso/régression polynomiale → Jour 8 (pas dans Jour 2)</li>
+<li>Chaque outil suit le schéma : origine → problème résolu (avant/après code) → cas réel → quand ne pas l'utiliser</li>
+</ul>
+
+<h3 id="déploiement">Déploiement</h3>
+
+<ul>
+<li>Pusher uniquement les <code>.html</code> (les <code>.md</code> et <code>generate_html.py</code> sont dans <code>.gitignore</code>)</li>
+<li>Commande : <code>python3 generate_html.py &amp;&amp; git add *.html */*.html index.html &amp;&amp; git commit -m "..." &amp;&amp; git push</code></li>
+</ul>
 
 <hr />
 
-<h3 id="décision-14-quelle-bibliothèque-python">Décision 1.4 — Quelle bibliothèque Python</h3>
+<h2 id="profil-de-létudiant">Profil de l'étudiant</h2>
 
-<table>
-<thead>
-<tr>
-  <th>Besoin</th>
-  <th>Bibliothèque</th>
-  <th>Pourquoi pas l'autre</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>ML classique rapide, pipeline prod</td>
-  <td><strong>scikit-learn</strong></td>
-  <td>Référence universelle, tous les algos ont la même syntaxe</td>
-</tr>
-<tr>
-  <td>Gradient boosting sur données tabulaires</td>
-  <td><strong>XGBoost / LightGBM</strong></td>
-  <td>Sklearn trop lent sur gros volumes</td>
-</tr>
-<tr>
-  <td>Séries temporelles statistiques</td>
-  <td><strong>statsmodels / Prophet</strong></td>
-  <td>Sklearn n'a pas ces modèles</td>
-</tr>
-<tr>
-  <td>Deep Learning flexible, recherche</td>
-  <td><strong>PyTorch</strong></td>
-  <td>TF plus lourd à déboguer</td>
-</tr>
-<tr>
-  <td>Deep Learning prod, NLP state-of-art</td>
-  <td><strong>HuggingFace Transformers</strong></td>
-  <td>PyTorch seul = tout from scratch</td>
-</tr>
-<tr>
-  <td>Experiment tracking</td>
-  <td><strong>MLflow</strong></td>
-  <td>Sinon tu perds tes runs (voir Jour 5)</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li>Expérience pratique GenAI et multi-agents — pas de maîtrise théorique déclarée</li>
+<li>Points forts observés : bon raisonnement d'architecture système, intuition sur les complémentarités (clustering + séries temporelles, RAG + catalogue produit)</li>
+<li>Points faibles : mécanismes internes des algorithmes classiques, choix entre outils sur des critères précis, lecture et interprétation des métriques</li>
+<li>Apprend par visualisation, analogies, et cas réels français identifiables</li>
+<li>Veut une mesure honnête et objective de sa progression</li>
+</ul>
 
 <hr />
 
-<p><em>[Jours 2-7 à compléter]</em></p>
+<h2 id="ce-qui-reste-à-faire">Ce qui reste à faire</h2>
+
+<ul>
+<li>Continuer l'approfondissement selon les lacunes identifiées à la lecture des cours</li>
+<li>Déploiement Vercel : plugin installé (<code>npx plugins add vercel/vercel-plugin</code>), authentification à finaliser</li>
+<li>Mettre à jour le README.md avec le Jour 8 dans le tableau de progression</li>
+</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715 Fermer":"\u26F6 Plein \xe9cran";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6 Plein \xe9cran";document.removeEventListener("keydown",esc);}});}}</script></body></html>
