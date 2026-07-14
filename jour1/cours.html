@@ -635,41 +635,51 @@ Taux d'occupation d'un hôtel — chaque nuit
 
 <h4>Rôle 3 — Les algos que XGBoost ne fait pas du tout</h4>
 
-<p>XGBoost est un <strong>classificateur/régresseur</strong> — il prédit une valeur ou une catégorie à partir de données existantes. Mais plusieurs familles de problèmes n'ont rien à voir avec ça :</p>
+<p>XGBoost est un algorithme <strong>supervisé</strong> — il apprend à partir de données déjà étiquetées par un humain (fraude/non-fraude, prix, catégorie…) pour prédire sur de nouveaux cas. C'est pour ça qu'il fait de la classification : les catégories existent avant l'entraînement, quelqu'un les a définies.</p>
+
+<p>Ce que XGBoost ne fait pas, c'est le travail <strong>non-supervisé</strong> : trouver une structure dans des données qui n'ont aucun label. Personne n'a défini les groupes à l'avance — l'algo doit les découvrir lui-même. Ce sont deux familles de problèmes qui n'ont rien à voir, même si le mot "groupe" apparaît dans les deux.</p>
+
+<p>:::situation
+<strong>Criteo</strong> (adtech, Paris) gère des milliards de logs de clics. Un data scientist doit en même temps : détecter si un comportement est une fraude publicitaire, comprendre quels profils d'annonceurs se ressemblent sans avoir défini ces profils à l'avance, et réduire les 300 features de chaque événement à 20 pour accélérer les modèles. Trois outils différents pour trois questions différentes — XGBoost ne peut répondre qu'à la première.
+:::</p>
 
 <table>
 <thead>
 <tr>
-  <th>Problème</th>
-  <th>Algo sklearn</th>
+  <th>Question</th>
+  <th>Famille</th>
+  <th>Outil sklearn</th>
   <th>Ce que XGBoost ferait</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>"Quelles transactions sont bizarres ?"</td>
+  <td>"Ce clic est-il frauduleux ?"</td>
+  <td>Supervisé (anomalie)</td>
   <td>Isolation Forest</td>
-  <td>Rien — XGBoost ne détecte pas les anomalies</td>
+  <td>Rien — il ne détecte pas les anomalies sans label</td>
 </tr>
 <tr>
-  <td>"Combien de groupes naturels dans mes clients ?"</td>
+  <td>"Quels profils d'annonceurs se ressemblent ?"</td>
+  <td>Non-supervisé (clustering)</td>
   <td>K-Means, DBSCAN</td>
-  <td>Rien — XGBoost ne fait pas de clustering</td>
+  <td>Rien — il ne découvre pas de groupes sans étiquettes</td>
 </tr>
 <tr>
-  <td>"Réduire 200 colonnes à 10 sans perdre l'info"</td>
+  <td>"Réduire 300 features à 20 sans perdre l'info"</td>
+  <td>Non-supervisé (réduction)</td>
   <td>PCA</td>
-  <td>Rien — XGBoost ne compresse pas les données</td>
+  <td>Rien — il ne compresse pas les données</td>
 </tr>
 </tbody>
 </table>
 
-<p><strong>Isolation Forest</strong> : imagine un algo qui essaie d'isoler chaque point de données. Les anomalies (transactions frauduleuses, pannes de capteur) s'isolent facilement — elles sont seules dans leur coin. Les points normaux sont entourés d'autres points normaux, difficiles à isoler.</p>
+<p><strong>Isolation Forest</strong> : tente d'isoler chaque point de données. Une anomalie (clic frauduleux, panne de capteur) s'isole en peu de coupures — elle est seule dans son coin. Un point normal est entouré d'autres points normaux : il faut beaucoup de coupures pour l'isoler.</p>
 
-<p><strong>PCA (Analyse en Composantes Principales)</strong> : si tu as 200 colonnes dans ton tableau, c'est souvent parce qu'elles se recoupent (taille et poids d'une personne sont corrélés). PCA trouve les "axes d'information" réels et réduit les 200 colonnes à 10 qui contiennent l'essentiel de l'information.</p>
+<p><strong>PCA (Analyse en Composantes Principales)</strong> : si 300 colonnes se recoupent souvent (deux métriques de comportement similaires seront corrélées), PCA trouve les "axes d'information" réels et réduit les 300 colonnes à 20 qui contiennent l'essentiel — sans aucune supervision.</p>
 
 <blockquote>
-  <p><strong>Résumé</strong> : sklearn = infrastructure + petits modèles + algos non-supervisés. XGBoost = le meilleur classificateur/régresseur sur données tabulaires à volume. Les deux sont complémentaires — un projet professionnel utilise les deux en même temps.</p>
+  <p><strong>Résumé</strong> : sklearn = infrastructure + petits modèles + algos non-supervisés. XGBoost = le meilleur classificateur/régresseur supervisé sur données tabulaires à volume. Les deux sont complémentaires — un projet professionnel utilise les deux en même temps.</p>
 </blockquote>
 
 <hr />
