@@ -205,7 +205,7 @@ Output attendu :
 
 <p><strong>Justification</strong> : Pas de label "type de client" → on ne peut pas faire du supervisé. L'objectif est de <strong>découvrir</strong> des groupes naturels.</p>
 
-<p><strong>Bibliothèques</strong> : scikit-learn (K-Means, DBSCAN) + pandas pour le preprocessing. PCA ou t-SNE pour visualiser les clusters.</p>
+<p><strong>Bibliothèques</strong> : scikit-learn (K-Means, DBSCAN) + <strong>pandas</strong> (la bibliothèque standard pour manipuler des tableaux de données en Python — lire un CSV, filtrer des lignes, normaliser des colonnes) pour le preprocessing. <strong>PCA ou t-SNE</strong> pour visualiser les clusters : ces deux techniques réduisent des données à 50+ colonnes en 2 dimensions affichables sur un graphe, pour voir si les groupes sont visuellement séparés. PCA fait une réduction linéaire (rapide), t-SNE fait une réduction non-linéaire (meilleure pour révéler des structures complexes, plus lente).</p>
 
 <p><strong>Output attendu</strong> : 5-10 segments nommés ("Famille bio", "Prix-sensible", etc.) avec les features qui les caractérisent. Ces segments deviennent les labels pour de futures campagnes (et potentiellement de futurs modèles supervisés : "prédit si un client du segment A va répondre à la promo X").</p>
 
