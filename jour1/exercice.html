@@ -357,16 +357,19 @@ Quel serait le MVP le plus simple ?
 <p><details>
 <summary>Réponse</summary></p>
 
-<p><strong>Deux problèmes fondamentaux mélangés</strong> :</p>
+<p><strong>Le vrai piège : la phrase mélange deux questions sans distinguer leur ordre.</strong></p>
+
+<p>La séquence clustering → classification est une architecture tout à fait valide — et utilisée en production. La voici correctement :</p>
 
 <ol>
-<li><p>Le clustering (non-supervisé) donne des segments, pas une prédiction de churn. Pour prédire le churn, il faut un modèle supervisé avec un label "a churné" dans les données historiques.</p></li>
-<li><p>"Faire du clustering puis prédire" semble logique mais crée un problème : les clusters ne sont pas des features valides pour prédire le churn. C'est une fuite de données potentielle (data leakage) si les clusters sont calculés sur l'ensemble des données.</p></li>
+<li><strong>Clustering</strong> (non-supervisé) sur les données clients → découvrir des profils naturels ("jeunes urbains", "seniors fidèles"…)</li>
+<li><strong>Validation statistique</strong> avec statsmodels — tester si les profils trouvés sont significatifs, si les différences entre clusters sont réelles et pas du bruit</li>
+<li><strong>Classification</strong> (supervisé) : une fois les clusters validés, leur label devient une feature ou une cible. On entraîne XGBoost ou sklearn sur les données historiques avec le label "a churné à J+90" — en ajoutant le cluster comme variable explicative</li>
 </ol>
 
-<p><strong>La bonne architecture</strong> :
-- Clustering pour comprendre les profils clients → insights marketing
-- Churn prediction séparément : supervisé, avec label "actif/inactif à J+90"</p>
+<p><strong>Le vrai piège est technique</strong> : si tu calcules les clusters sur <em>l'ensemble</em> du dataset avant de séparer train et test, tu as du <strong>data leakage</strong> — le modèle de classification aura vu indirectement les données de test pendant l'entraînement, ce qui gonfle artificiellement les performances mesurées. La bonne pratique : calculer les clusters uniquement sur le train, puis assigner les données de test au cluster le plus proche sans les inclure dans le calcul initial.</p>
+
+<p><strong>Ce que la phrase du DSI cache</strong> : il dit "clustering puis prédire" comme si c'était une seule étape. Ce sont deux projets distincts avec deux datasets, deux évaluations, deux déploiements. Les confondre dans le planning conduit à sous-estimer le travail d'un facteur 2.</p>
 
 <p></details></p>
 
