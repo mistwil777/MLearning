@@ -296,6 +296,8 @@ Justification :
 
 <p>Un collègue vous montre ses courbes d'entraînement. Le modèle est un CNN EfficientNet-B0 entraîné pour classifier des images de documents (facture / contrat / relevé bancaire / courrier), dataset : 8 000 images.</p>
 
+<p>La loss (perte) mesure l'erreur du modèle — plus elle est basse, mieux c'est. Sur le train elle diminue toujours. Sur la validation elle doit suivre la même tendance ; si elle remonte alors que la train loss continue de baisser, le modèle surappend (overfitting).</p>
+
 <div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Epoch  Train Loss  Val Loss   Train Acc  Val Acc
   1      0.842      0.891      68.2%     66.1%
   2      0.612      0.723      76.4%     71.8%
@@ -331,8 +333,11 @@ f) L'entraînement a duré trop longtemps  </p>
 
 <p><strong>Question 3 — Corriger le code</strong></p>
 
+<p>La data augmentation consiste à créer artificiellement de nouvelles images d'entraînement en appliquant des transformations (rotation, miroir, changement de couleur) — le modèle apprend ainsi à reconnaître un objet quelle que soit son orientation ou son éclairage.</p>
+
 <div class="codehilite">
 <pre><span></span><code><span class="c1"># Code original — problème d&#39;overfitting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transforms</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 
@@ -353,11 +358,10 @@ f) L'entraînement a duré trop longtemps  </p>
     <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
-    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
-    <span class="c1"># pas d&#39;early stopping</span>
-<span class="p">)</span>
+<span class="c1"># Boucle d&#39;entraînement sans early stopping, learning rate trop élevé</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># pas d&#39;early stopping, pas de weight decay</span>
 </code></pre>
 </div>
 
@@ -368,15 +372,16 @@ f) L'entraînement a duré trop longtemps  </p>
 <div class="codehilite">
 <pre><span></span><code><span class="c1"># Code corrigé</span>
 
+<span class="c1"># Correction 1 : data augmentation</span>
 <span class="n">transform_train</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
     <span class="c1"># ← Corrections ici</span>
 <span class="p">])</span>
 
-<span class="c1"># ← Autres corrections</span>
+<span class="c1"># ← Autres corrections (geler les couches de base, dropout, learning rate, early stopping manuel)</span>
 </code></pre>
 </div>
 
-<p><strong>Question 4 — Early stopping</strong></p>
+<p><strong>Question 4 — Early stopping</strong> (arrêt anticipé — on surveille la perte sur le jeu de validation ; quand elle cesse de diminuer pendant N époques consécutives, on arrête l'entraînement et on restaure les poids du meilleur moment)</p>
 
 <p>D'après les courbes, à quelle epoch aurait-il fallu arrêter l'entraînement et pourquoi ?</p>
 
@@ -384,7 +389,7 @@ f) L'entraînement a duré trop longtemps  </p>
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Définissez l'overfitting. Comment le reconnaître sur des courbes d'entraînement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le modèle mémorise le dataset d'entraînement au lieu d'apprendre des patterns généralisables. Sur les courbes : la loss d'entraînement continue de baisser, mais la loss de validation commence à remonter.</p></div></div></div>
 
-<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Citez 4 techniques pour réduire l'overfitting sur un petit dataset d'images.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">1. Data augmentation (flip, rotation, color jitter), 2. Dropout dans la tête de classification, 3. Réduire le learning rate, 4. Early stopping (arrêter quand la val loss remonte), 5. Feature extraction plutôt que fine-tuning complet, 6. Weight decay (L2 regularization).</p></div></div></div>
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Citez 4 techniques pour réduire l'overfitting sur un petit dataset d'images.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">1. Data augmentation (flip, rotation, color jitter), 2. Dropout dans la tête de classification, 3. Réduire le learning rate, 4. Early stopping (arrêter quand la val loss remonte), 5. Feature extraction plutôt que fine-tuning complet, 6. Weight decay (régularisation L2 — pénalise les poids trop grands du réseau pour éviter que le modèle mémorise les données d'entraînement).</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que l'early stopping ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Surveiller la val loss pendant l'entraînement et arrêter automatiquement quand elle ne s'améliore plus depuis N epochs consécutives. On restaure les poids du meilleur checkpoint.</p></div></div></div></div></div>
 

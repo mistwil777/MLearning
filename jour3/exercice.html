@@ -228,7 +228,7 @@ Modèle recommandé : ___________
 
 <p><strong>Saisonnalité</strong> : Forte, annuelle (cycle chaud/froid). La saisonnalité est <strong>multiplicative</strong> : les pics hivernaux sont plus élevés les années froides, proportionnellement au niveau ambiant.</p>
 
-<p><strong>Anomalie</strong> : Oui, le pic de juillet 2022 est une anomalie à isoler avant de modéliser.</p>
+<p><strong>Anomalie</strong> : Oui, le pic de juillet 2022 est un outlier (valeur aberrante — point de donnée anormalement éloigné des autres, souvent dû à un événement exceptionnel) à isoler avant de modéliser.</p>
 
 <p><strong>Problème avec le MAPE</strong> : La série contient des valeurs proches de zéro en été (&lt; 5 unités). Le MAPE explose quand le réel est proche de zéro : une erreur de 2 unités sur une valeur réelle de 1 donne MAPE = 200%. Il faut utiliser le MAE ou le RMSE sur cette série.</p>
 
@@ -261,7 +261,7 @@ Quel split train/test utiliseriez-vous sur 2 ans de données hebdomadaires ?
 
 <p><strong>Décomposition</strong> : <strong>Multiplicative</strong>. Le pic de décembre passe de 3× à 4× la moyenne — il grandit avec la tendance haussière. L'amplitude est proportionnelle au niveau.</p>
 
-<p><strong>Split train/test</strong> : Avec 2 ans × 52 semaines = 104 semaines, on garde les 52 dernières semaines (1 an complet) pour le test, afin d'évaluer le modèle sur une saisonnalité annuelle complète. Ne jamais prendre moins d'un cycle saisonnier complet dans le jeu de test.</p>
+<p><strong>Split train/test</strong> : Avec 2 ans × 52 semaines = 104 semaines, on garde les 52 dernières semaines (1 an complet) pour le test, afin d'évaluer le modèle sur une saisonnalité annuelle complète. Ne jamais prendre moins d'un cycle saisonnier complet dans le jeu de test. Si les données ont une saisonnalité annuelle (Noël, été…), le jeu de test doit couvrir au moins 12 mois — sinon les performances mesurées ne reflètent pas ce que le modèle verra en production.</p>
 
 <p></details></p>
 

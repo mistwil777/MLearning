@@ -276,7 +276,7 @@ Quel serait le MVP le plus simple ?
 - Zéro coût d'entraînement, déployable en 1 jour</p>
 
 <p><strong>Option 2</strong> : ML classique (TF-IDF + Logistic Regression)
-- TF-IDF = transformer chaque email en un vecteur de nombres (fréquence de chaque mot) que sklearn peut traiter
+- TF-IDF (Term Frequency-Inverse Document Frequency — une technique qui convertit du texte en nombres : chaque mot reçoit un score proportionnel à sa fréquence dans le document mais inversement proportionnel à sa fréquence dans tous les documents, ce qui downvote les mots courants comme "le", "de") = transformer chaque email en un vecteur de nombres que sklearn peut traiter
 - scikit-learn entraîne une régression logistique sur ces vecteurs → classification en 5 catégories
 - Si le client a des emails labelisés → entraînable en quelques heures
 - Performance attendue : 85-92% sur 5 classes</p>
@@ -387,7 +387,7 @@ Quel serait le MVP le plus simple ?
 <p>La bonne métrique sur ce problème :
 - <strong>Précision</strong> : sur les alertes levées, combien sont vraies fraudes ? (éviter les faux positifs = bloquer des clients légitimes)
 - <strong>Rappel</strong> : sur les vraies fraudes, combien sont détectées ? (éviter les faux négatifs = laisser passer des fraudes)
-- <strong>F1-score</strong> ou <strong>AUC-ROC</strong> : balance les deux</p>
+- <strong>F1-score</strong> (moyenne harmonique entre rappel et précision — utile quand les deux comptent également) ou <strong>AUC-ROC</strong> : balance les deux</p>
 
 <p>La métrique à optimiser dépend du coût métier : est-il pire de rater une fraude ou de bloquer un bon client ?</p>
 

@@ -185,7 +185,7 @@ details>*:not(summary){padding:0 20px 20px}
 
 <ul>
 <li><strong>Type de problème</strong> : Classification supervisée sur données non structurées (texte)</li>
-<li><strong>Algorithme recommandé</strong> : CamemBERT fine-tuné (HuggingFace Transformers) — pas XGBoost</li>
+<li><strong>Algorithme recommandé</strong> : CamemBERT fine-tuné (HuggingFace Transformers — couvert en Jour 4) — pas XGBoost</li>
 <li><strong>Métrique principale</strong> : Rappel (ne pas manquer un document urgent = faux négatif potentiellement grave). Compléter avec F1 pour l'équilibre.</li>
 <li><strong>Justification</strong> : les données sont du texte libre médical en français — XGBoost ne comprend pas le texte. CamemBERT est pré-entraîné sur le français, il suffit de le fine-tuner sur les 2000 documents annotés. C'est un problème qui sort du ML classique (Jour 5 du programme).</li>
 <li><strong class="lbl-warn">&#x26a1; Piège</strong> : ne pas essayer de "transformer le texte en features manuellement" (comptage de mots, TF-IDF) — sous-optimal pour la nuance médicale. Et surtout ne pas utiliser XGBoost sur du texte brut — ça ne fonctionnerait pas.</li>
@@ -211,7 +211,7 @@ details>*:not(summary){padding:0 20px 20px}
 <li><strong>Type de problème</strong> : Classification binaire supervisée, très déséquilibrée, contrainte de latence</li>
 <li><strong>Algorithme recommandé</strong> : Régression logistique (contrainte 50ms) — pas XGBoost</li>
 <li><strong>Métrique principale</strong> : Précision (la pénalité pour bloquer un appel légitime est très élevée — minimiser les faux positifs). Fixer un seuil de décision bas sur la probabilité.</li>
-<li><strong>Justification</strong> : XGBoost peut prendre 10-50ms par prédiction selon la configuration — risqué pour 50ms max. La régression logistique prédit en moins de 1ms. De plus, avec 0.01% de fraudes, les données sont extrêmement déséquilibrées : utiliser <code>class_weight='balanced'</code> ou sur-échantillonner les fraudes avec SMOTE.</li>
+<li><strong>Justification</strong> : XGBoost peut prendre 10-50ms par prédiction selon la configuration — risqué pour 50ms max. La régression logistique prédit en moins de 1ms. De plus, avec 0.01% de fraudes, les données sont extrêmement déséquilibrées : utiliser <code>class_weight='balanced'</code> ou sur-échantillonner les fraudes avec SMOTE (Synthetic Minority Over-sampling Technique — génère artificiellement de nouveaux exemples de la classe minoritaire par interpolation entre exemples existants).</li>
 <li><strong class="lbl-warn">&#x26a1; Piège</strong> : optimiser le rappel au détriment de la précision bloquerait des dizaines de milliers d'appels légitimes par jour — désastreux pour l'opérateur. La contrainte métier (coût des faux positifs élevé) impose de prioriser la précision.</li>
 </ul>
 
@@ -435,9 +435,9 @@ nb_transactions_meme_compte : 0.071
 <p>Passable mais insuffisante pour un déploiement. Un score de 0.731 signifie que le modèle classe correctement 73.1% des paires (une vraie fraude, une transaction normale) — c'est mieux que le hasard (0.5) mais un bon modèle de détection de fraude devrait atteindre 0.85+.</p>
 
 <p>Pistes d'amélioration :
-- <strong>Rééquilibrer les classes</strong> : ajouter <code>scale_pos_weight</code> dans XGBoost (ratio négatifs/positifs = 98.5/1.5 ≈ 66) ou utiliser SMOTE pour sur-échantillonner les fraudes.
+- <strong>Rééquilibrer les classes</strong> : ajouter <code>scale_pos_weight</code> (paramètre XGBoost qui dit au modèle de donner plus de poids aux exemples positifs — fraudes — pendant l'entraînement ; typiquement réglé au ratio négatifs/positifs) dans XGBoost (ratio négatifs/positifs = 98.5/1.5 ≈ 66) ou utiliser SMOTE pour sur-échantillonner les fraudes.
 - <strong>Enrichir les features</strong> : la fréquence sur 7 jours est une bonne idée — ajouter aussi des features de vélocité (montant inhabituel pour ce compte spécifiquement).
-- <strong>Ajuster le seuil de décision</strong> : au lieu du seuil par défaut 0.5, chercher le seuil qui maximise le rappel tout en maintenant une précision acceptable.</p>
+- <strong>Ajuster le seuil de décision</strong> : un modèle de classification retourne une probabilité (0.3, 0.7…) ; par défaut on dit "fraude si &gt; 0.5". Abaisser ce seuil produit plus d'alertes (rappel élevé), le relever produit moins d'alertes mais plus fiables (précision élevée). Chercher le seuil qui maximise le rappel tout en maintenant une précision acceptable.</p>
 
 <hr />
 
