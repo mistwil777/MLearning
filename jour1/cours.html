@@ -882,7 +882,7 @@ Taux d'occupation d'un hôtel — chaque nuit
 
 <h3 id="illusion-1-le-ml-va-trouver-la-solution-tout-seul">Illusion 1 : "Le ML va trouver la solution tout seul"</h3>
 
-<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Une startup retail a entraîné un modèle de recommandation. Il performe bien en offline (AUC 0.85). En prod, les ventes n'augmentent pas. Pourquoi ? Le modèle recommandait des articles déjà vus (il avait appris à être "safe"). Personne n'avait défini la bonne métrique métier.</p>
+<div class="callout situation"><div class="callout-head">&#x1f4cd; Situation réelle</div><p>Une startup retail a entraîné un modèle de recommandation. Il performe bien en offline (<strong>AUC</strong> 0.85 — l'AUC est un score entre 0 et 1 qui mesure la capacité du modèle à distinguer les classes ; 1 = parfait, 0.5 = aléatoire). En prod, les ventes n'augmentent pas. Pourquoi ? Le modèle recommandait des articles déjà vus (il avait appris à être "safe"). Personne n'avait défini la bonne métrique métier.</p>
 
 <p><strong>Le ML optimise ce qu'on lui dit d'optimiser.</strong> Si la métrique est mal choisie, le modèle sera parfait... pour le mauvais objectif.</p></div>
 
