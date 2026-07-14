@@ -158,7 +158,7 @@ details>*:not(summary){padding:0 20px 20px}
 <p><strong>À proposer</strong> : schéma du pipeline avec les composants, justification du découpage.</p>
 
 <p>:::problem
-<strong>Question piège</strong> : pourquoi ne pas envoyer toutes les annonces directement à un LLM multimodal (texte + images) ?
+<strong>Question piège</strong> : pourquoi ne pas envoyer toutes les annonces directement à un LLM multimodal (modèle de langage capable de traiter simultanément du texte et des images, pas seulement du texte) ?
 :::</p>
 
 <hr />
@@ -168,7 +168,7 @@ details>*:not(summary){padding:0 20px 20px}
 <p><strong>Contexte</strong> : La banque reçoit 2 000 demandes de prêt immobilier par mois. Chaque dossier contient : données structurées (revenus, charges, historique bancaire), pièces justificatives scannées (bulletins de salaire, avis d'imposition, relevés), et un formulaire libre où le demandeur décrit son projet.</p>
 
 <p><strong>Contraintes</strong> :
-- Décision réglementaire : le motif de refus doit être expliqué au client (RGPD, DSP2)
+- Décision réglementaire : le motif de refus doit être expliqué au client (RGPD, DSP2 — Directive sur les Services de Paiement 2 : réglementation européenne qui oblige les établissements financiers à expliquer les décisions automatisées de crédit ou de refus de paiement)
 - Les conseillers passent actuellement 45 min par dossier sur la saisie des pièces
 - Taux d'erreur de saisie manuelle : 3,2%
 - La décision finale d'octroi reste humaine (réglementation bancaire)</p>
@@ -179,12 +179,12 @@ details>*:not(summary){padding:0 20px 20px}
 
 <h3 id="cas-c-chatbot-de-support-technique-pour-un-éditeur-de-logiciel-saas">Cas C — Chatbot de support technique pour un éditeur de logiciel SaaS</h3>
 
-<p><strong>Contexte</strong> : L'éditeur gère 15 000 tickets de support par mois. 60% sont des questions documentées (les réponses existent dans la documentation, les changelogs, les tickets précédents résolus). 30% sont des bugs nouveaux qui nécessitent une investigation. 10% sont des demandes de features.</p>
+<p><strong>Contexte</strong> : L'éditeur gère 15 000 tickets de support par mois. 60% sont des questions documentées (les réponses existent dans la documentation, les changelogs (historique des modifications d'un logiciel — liste des changements entre versions), les tickets précédents résolus). 30% sont des bugs nouveaux qui nécessitent une investigation. 10% sont des demandes de features.</p>
 
 <p><strong>Contraintes</strong> :
 - La documentation est mise à jour toutes les 2 semaines (nouvelles versions)
 - Les tickets précédents résolus sont une mine d'or non exploitée (200 000 tickets sur 5 ans)
-- Les clients Enterprise ont un SLA de 2h pour la première réponse
+- Les clients Enterprise ont un SLA (Service Level Agreement — engagement contractuel sur la qualité de service, ici un délai de réponse maximal garanti) de 2h pour la première réponse
 - Le code source du produit ne doit pas être exposé au LLM (propriété intellectuelle)</p>
 
 <p><strong>À proposer</strong> : architecture complète du système de support automatisé.</p>
@@ -203,6 +203,7 @@ details>*:not(summary){padding:0 20px 20px}
 <span class="kn">from</span><span class="w"> </span><span class="nn">langchain.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectoryLoader</span>
 
 <span class="c1"># ─── CHARGEMENT ───────────────────────────────────────────────────</span>
+<span class="c1"># DirectoryLoader charge automatiquement tous les fichiers d&#39;un dossier correspondant au pattern glob (ex : **/*.txt = tous les fichiers .txt dans tous les sous-dossiers).</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">DirectoryLoader</span><span class="p">(</span><span class="s2">&quot;./docs/&quot;</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s2">&quot;**/*.txt&quot;</span><span class="p">)</span>
 <span class="n">documents</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 

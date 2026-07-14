@@ -155,7 +155,7 @@ details>*:not(summary){padding:0 20px 20px}
 - 1 data engineer
 - Pas de MLOps dédié</p>
 
-<p><strong>Contrainte réglementaire :</strong> toute décision commerciale basée sur ce modèle (appel de rétention, offre personnalisée) doit être explicable. La CNIL et le code des assurances imposent que le client puisse comprendre pourquoi il a été contacté.</p>
+<p><strong>Contrainte réglementaire :</strong> toute décision commerciale basée sur ce modèle (appel de rétention, offre personnalisée) doit être explicable. La CNIL (Commission Nationale de l'Informatique et des Libertés — autorité française de protection des données personnelles, chargée de faire respecter le RGPD en France) et le code des assurances imposent que le client puisse comprendre pourquoi il a été contacté.</p>
 
 <hr />
 
@@ -225,7 +225,7 @@ Les motifs sont saisis manuellement par les conseillers. En pratique, "réclamat
 On n'observe la résiliation que pour les clients qui l'ont initiée. Mais des clients insatisfaits qui n'ont pas encore résilié sont dans les négatifs (y=0). Si on entraîne le modèle sans distinguer "satisfait" de "insatisfait qui n'a pas encore agi", on sous-estime le risque de ce deuxième groupe. Le modèle sera moins performant sur les silencieux.</p>
 
 <p><strong>Signal manquant précieux :</strong>
-Les <strong>données de comparaison en ligne</strong> — est-ce que le client a consulté des comparateurs d'assurance (ASSUREo, LeLynx) récemment ? Ce signal n'est pas disponible directement, mais il pourrait être approximé par des partenariats de données ou des enquêtes NPS envoyées au bon moment. Son absence est un vrai angle mort du modèle.</p>
+Les <strong>données de comparaison en ligne</strong> — est-ce que le client a consulté des comparateurs d'assurance (ASSUREo, LeLynx) récemment ? Ce signal n'est pas disponible directement, mais il pourrait être approximé par des partenariats de données ou des enquêtes NPS (Net Promoter Score — indicateur qui mesure la propension d'un client à recommander un service, sur une échelle de 0 à 10) envoyées au bon moment. Son absence est un vrai angle mort du modèle.</p>
 
 <p></details></p>
 
@@ -275,7 +275,7 @@ Les <strong>données de comparaison en ligne</strong> — est-ce que le client a
 
 <p><strong>Pourquoi XGBoost et pas un LLM ou un réseau de neurones ?</strong></p>
 
-<p>La contrainte réglementaire est déterminante. La CNIL impose l'explicabilité des décisions automatisées impactant les personnes (Article 22 du RGPD). XGBoost avec SHAP permet de produire pour chaque contrat les 3 facteurs qui contribuent le plus au score — texte compréhensible par un conseiller et présentable au client.</p>
+<p>La contrainte réglementaire est déterminante. La CNIL impose l'explicabilité des décisions automatisées impactant les personnes (Article 22 du RGPD — règle européenne qui interdit les décisions entièrement automatisées ayant un impact significatif sur une personne sans possibilité d'explication humaine). XGBoost avec SHAP permet de produire pour chaque contrat les 3 facteurs qui contribuent le plus au score — texte compréhensible par un conseiller et présentable au client.</p>
 
 <p>Un réseau de neurones profond serait plus performant en AUC (+2-3 points estimés) mais ininterprétable nativement. Un LLM ajouterait de la latence, du coût, et ne s'entraîne pas sur des données tabulaires structurées.</p>
 
@@ -334,6 +334,8 @@ Les règles simples ("si &gt; 3 appels en 30 jours → alerte") ont un rappel fa
 <p>Le taux de résiliation est de 8,2% — donc 91,8% des contrats ne résilient pas. Un modèle stupide qui prédit "jamais de résiliation" atteint une accuracy de 91,8%. C'est excellent sur papier et complètement inutile en pratique.</p>
 
 <p><strong>Métriques techniques :</strong></p>
+
+<p>Precision@k signifie : parmi les k premières alertes classées par le modèle (les plus probables), combien sont de vrais positifs. Precision@top10% = parmi le top 10% des scores les plus élevés.</p>
 
 <table>
 <thead>
@@ -416,7 +418,7 @@ Les règles simples ("si &gt; 3 appels en 30 jours → alerte") ont un rappel fa
 
 <p><strong>Contrainte principale :</strong> pas de MLOps dédié = pas de Kubernetes, pas d'infrastructure complexe à maintenir. Chaque heure passée à maintenir l'infra est une heure de moins sur le modèle.</p>
 
-<p><strong>Phase 1 — POC (semaines 1-4)</strong></p>
+<p><strong>Phase 1 — POC (Proof of Concept — prototype minimal dont l'objectif est de valider la faisabilité technique avant d'investir dans un développement complet) (semaines 1-4)</strong></p>
 
 <p>Objectif : prouver que le modèle a un AUC &gt; 0.80 sur données historiques. Pas de déploiement, pas de pipeline automatisé. Un notebook reproductible suffit.</p>
 

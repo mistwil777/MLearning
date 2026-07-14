@@ -148,7 +148,7 @@ details>*:not(summary){padding:0 20px 20px}
 
 <h3 id="situation-a-la-startup-fintech">Situation A — La startup fintech</h3>
 
-<p>Une startup a un modèle de scoring de prêt. Le data scientist le ré-entraîne manuellement quand il "pense" que les performances ont baissé. Les paramètres sont dans un notebook Jupyter. Le modèle est sauvegardé dans un fichier <code>model_final_v2.pkl</code> sur le serveur de prod. Aucun log de prédictions n'existe.</p>
+<p>Une startup a un modèle de scoring de prêt. Le data scientist le ré-entraîne manuellement quand il "pense" que les performances ont baissé. Les paramètres sont dans un notebook Jupyter. Le modèle est sauvegardé dans un fichier <code>model_final_v2.pkl</code> (.pkl est le format pickle — format de sérialisation Python qui sauvegarde un objet Python, ici un modèle entraîné, dans un fichier binaire) sur le serveur de prod. Aucun log de prédictions n'existe.</p>
 
 <div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Ce qui manque :
 Risque principal :
@@ -227,7 +227,7 @@ Risque principal :
 
 <p><strong>Ce qui manque :</strong>
 - Monitoring métier (niveau 3) : mesurer la performance réelle sur les décisions effectuées
-- Boucle de feedback : les résultats réels (défaut / remboursement) ne sont pas réinjectés comme nouvelles données d'entraînement
+- Boucle de feedback (les résultats réels observés en production — défaut, remboursement, clic — sont réinjectés régulièrement comme nouvelles données d'entraînement pour que le modèle reste à jour) : ici, les résultats réels (défaut / remboursement) ne sont pas réinjectés
 - Validation périodique sur données récentes : les métriques sur le test set de 2022 ne reflètent pas les performances actuelles</p>
 
 <p><strong>Risque principal :</strong> Le modèle peut avoir drifté significativement depuis 2022 (nouveaux profils clients, inflation, hausse des taux). Sans mesure du taux de défaut réel sur les dossiers acceptés par le modèle, impossible de savoir. La banque croit avoir un modèle à 89% de précision alors qu'il tourne peut-être à 74% sur les données actuelles.</p>
