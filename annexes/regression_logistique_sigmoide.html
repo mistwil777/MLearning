@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML Accéléré — 8 joursProgramme7 jours3-4h/jour</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréRégression logistique et sigmoïde — clarificationsProgramme</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,87 +132,115 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div id="lock" style="position:fixed;inset:0;z-index:99999;background:#0f1a12;display:flex;align-items:center;justify-content:center;"><div style="background:#162019;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:40px 48px;text-align:center;min-width:300px"><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#2db87a;margin-bottom:20px">ML Acc&#233;l&#233;r&#233;</div><h2 style="font-size:1.4rem;font-weight:800;color:#deeee3;margin-bottom:24px;border:none;padding:0;margin-top:0">Acc&#232;s restreint</h2><input id="pwd" type="password" placeholder="Mot de passe" autofocus style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:#1c2a1f;color:#deeee3;font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box"><button onclick="checkPwd()" style="width:100%;padding:10px;background:#2db87a;border:none;border-radius:8px;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Entrer</button><div id="pwd-err" style="color:#e66767;font-size:12px;margin-top:10px;display:none">Mot de passe incorrect</div></div></div><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML Accéléré — <em>8 jours</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Régression logistique et sigmoïde — <em>clarifications</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client, qu'elle soit ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Solution déterministe au maximum. IA uniquement là où elle apporte une vraie valeur mesurée.</p>
-</blockquote>
+<h2 id="le-mot-régression-en-ml">Le mot "régression" en ML</h2>
+
+<p>En ML, <strong>régression</strong> signifie prédire un nombre continu (un prix, une température, une durée).
+Par opposition, <strong>classification</strong> signifie prédire une catégorie (spam/pas spam, fraude/pas fraude).</p>
+
+<p>La <strong>régression logistique</strong> est mal nommée : elle fait de la classification, pas de la régression. Le nom est un héritage historique — elle utilise une équation de régression en interne, mais son résultat final est une classe. Le nom est resté.</p>
 
 <hr />
 
-<h2 id="progression">Progression</h2>
+<h2 id="la-sigmoïde-un-traducteur-pas-un-cerveau">La sigmoïde : un traducteur, pas un cerveau</h2>
+
+<p>La régression logistique calcule d'abord un <strong>score</strong> (un nombre quelconque — peut valoir 4500, -200, peu importe). Ce score seul n'est pas interprétable.</p>
+
+<p>La <strong>sigmoïde</strong> prend ce score et le compresse entre 0 et 1, ce qui donne une probabilité lisible : "c'est à 80% un spam".</p>
+
+<p>La sigmoïde ne génère rien — elle transforme. Elle a toujours besoin d'un nombre en entrée, elle est toujours en bout de chaîne.</p>
+
+<hr />
+
+<h2 id="la-sigmoïde-nest-pas-universelle">La sigmoïde n'est pas universelle</h2>
+
+<p>Tous les algos de classification ne passent pas par une sigmoïde :</p>
 
 <table>
 <thead>
 <tr>
-  <th>Jour</th>
-  <th>Thème</th>
-  <th>Statut</th>
-  <th>Fichiers</th>
+  <th>Algo</th>
+  <th>Comment il calcule la probabilité</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>1</td>
-  <td>Paysage ML — taxonomie, carte des bibliothèques, quand ML vs règles vs deep vs GenAI</td>
-  <td>✅</td>
-  <td><a href="jour1/cours.html">cours</a> · <a href="jour1/exercice.html">exercice</a></td>
+  <td>Régression logistique</td>
+  <td>sigmoïde appliquée sur un score linéaire</td>
 </tr>
 <tr>
-  <td>2</td>
-  <td>ML classique — pipeline complet, algos (XGBoost/LightGBM inclus), métriques métier</td>
-  <td>⬜</td>
-  <td><a href="jour2/cours.html">cours</a> · <a href="jour2/exercice.html">exercice</a></td>
+  <td>Random Forest</td>
+  <td>proportion du vote entre les arbres</td>
 </tr>
 <tr>
-  <td>3</td>
-  <td>Séries temporelles — stationnarité, Prophet, XGBoost sur TS, darts</td>
-  <td>⬜</td>
-  <td><a href="jour3/cours.html">cours</a> · <a href="jour3/exercice.html">exercice</a></td>
-</tr>
-<tr>
-  <td>4</td>
-  <td>Deep Learning — transfer learning, CV, NLP, ONNX, fine-tuning vs RAG</td>
-  <td>⬜</td>
-  <td><a href="jour4/cours.html">cours</a> · <a href="jour4/exercice.html">exercice</a></td>
-</tr>
-<tr>
-  <td>5</td>
-  <td>MLOps — MLflow, FastAPI, data drift, Evidently, CI/CD modèles</td>
-  <td>⬜</td>
-  <td><a href="jour5/cours.html">cours</a> · <a href="jour5/exercice.html">exercice</a></td>
-</tr>
-<tr>
-  <td>6</td>
-  <td>Architecture de solutions hybrides — framework de décision client</td>
-  <td>⬜</td>
-  <td><a href="jour6/cours.html">cours</a> · <a href="jour6/exercice.html">exercice</a></td>
-</tr>
-<tr>
-  <td>7</td>
-  <td>Capstone — 4 briefs clients, je joue l'architecte</td>
-  <td>⬜</td>
-  <td><a href="jour7/cours.html">cours</a> · <a href="jour7/exercice.html">exercice</a></td>
-</tr>
-<tr>
-  <td>8</td>
-  <td>Régression approfondie — Ridge, Lasso, polynomiale, courbes d'apprentissage</td>
-  <td>⬜</td>
-  <td><a href="jour8/cours.html">cours</a> · <a href="jour8/exercice.html">exercice</a></td>
+  <td>KNN</td>
+  <td>proportion des voisins de chaque classe</td>
 </tr>
 </tbody>
 </table>
 
+<p>L'objectif est le même (donner une probabilité), mais le chemin est différent.</p>
+
 <hr />
 
-<h2 id="ressources-transversales">Ressources transversales</h2>
+<h2 id="quand-choisir-la-régression-logistique-plutôt-que-random-forest">Quand choisir la régression logistique plutôt que Random Forest ?</h2>
+
+<p>Visualise tes données comme des points sur une feuille :</p>
 
 <ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif (se complète chaque jour)</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments issus des questions en cours</li>
+<li>Si tu peux séparer les deux groupes en traçant <strong>une seule ligne droite</strong> → régression logistique suffit, elle est plus rapide et plus facile à interpréter</li>
+<li>Si les points sont mélangés et qu'il faudrait une <strong>forme complexe et tortueuse</strong> pour les séparer → Random Forest ou un algo plus puissant</li>
 </ul>
 
-<hr />
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6;</button><svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="background:transparent;width:100%;max-width:700px">
+  <rect x="10" y="10" width="320" height="280" rx="12" fill="#1e1c24" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="170" y="38" text-anchor="middle" fill="#3987e5" font-size="13" font-weight="bold">Régression logistique</text>
+  <text x="170" y="55" text-anchor="middle" fill="#c8c0d8" font-size="11">frontière = une droite</text>
+  <circle cx="60" cy="100" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="80" cy="130" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="55" cy="155" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="90" cy="180" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="70" cy="210" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="100" cy="240" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="50" cy="240" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="240" cy="90" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="270" cy="120" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="255" cy="150" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="290" cy="170" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="260" cy="200" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="285" cy="240" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="240" cy="230" r="7" fill="#e66767" opacity="0.85"/>
+  <line x1="165" y1="70" x2="165" y2="270" stroke="#1baf7a" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <text x="170" y="285" text-anchor="middle" fill="#1baf7a" font-size="10">frontière droite ✓</text>
+  <rect x="370" y="10" width="320" height="280" rx="12" fill="#1e1c24" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="530" y="38" text-anchor="middle" fill="#9085e9" font-size="13" font-weight="bold">Random Forest</text>
+  <text x="530" y="55" text-anchor="middle" fill="#c8c0d8" font-size="11">frontière = forme complexe</text>
+  <circle cx="420" cy="100" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="490" cy="90" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="450" cy="140" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="420" cy="170" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="530" cy="130" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="560" cy="160" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="480" cy="200" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="550" cy="210" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="430" cy="230" r="7" fill="#e66767" opacity="0.85"/>
+  <circle cx="610" cy="100" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="600" cy="190" r="7" fill="#3987e5" opacity="0.85"/>
+  <circle cx="510" cy="240" r="7" fill="#e66767" opacity="0.85"/>
+  <polyline points="415,80 415,120 460,120 460,160 500,160 500,185 545,185 545,220 580,220 580,270" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <text x="530" y="285" text-anchor="middle" fill="#1baf7a" font-size="10">frontière complexe ✓</text>
+  <circle cx="430" cy="268" r="5" fill="#3987e5"/>
+  <text x="440" y="272" fill="#c8c0d8" font-size="10">classe A</text>
+  <circle cx="475" cy="268" r="5" fill="#e66767"/>
+  <text x="485" y="272" fill="#c8c0d8" font-size="10">classe B</text>
+</svg></div>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que signifie "régression" en ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Prédire un <strong>nombre continu</strong> (prix, température). Par opposition à la <strong>classification</strong> qui prédit une catégorie.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi la régression logistique s'appelle "régression" alors qu'elle classifie ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Héritage historique — elle utilise une équation de régression en interne, mais son résultat final est une <strong>classe</strong>. Le nom est resté.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">À quoi sert la sigmoïde ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">À convertir un <strong>score quelconque</strong> en <strong>probabilité entre 0 et 1</strong>. Elle ne génère rien, elle transforme. Elle est toujours en bout de chaîne.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand choisir régression logistique plutôt que Random Forest ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Quand les deux groupes sont séparables par une <strong>ligne droite</strong>. Si la frontière est complexe, Random Forest est plus adapté.</p></div></div></div></div></div>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}const ML_PASS="mlaccelere2025";function checkPwd(){const v=document.getElementById("pwd").value;if(v===ML_PASS){localStorage.setItem("ml_auth","1");document.getElementById("lock").style.display="none";}else{document.getElementById("pwd-err").style.display="block";}}document.getElementById("pwd").addEventListener("keydown",function(e){if(e.key==="Enter")checkPwd();});if(localStorage.getItem("ml_auth")==="1")document.getElementById("lock").style.display="none";(function(){const p=window.location.pathname;if(p.endsWith("index.html")||p==="/"||p.endsWith("/")){document.querySelectorAll("tbody td:nth-child(3)").forEach(function(td,i){const key="ml_p"+(i+1);const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.style.cursor="pointer";td.title="Cliquer pour mettre à jour votre progression";td.addEventListener("click",function(){const st=["⬜","🔄","✅"];const cur=st.indexOf(td.textContent.trim());const nxt=st[(cur+1)%st.length];td.textContent=nxt;localStorage.setItem(key,nxt);});})}})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>
