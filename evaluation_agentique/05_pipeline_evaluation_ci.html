@@ -1,0 +1,484 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréPipeline d'évaluation en CI/CD — Intégrer l'évaluation dans</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#deeee3;--ink2:#8fb89a;--ink3:#5e876a;
+  --blue:#2db87a;--violet:#e8830a;--aqua:#17c49a;
+  --yellow:#e8c400;--red:#e66767;--orange:#e8830a;
+  --blue-bg:rgba(45,184,122,.15);--violet-bg:rgba(232,131,10,.15);
+  --aqua-bg:rgba(23,196,154,.14);--yellow-bg:rgba(232,196,0,.13);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(232,131,10,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:240px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:860px;padding:52px 44px 120px;min-width:0}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(45,184,122,.22) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(232,131,10,.15) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(45,184,122,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--orange) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Pipeline d'évaluation en CI/CD — <em>Intégrer l'évaluation dans le déploiement</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+
+<hr />
+
+<h2 id="définition">Définition</h2>
+
+<p>Un <strong>pipeline d'évaluation en CI/CD</strong> est une suite de tests automatisés qui s'exécutent à chaque modification du système (prompt, modèle, code de l'agent) et bloquent le déploiement si les métriques chutent en dessous d'un seuil défini. C'est l'équivalent des tests unitaires pour les systèmes ML classiques, appliqué aux agents LLM.</p>
+
+<hr />
+
+<p>:::situation
+<strong>Capgemini, mission assurance — Agent d'analyse de sinistres</strong></p>
+
+<p>L'équipe modifie le prompt système pour améliorer la concision des réponses. En développement, les réponses semblent meilleures. En production, les juristes constatent que l'agent omet maintenant certaines clauses importantes dans ses analyses. Problème : il n'y avait pas de test automatisé sur "présence des clauses critiques". Une modification de prompt est passée en prod sans garde-fou. Avec un pipeline d'évaluation en CI, ce cas aurait été bloqué avant le merge.
+:::</p>
+
+<hr />
+
+<h2 id="architecture-dun-pipeline-dévaluation">Architecture d'un pipeline d'évaluation</h2>
+
+<div class="mindmap">git push / PR
+     ↓
+[CI déclenché]
+     ↓
+┌─────────────────────────────────┐
+│  1. Tests unitaires rapides     │  &lt; 2 min — DeepEval sur 20 cas
+│     (smoke tests)               │  Vérifie : pas de régression majeure
+└─────────────────────────────────┘
+     ↓ (si OK)
+┌─────────────────────────────────┐
+│  2. Évaluation complète         │  5-15 min — Ragas ou DeepEval complet
+│     (full eval suite)           │  Métriques : accuracy, faithfulness...
+└─────────────────────────────────┘
+     ↓ (si OK)
+┌─────────────────────────────────┐
+│  3. Comparaison baseline        │  Comparer vs version précédente
+│     (regression check)         │  Bloquer si dégradation &gt; seuil
+└─────────────────────────────────┘
+     ↓ (si OK)
+[Merge autorisé / Déploiement]
+</div>
+
+<hr />
+
+<h2 id="implémentation-structure-de-projet">Implémentation — Structure de projet</h2>
+
+<div class="mindmap">my_agent/
+├── agent.py                    ← code de l'agent
+├── prompts/
+│   └── system_prompt.txt       ← prompt versionné
+├── evals/
+│   ├── test_agent_smoke.py     ← tests rapides (DeepEval)
+│   ├── test_agent_full.py      ← évaluation complète
+│   ├── baseline.json           ← métriques de la version précédente
+│   └── testset.csv             ← dataset de test versionné
+└── .github/workflows/
+    └── eval.yml                ← CI GitHub Actions
+</div>
+
+<hr />
+
+<h2 id="les-tests-smoke-vérification-rapide-en-2-minutes">Les tests smoke — vérification rapide en 2 minutes</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># evals/test_agent_smoke.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancyMetric</span><span class="p">,</span> <span class="n">HallucinationMetric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">my_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">agent</span>
+
+<span class="c1"># 5-10 cas critiques — les plus importants du domaine</span>
+<span class="n">CRITICAL_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Quelles pièces justificatives pour une déclaration de sinistre ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Pour déclarer un sinistre : facture d&#39;achat, photos des dommages, &quot;</span>
+                   <span class="s2">&quot;constat si tiers impliqué, numéro de contrat.&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;must_contain&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;facture&quot;</span><span class="p">,</span> <span class="s2">&quot;photos&quot;</span><span class="p">,</span> <span class="s2">&quot;constat&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Quel est le délai de remboursement ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Délai légal de remboursement : 30 jours à compter de la réception du dossier complet.&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;must_contain&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;30 jours&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;case&quot;</span><span class="p">,</span> <span class="n">CRITICAL_CASES</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_smoke</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">context</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">])</span>
+
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Vérification 1 : pas d&#39;hallucination</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">HallucinationMetric</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)])</span>
+
+    <span class="c1"># Vérification 2 : les éléments critiques sont présents</span>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;must_contain&quot;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">term</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> \
+            <span class="sa">f</span><span class="s2">&quot;Terme critique absent de la réponse : &#39;</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="lévaluation-complète-comparaison-avec-la-baseline">L'évaluation complète — comparaison avec la baseline</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># evals/test_agent_full.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">my_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">agent</span>
+
+<span class="n">BASELINE_PATH</span> <span class="o">=</span> <span class="s2">&quot;evals/baseline.json&quot;</span>
+<span class="n">TESTSET_PATH</span> <span class="o">=</span> <span class="s2">&quot;evals/testset.csv&quot;</span>
+
+<span class="c1"># Seuils de non-régression : si une métrique baisse de plus de X points, bloquer</span>
+<span class="n">REGRESSION_THRESHOLDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>      <span class="c1"># tolérance 5 points</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Seuils absolus minimaux : ne jamais descendre en dessous</span>
+<span class="n">ABSOLUTE_MINIMUMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.70</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.65</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_full_eval</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TESTSET_PATH</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;contexts&quot;</span><span class="p">]],</span>  <span class="c1"># contexts stockés comme liste sérialisée</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="s2">&quot;ground_truth&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ground_truth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ground_truth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
+        <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+        <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_no_regression</span><span class="p">():</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">run_full_eval</span><span class="p">()</span>
+
+    <span class="c1"># Vérifier les minimums absolus</span>
+    <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">minimum</span> <span class="ow">in</span> <span class="n">ABSOLUTE_MINIMUMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">minimum</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &lt; minimum absolu </span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Vérifier la non-régression vs baseline</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">BASELINE_PATH</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">BASELINE_PATH</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">baseline</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">REGRESSION_THRESHOLDS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">current</span> <span class="ow">and</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">baseline</span><span class="p">:</span>
+                <span class="n">drop</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">-</span> <span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">drop</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Régression détectée sur </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> : &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baseline</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(chute de </span><span class="si">{</span><span class="n">drop</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, seuil = </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+
+    <span class="c1"># Mettre à jour la baseline si tous les tests passent</span>
+    <span class="c1"># (seulement en CI sur la branche main)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GITHUB_REF&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;refs/heads/main&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">BASELINE_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline mise à jour : </span><span class="si">{</span><span class="n">current</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="configuration-github-actions">Configuration GitHub Actions</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># .github/workflows/eval.yml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Agent Evaluation</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;agent.py&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;prompts/**&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;evals/**&quot;</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">smoke-tests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Smoke Tests (rapides)</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v5</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.11&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install deepeval anthropic</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run smoke tests</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ANTHROPIC_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.ANTHROPIC_API_KEY }}</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deepeval test run evals/test_agent_smoke.py</span>
+
+<span class="w">  </span><span class="nt">full-eval</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Full Evaluation</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smoke-tests</span><span class="w">   </span><span class="c1"># seulement si les smoke tests passent</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v5</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.11&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install ragas anthropic datasets pandas</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run full evaluation</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ANTHROPIC_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.ANTHROPIC_API_KEY }}</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pytest evals/test_agent_full.py -v</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload eval results</span>
+<span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always()</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eval-results</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">evals/results/</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="versionner-le-dataset-de-test-et-la-baseline">Versionner le dataset de test et la baseline</h2>
+
+<p>:::callout-insight
+<strong>Le dataset de test doit être versionné dans git comme du code</strong></p>
+
+<p>Si le dataset change sans que le code change, les métriques peuvent "s'améliorer" artificiellement. Si le code change mais le dataset devient obsolète, on passe à côté de nouvelles classes d'erreurs. Traiter le dataset de test comme du code : revue de PR, changelog, pas de modification sans justification.
+:::</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Script de mise à jour de baseline — à lancer manuellement après validation humaine</span>
+<span class="c1"># scripts/update_baseline.py</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">evals.test_agent_full</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_full_eval</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calcul des nouvelles métriques de baseline...&quot;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">run_full_eval</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;evals/baseline.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Baseline mise à jour :&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">N&#39;oubliez pas de commiter baseline.json et de documenter les changements.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="combien-ça-coûte-en-tokens">Combien ça coûte en tokens ?</h2>
+
+<p>Un pipeline d'évaluation en CI a un coût en tokens à chaque exécution (les métriques Ragas et DeepEval utilisent des LLM en interne).</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Smoke tests (10 cas × 2 métriques) ≈ 5 000 tokens → ~0,03 € (Claude Haiku)
+Full eval (100 cas × 3 métriques)  ≈ 80 000 tokens → ~0,40 € (Claude Haiku)
+
+Recommandation :
+- Smoke tests : utiliser Claude Haiku (suffisant pour les vérifications rapides)
+- Full eval : utiliser Claude Haiku ou Sonnet selon la précision requise
+- LLM-as-judge final : utiliser Claude Opus (meilleure corrélation avec humains)
+</code></pre></div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Configurer le modèle utilisé pour les métriques DeepEval</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeepEvalBaseLLM</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HaikuJudge</span><span class="p">(</span><span class="n">DeepEvalBaseLLM</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-haiku-4-5-20251001&quot;</span><span class="p">,</span>  <span class="c1"># moins cher pour les évals en CI</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">a_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;claude-haiku-4-5&quot;</span>
+
+<span class="c1"># Utiliser dans les métriques</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancyMetric</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">AnswerRelevancyMetric</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">HaikuJudge</span><span class="p">(),</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="quand-utiliser-un-pipeline-dévaluation-en-ci">Quand utiliser un pipeline d'évaluation en CI</h2>
+
+<ul>
+<li>Dès qu'un agent est en production et qu'il existe un historique de cas connus</li>
+<li>Dès qu'on modifie un prompt — même une virgule peut changer le comportement</li>
+<li>Quand plusieurs personnes travaillent sur le même agent — pour éviter les régressions croisées</li>
+<li>Avant tout changement de modèle (migration GPT-4 → Claude, Claude Sonnet → Haiku...)</li>
+</ul>
+
+<h2 id="quand-cest-prématuré">Quand c'est prématuré</h2>
+
+<ul>
+<li>En phase d'exploration rapide (prototypes, POC &lt; 2 semaines) — le dataset de test n'est pas stable</li>
+<li>Quand les cas de test représentatifs ne sont pas encore définis — évaluer avant d'avoir des cas clairs produit des métriques sans sens</li>
+</ul>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un pipeline d'évaluation en CI/CD pour un agent LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Des tests automatisés qui s'exécutent à chaque modification (prompt, modèle, code) et <strong>bloquent le déploiement si les métriques chutent</strong> en dessous d'un seuil. Équivalent des tests unitaires pour les agents.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre les smoke tests et la full evaluation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les <strong>smoke tests</strong> vérifient 5-10 cas critiques en 2 minutes (détecter une régression majeure). La <strong>full evaluation</strong> évalue l'intégralité du dataset (50-100 cas) avec toutes les métriques — plus lente et plus coûteuse.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi faut-il versionner le dataset de test dans git ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Pour que les métriques restent comparables entre versions. Si le dataset change sans traçabilité, une "amélioration" des métriques peut être artificielle (cas plus faciles) plutôt que réelle.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment réduire le coût en tokens d'un pipeline d'évaluation en CI ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Utiliser <strong>Claude Haiku</strong> pour les métriques de CI (smoke tests et full eval). Réserver Claude Opus uniquement pour les LLM-as-judge finaux où la corrélation avec les jugements humains doit être maximale.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une baseline dans un pipeline d'évaluation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les <strong>métriques de la version précédente</strong>, stockées dans un fichier. Elles servent à détecter une régression : si la version actuelle est plus de X points en dessous, le déploiement est bloqué.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

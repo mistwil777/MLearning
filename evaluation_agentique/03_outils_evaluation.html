@@ -1,0 +1,603 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréOutils d'évaluation agentique — Ne pas tout reconstruirePro</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#deeee3;--ink2:#8fb89a;--ink3:#5e876a;
+  --blue:#2db87a;--violet:#e8830a;--aqua:#17c49a;
+  --yellow:#e8c400;--red:#e66767;--orange:#e8830a;
+  --blue-bg:rgba(45,184,122,.15);--violet-bg:rgba(232,131,10,.15);
+  --aqua-bg:rgba(23,196,154,.14);--yellow-bg:rgba(232,196,0,.13);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(232,131,10,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:240px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:860px;padding:52px 44px 120px;min-width:0}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(45,184,122,.22) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(232,131,10,.15) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(45,184,122,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--orange) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Outils d'évaluation agentique — <em>Ne pas tout reconstruire</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+
+<hr />
+
+<h2 id="définition">Définition</h2>
+
+<p>Les <strong>frameworks d'évaluation agentique</strong> sont des bibliothèques et plateformes qui implémentent les métriques, les patterns de test, les tableaux de bord et le traçage d'exécution pour les systèmes LLM et agents. Ils remplacent une infrastructure que la plupart des équipes construisent manuellement — et mal — à chaque projet.</p>
+
+<hr />
+
+<p>:::situation
+<strong>Startup française (anonymisée), 2024 — Pipeline RAG pour support client</strong></p>
+
+<p>L'équipe a passé 6 semaines à construire un système d'évaluation maison : boucle de test, calcul des métriques, stockage des résultats, dashboard Streamlit. Résultat : fragile, non maintenu, personne ne comprend comment l'interprêter à part la personne qui l'a construit. Découverte tardive de Ragas et DeepEval : ces outils auraient couvert 80 % du besoin en une journée d'intégration.
+:::</p>
+
+<hr />
+
+<h2 id="la-carte-des-outils-qui-fait-quoi">La carte des outils — qui fait quoi</h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6;</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 520" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Connecteurs root -->
+  <path d="M550,55 C550,95 200,95 200,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,55 C550,95 500,95 500,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,55 C550,95 800,95 800,130" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- ROOT -->
+  <rect x="330" y="25" width="440" height="40" rx="20" fill="rgba(57,135,229,.15)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="50" text-anchor="middle" fill="#3987e5" font-size="14" font-weight="800">Outils d'évaluation agentique</text>
+
+  <!-- Col 1 : Métriques offline -->
+  <rect x="80" y="130" width="240" height="38" rx="19" fill="rgba(27,175,122,.15)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="200" y="153" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Métriques offline (sans prod)</text>
+
+  <path d="M200,168 L200,200" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M200,168 C200,190 110,190 110,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M200,168 C200,190 290,190 290,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <rect x="40" y="210" width="140" height="56" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="110" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">Ragas</text>
+  <text x="110" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">RAG spécialisé</text>
+  <text x="110" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">Open source</text>
+
+  <rect x="130" y="210" width="140" height="56" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="200" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">DeepEval</text>
+  <text x="200" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Agentique général</text>
+  <text x="200" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">Open source / SaaS</text>
+
+  <rect x="220" y="210" width="140" height="56" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="290" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">ARES</text>
+  <text x="290" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">RAG académique</text>
+  <text x="290" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">Open source</text>
+
+  <!-- Col 2 : Observabilité prod -->
+  <rect x="380" y="130" width="240" height="38" rx="19" fill="rgba(144,133,233,.15)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="500" y="153" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Observabilité production</text>
+
+  <path d="M500,168 C500,190 430,190 430,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M500,168 C500,190 570,190 570,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <rect x="360" y="210" width="140" height="56" rx="8" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1"/>
+  <text x="430" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">LangSmith</text>
+  <text x="430" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Traçage + datasets</text>
+  <text x="430" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">SaaS (gratuit limité)</text>
+
+  <rect x="500" y="210" width="140" height="56" rx="8" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1"/>
+  <text x="570" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">Arize Phoenix</text>
+  <text x="570" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Open source, local</text>
+  <text x="570" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">LLM traces + métriques</text>
+
+  <!-- Col 3 : Benchmarks + CI -->
+  <rect x="680" y="130" width="240" height="38" rx="19" fill="rgba(232,166,0,.15)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="800" y="153" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="700">Benchmarks + CI/CD</text>
+
+  <path d="M800,168 C800,190 720,190 720,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M800,168 C800,190 800,190 800,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M800,168 C800,190 900,190 900,210" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <rect x="650" y="210" width="140" height="56" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="720" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">Promptfoo</text>
+  <text x="720" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Test prompts en CI</text>
+  <text x="720" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">Open source</text>
+
+  <rect x="730" y="210" width="140" height="56" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="800" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">Helicone</text>
+  <text x="800" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Proxy LLM + logs</text>
+  <text x="800" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">SaaS (gratuit 10k req)</text>
+
+  <rect x="830" y="210" width="140" height="56" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="900" y="232" text-anchor="middle" fill="#c8c0d8" font-size="11" font-weight="600">Weave (W&amp;B)</text>
+  <text x="900" y="248" text-anchor="middle" fill="#8f8a9e" font-size="10">Traçage + éval</text>
+  <text x="900" y="261" text-anchor="middle" fill="#8f8a9e" font-size="10">SaaS (gratuit 100GB)</text>
+
+  <!-- Tableau comparatif résumé -->
+  <rect x="40" y="310" width="1020" height="170" rx="10" fill="rgba(57,135,229,.04)" stroke="rgba(57,135,229,.15)" stroke-width="1"/>
+  <text x="550" y="332" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="700">CHOISIR L'OUTIL</text>
+
+  <text x="200" y="358" text-anchor="middle" fill="#1baf7a" font-size="11" font-weight="600">Ragas</text>
+  <text x="200" y="376" text-anchor="middle" fill="#8f8a9e" font-size="10">→ Pipeline RAG à évaluer</text>
+  <text x="200" y="392" text-anchor="middle" fill="#8f8a9e" font-size="10">   (faithfulness, context recall)</text>
+
+  <text x="450" y="358" text-anchor="middle" fill="#9085e9" font-size="11" font-weight="600">DeepEval</text>
+  <text x="450" y="376" text-anchor="middle" fill="#8f8a9e" font-size="10">→ Agent général, tests unitaires</text>
+  <text x="450" y="392" text-anchor="middle" fill="#8f8a9e" font-size="10">   style pytest pour LLM</text>
+
+  <text x="700" y="358" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="600">LangSmith / Phoenix</text>
+  <text x="700" y="376" text-anchor="middle" fill="#8f8a9e" font-size="10">→ Observer ce qui se passe</text>
+  <text x="700" y="392" text-anchor="middle" fill="#8f8a9e" font-size="10">   en production (traces)</text>
+
+  <text x="950" y="358" text-anchor="middle" fill="#e8a600" font-size="11" font-weight="600">Promptfoo</text>
+  <text x="950" y="376" text-anchor="middle" fill="#8f8a9e" font-size="10">→ Tester les prompts</text>
+  <text x="950" y="392" text-anchor="middle" fill="#8f8a9e" font-size="10">   dans une CI/CD</text>
+
+  <text x="550" y="432" text-anchor="middle" fill="#8f8a9e" font-size="10" font-style="italic">Ces outils sont complémentaires, pas concurrents — la combinaison standard : Ragas/DeepEval (offline) + LangSmith ou Phoenix (prod)</text>
+  <text x="550" y="450" text-anchor="middle" fill="#8f8a9e" font-size="10" font-style="italic">Helicone ou Weave s'ajoutent si on veut tracker les coûts et la latence sans écrire de code de monitoring.</text>
+</svg></div>
+
+<hr />
+
+<h2 id="ragas-évaluation-rag-sans-annotation-humaine">Ragas — Évaluation RAG sans annotation humaine</h2>
+
+<p><strong>Ragas</strong> (Retrieval Augmented Generation Assessment) est le standard de facto pour évaluer les pipelines RAG. Il calcule 4 métriques principales en utilisant un LLM-as-judge interne.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">ragas</span>
+</code></pre>
+</div>
+
+<h3 id="les-4-métriques-ragas">Les 4 métriques Ragas</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Métrique</th>
+  <th>Ce qu'elle mesure</th>
+  <th>Ce qui peut la faire chuter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Faithfulness</strong></td>
+  <td>La réponse est-elle fidèle aux documents récupérés ?</td>
+  <td>Hallucination — l'agent invente quelque chose absent des chunks</td>
+</tr>
+<tr>
+  <td><strong>Answer Relevancy</strong></td>
+  <td>La réponse répond-elle à la question posée ?</td>
+  <td>Réponse correcte mais hors sujet</td>
+</tr>
+<tr>
+  <td><strong>Context Precision</strong></td>
+  <td>Les chunks récupérés sont-ils pertinents ?</td>
+  <td>Retrieval trop large, bruit dans le contexte</td>
+</tr>
+<tr>
+  <td><strong>Context Recall</strong></td>
+  <td>Les chunks nécessaires ont-ils été récupérés ?</td>
+  <td>Retrieval trop étroit, info manquante</td>
+</tr>
+</tbody>
+</table>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">,</span> <span class="n">context_recall</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c1"># Structure attendue par Ragas</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Quelle est la politique de remboursement pour les articles défectueux ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Quel est le délai de livraison standard ?&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="c1"># Réponses générées par votre agent</span>
+        <span class="s2">&quot;Les articles défectueux sont remboursés sous 30 jours sur présentation de la facture.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Le délai standard est de 5 à 7 jours ouvrés.&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="c1"># Chunks récupérés par votre retriever pour chaque question</span>
+        <span class="p">[</span><span class="s2">&quot;Notre politique de retour : tout article défectueux remboursé 30 jours après achat avec facture.&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Livraison standard : 5-7 jours ouvrés. Express disponible sous 24h.&quot;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ground_truth&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="c1"># Réponse de référence (si disponible — optionnel pour certaines métriques)</span>
+        <span class="s2">&quot;Remboursement sous 30 jours avec facture.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;5 à 7 jours ouvrés.&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">,</span> <span class="n">context_recall</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="c1"># {&#39;faithfulness&#39;: 0.95, &#39;answer_relevancy&#39;: 0.89, &#39;context_precision&#39;: 0.82, &#39;context_recall&#39;: 0.78}</span>
+</code></pre>
+</div>
+
+<h3 id="interpréter-les-résultats-ragas">Interpréter les résultats Ragas</h3>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">faithfulness faible (&lt; 0.8)   → votre LLM hallucine par rapport aux documents
+answer_relevancy faible        → votre agent dévie du sujet ou sur-explique
+context_precision faible       → votre retriever ramène trop de bruit
+context_recall faible          → votre retriever rate des chunks importants
+</code></pre></div>
+
+<hr />
+
+<h2 id="deepeval-tests-unitaires-pour-llm">DeepEval — Tests unitaires pour LLM</h2>
+
+<p><strong>DeepEval</strong> adopte le paradigme pytest : chaque test vérifie un comportement attendu, et le test échoue s'il n'est pas respecté. Ça s'intègre directement dans une CI.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">deepeval</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnswerRelevancyMetric</span><span class="p">,</span>
+    <span class="n">FaithfulnessMetric</span><span class="p">,</span>
+    <span class="n">HallucinationMetric</span><span class="p">,</span>
+    <span class="n">ToxicityMetric</span><span class="p">,</span>
+    <span class="n">GEval</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Test 1 — Vérifier qu&#39;une réponse est pertinente</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_customer_support_relevance</span><span class="p">():</span>
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;Comment puis-je annuler ma commande ?&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">my_agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;Comment puis-je annuler ma commande ?&quot;</span><span class="p">),</span>
+        <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Vous pouvez annuler depuis votre espace client sous 24h.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">AnswerRelevancyMetric</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+
+
+<span class="c1"># Test 2 — Vérifier qu&#39;il n&#39;y a pas d&#39;hallucination</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_no_hallucination</span><span class="p">():</span>
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;Quel est notre délai de retour ?&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">my_agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;Quel est notre délai de retour ?&quot;</span><span class="p">),</span>
+        <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Notre politique : retours acceptés sous 14 jours.&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">HallucinationMetric</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># max 20% de contenu non ancré</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+
+
+<span class="c1"># Test 3 — Critère métier personnalisé avec G-Eval</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_formal_tone</span><span class="p">():</span>
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;Bonjour j&#39;ai un problème&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">my_agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;Bonjour j&#39;ai un problème&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">GEval</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ton professionnel&quot;</span><span class="p">,</span>
+        <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;La réponse utilise un ton formel et professionnel, sans familiarités.&quot;</span><span class="p">,</span>
+        <span class="n">evaluation_params</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;actual_output&quot;</span><span class="p">],</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="mf">0.8</span>
+    <span class="p">)</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Lancer comme des tests pytest normaux</span>
+deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </span>run<span class="w"> </span>test_agent.py
+
+<span class="c1"># Dans la CI (GitHub Actions par exemple)</span>
+<span class="c1"># - name: Run LLM evals</span>
+<span class="c1">#   run: deepeval test run tests/test_agent.py</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="arize-phoenix-observabilité-locale-et-gratuite">Arize Phoenix — Observabilité locale et gratuite</h2>
+
+<p><strong>Phoenix</strong> est un outil d'observabilité open source qui tourne localement (pas de données envoyées en dehors). Il intercepte les appels LLM via OpenTelemetry et les affiche dans une interface web.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">arize</span><span class="o">-</span><span class="n">phoenix</span> <span class="n">openinference</span><span class="o">-</span><span class="n">instrumentation</span><span class="o">-</span><span class="n">anthropic</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">phoenix</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnthropicInstrumentor</span>
+
+<span class="c1"># Démarre l&#39;interface web sur http://localhost:6006</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">launch_app</span><span class="p">()</span>
+
+<span class="c1"># Instrumente automatiquement tous les appels Anthropic</span>
+<span class="n">AnthropicInstrumentor</span><span class="p">()</span><span class="o">.</span><span class="n">instrument</span><span class="p">()</span>
+
+<span class="c1"># Vos appels normaux sont maintenant tracés</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Résume ce document : ...&quot;</span><span class="p">}]</span>
+<span class="p">)</span>
+
+<span class="c1"># → Phoenix capture : prompt, réponse, tokens, latence, coût estimé</span>
+<span class="c1"># → Visualisable sur http://localhost:6006</span>
+</code></pre>
+</div>
+
+<p>:::callout-insight
+<strong>Pourquoi Phoenix plutôt que LangSmith si on débute ?</strong></p>
+
+<p>LangSmith est excellent mais SaaS — vos données de prod passent chez LangChain. Phoenix tourne localement, zéro configuration de compte, idéal pour du développement ou des contextes où les données sont sensibles. Pour un projet client Capgemini, Phoenix est souvent le choix par défaut.
+:::</p>
+
+<hr />
+
+<h2 id="promptfoo-tester-les-prompts-comme-du-code">Promptfoo — Tester les prompts comme du code</h2>
+
+<p><strong>Promptfoo</strong> est un outil CLI qui permet de définir des suites de tests pour vos prompts et de les exécuter en CI. Il supporte plusieurs providers (Anthropic, OpenAI, Mistral...) et permet la comparaison A/B de prompts.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># promptfooconfig.yaml</span>
+<span class="nt">prompts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tu</span><span class="nv"> </span><span class="s">es</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">assistant</span><span class="nv"> </span><span class="s">support</span><span class="nv"> </span><span class="s">client.</span><span class="nv"> </span><span class="s">Réponds</span><span class="nv"> </span><span class="s">à</span><span class="nv"> </span><span class="s">:</span><span class="nv"> </span><span class="s">{{question}}&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tu</span><span class="nv"> </span><span class="s">es</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">expert</span><span class="nv"> </span><span class="s">service</span><span class="nv"> </span><span class="s">client</span><span class="nv"> </span><span class="s">FNAC.</span><span class="nv"> </span><span class="s">Sois</span><span class="nv"> </span><span class="s">concis.</span><span class="nv"> </span><span class="s">Question</span><span class="nv"> </span><span class="s">:</span><span class="nv"> </span><span class="s">{{question}}&quot;</span>
+
+<span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">anthropic:claude-opus-5</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">anthropic:claude-haiku-4-5-20251001</span><span class="w">  </span><span class="c1"># comparaison coût/qualité</span>
+
+<span class="nt">tests</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">vars</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">question</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Comment</span><span class="nv"> </span><span class="s">annuler</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">commande</span><span class="nv"> </span><span class="s">?&quot;</span>
+<span class="w">    </span><span class="nt">assert</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">contains</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;espace</span><span class="nv"> </span><span class="s">client&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">llm-rubric</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">réponse</span><span class="nv"> </span><span class="s">explique</span><span class="nv"> </span><span class="s">clairement</span><span class="nv"> </span><span class="s">comment</span><span class="nv"> </span><span class="s">annuler</span><span class="nv"> </span><span class="s">sans</span><span class="nv"> </span><span class="s">être</span><span class="nv"> </span><span class="s">agressive&quot;</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">vars</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">question</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Je</span><span class="nv"> </span><span class="s">veux</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">remboursement&quot;</span>
+<span class="w">    </span><span class="nt">assert</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-contains</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;impossible&quot;</span><span class="w">  </span><span class="c1"># jamais dire &quot;impossible&quot; au client</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">llm-rubric</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">réponse</span><span class="nv"> </span><span class="s">propose</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">ou</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">chemin</span><span class="nv"> </span><span class="s">vers</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">solution&quot;</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code>npx<span class="w"> </span>promptfoo<span class="w"> </span><span class="nb">eval</span>
+<span class="c1"># Tableau comparatif des deux prompts × deux modèles</span>
+<span class="c1"># Score de réussite, coût estimé, latence</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="helicone-proxy-transparent-pour-logger-tous-les-appels">Helicone — Proxy transparent pour logger tous les appels</h2>
+
+<p><strong>Helicone</strong> s'insère entre votre code et l'API Anthropic/OpenAI sans modifier votre code existant. Un seul changement d'URL pour avoir : logs, coûts, latences, rate limits.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Avant (appel direct)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;sk-ant-...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Après (via Helicone) — une seule ligne change</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;sk-ant-...&quot;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://anthropic.helicone.ai&quot;</span><span class="p">,</span>
+    <span class="n">default_headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Helicone-Auth&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer sk-helicone-...&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Tout le reste de votre code est identique</span>
+<span class="c1"># Helicone capture : modèle, prompt, réponse, tokens, coût, latence, user_id</span>
+</code></pre>
+</div>
+
+<p>Plan gratuit : 10 000 requêtes/mois — suffisant pour le développement et les projets académiques.</p>
+
+<hr />
+
+<h2 id="tableau-de-décision">Tableau de décision</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Besoin</th>
+  <th>Outil recommandé</th>
+  <th>Gratuit ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Évaluer un pipeline RAG</td>
+  <td><strong>Ragas</strong></td>
+  <td>Oui (open source)</td>
+</tr>
+<tr>
+  <td>Tests unitaires style pytest pour agents</td>
+  <td><strong>DeepEval</strong></td>
+  <td>Oui (tier gratuit)</td>
+</tr>
+<tr>
+  <td>Observer ce qui se passe en prod (local)</td>
+  <td><strong>Arize Phoenix</strong></td>
+  <td>Oui (open source)</td>
+</tr>
+<tr>
+  <td>Observer en prod (cloud)</td>
+  <td><strong>LangSmith</strong></td>
+  <td>Oui (5k traces/mois)</td>
+</tr>
+<tr>
+  <td>Tester des prompts dans la CI</td>
+  <td><strong>Promptfoo</strong></td>
+  <td>Oui (open source)</td>
+</tr>
+<tr>
+  <td>Logger tous les appels LLM sans code</td>
+  <td><strong>Helicone</strong></td>
+  <td>Oui (10k req/mois)</td>
+</tr>
+<tr>
+  <td>Traçage + métriques + Weights &amp; Biases</td>
+  <td><strong>Weave</strong></td>
+  <td>Oui (100 GB logs)</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="quand-utiliser-ces-outils">Quand utiliser ces outils</h2>
+
+<ul>
+<li>Dès le début d'un projet LLM/agent — pas après que les problèmes apparaissent</li>
+<li>Avant de modifier un prompt ou de changer de modèle : établir une baseline avec DeepEval ou Ragas</li>
+<li>Pour un pipeline RAG : Ragas est non-négociable — sans lui, vous optimisez à l'aveugle</li>
+<li>Pour les coûts : Helicone ou Weave dès qu'on passe à un usage régulier</li>
+</ul>
+
+<h2 id="quand-ne-pas-les-utiliser">Quand ne pas les utiliser</h2>
+
+<ul>
+<li>Ragas sans contexte fourni : les métriques <code>context_*</code> nécessitent que les chunks récupérés soient accessibles — si votre retriever est une boîte noire, l'intégration est plus complexe</li>
+<li>DeepEval pour des tâches créatives où le critère de succès est intrinsèquement subjectif — les métriques seront basses même sur de bonnes réponses</li>
+<li>Helicone si les données de vos appels LLM sont confidentielles (contrats, données médicales) — envisager Phoenix local à la place</li>
+</ul>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelles sont les 4 métriques principales de Ragas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Faithfulness</strong> (pas d'hallucination), <strong>Answer Relevancy</strong> (réponse pertinente à la question), <strong>Context Precision</strong> (chunks récupérés pertinents), <strong>Context Recall</strong> (chunks nécessaires récupérés).</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre DeepEval et Ragas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Ragas</strong> est spécialisé RAG avec des métriques prédéfinies. <strong>DeepEval</strong> est un framework généraliste qui permet d'écrire des tests unitaires style pytest pour n'importe quel agent ou LLM, avec des métriques personnalisables.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utiliser Arize Phoenix plutôt que LangSmith dans un projet client ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Phoenix est <strong>open source et local</strong> — aucune donnée n'est envoyée en dehors. LangSmith est SaaS, ce qui peut poser des problèmes de confidentialité sur des projets avec données sensibles.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que Promptfoo et dans quel contexte l'utiliser ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un outil CLI pour <strong>tester et comparer des prompts</strong> en CI/CD. Permet de détecter automatiquement une régression de prompt avant un déploiement, et de comparer plusieurs modèles sur les mêmes cas de test.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Si faithfulness est faible dans Ragas, quel est le problème ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le LLM <strong>hallucine</strong> — il affirme des choses absentes ou contredites par les documents récupérés. Le problème est dans le LLM ou son prompt, pas dans le retriever.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

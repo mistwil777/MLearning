@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréLLM-as-Judge — Évaluer une réponse ouverte avec un autre LL</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#deeee3;--ink2:#8fb89a;--ink3:#5e876a;
+  --blue:#2db87a;--violet:#e8830a;--aqua:#17c49a;
+  --yellow:#e8c400;--red:#e66767;--orange:#e8830a;
+  --blue-bg:rgba(45,184,122,.15);--violet-bg:rgba(232,131,10,.15);
+  --aqua-bg:rgba(23,196,154,.14);--yellow-bg:rgba(232,196,0,.13);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(232,131,10,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:240px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:860px;padding:52px 44px 120px;min-width:0}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(45,184,122,.22) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(232,131,10,.15) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(45,184,122,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--orange) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>LLM-as-Judge — <em>Évaluer une réponse ouverte avec un autre LLM</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+
+<hr />
+
+<h2 id="définition">Définition</h2>
+
+<p>Le <strong>LLM-as-judge</strong> est un patron d'évaluation dans lequel un LLM (le juge) note la sortie d'un autre LLM (l'agent évalué) selon des critères définis. Il remplace l'annotation humaine quand la tâche est ouverte — génération de texte, résumé, conversation, raisonnement — là où une comparaison exacte avec une ground truth est impossible.</p>
+
+<hr />
+
+<p>:::situation
+<strong>Thales, équipe IA interne — Agent de rédaction de synthèses techniques</strong></p>
+
+<p>L'agent produit des synthèses de rapports d'incidents systèmes. Les synthèses sont jugées "bonnes" ou "mauvaises" par les ingénieurs, mais annoter 500 sorties par semaine à la main est impossible. Problème : comment savoir si le prompt v2 est meilleur que le prompt v1 sans annoter manuellement ? Solution : un LLM juge les deux sorties en aveugle et donne un score + une justification.
+:::</p>
+
+<hr />
+
+<h2 id="le-problème-les-tâches-ouvertes-résistent-aux-métriques-classiques">Le problème : les tâches ouvertes résistent aux métriques classiques</h2>
+
+<p>:::problem
+<strong>Avant — on mesure ce qui est facile, pas ce qui compte</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Tentation : utiliser des métriques NLP classiques</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rouge_score</span><span class="w"> </span><span class="kn">import</span> <span class="n">rouge_scorer</span>
+<span class="n">scorer</span> <span class="o">=</span> <span class="n">rouge_scorer</span><span class="o">.</span><span class="n">RougeScorer</span><span class="p">([</span><span class="s2">&quot;rougeL&quot;</span><span class="p">])</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">scorer</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+<span class="c1"># score.rougeL.fmeasure → 0.43</span>
+
+<span class="c1"># Le problème : ROUGE mesure la similarité lexicale</span>
+<span class="c1"># &quot;Le serveur est tombé à 14h&quot; et &quot;La panne a démarré à 14h00&quot;</span>
+<span class="c1"># → ROUGE score faible, mais les deux phrases disent la même chose</span>
+<span class="c1"># → Un agent qui paraphrase parfaitement sera pénalisé</span>
+</code></pre>
+</div>
+
+<p>BLEU, ROUGE et METEOR comparent les mots, pas le sens. Pour une tâche où la formulation peut varier librement, ils sont quasi inutiles.
+:::</p>
+
+<hr />
+
+<h2 id="comment-ça-marche-les-trois-formes-de-llm-as-judge">Comment ça marche — les trois formes de LLM-as-judge</h2>
+
+<h3 id="forme-1-score-absolu-scoring">Forme 1 — Score absolu (scoring)</h3>
+
+<p>Le juge note la réponse sur une échelle de 1 à 5 selon un critère précis.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="n">JUDGE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Tu es un évaluateur expert. Évalue la réponse suivante selon le critère FIDÉLITÉ FACTUELLE.</span>
+
+<span class="s2">CRITÈRE — Fidélité factuelle :</span>
+<span class="s2">Score 5 : toutes les affirmations sont vérifiables et correctes</span>
+<span class="s2">Score 4 : une imprécision mineure, rien d&#39;incorrect</span>
+<span class="s2">Score 3 : une erreur factuelle non critique</span>
+<span class="s2">Score 2 : plusieurs erreurs factuelles</span>
+<span class="s2">Score 1 : majoritairement incorrect</span>
+
+<span class="s2">CONTEXTE SOURCE :</span>
+<span class="si">{context}</span>
+
+<span class="s2">RÉPONSE À ÉVALUER :</span>
+<span class="si">{response}</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;score&quot;: &lt;entier 1-5&gt;, &quot;justification&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">judge_factuality</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>  <span class="c1"># utiliser le modèle le plus capable comme juge</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">JUDGE_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">judge_factuality</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="s2">&quot;Le serveur A est tombé le 12/03 à 14h22 suite à une saturation mémoire.&quot;</span><span class="p">,</span>
+    <span class="n">response</span><span class="o">=</span><span class="s2">&quot;Le serveur A a rencontré une panne mémoire vers 14h20 le 12 mars.&quot;</span>
+<span class="p">)</span>
+<span class="c1"># → {&quot;score&quot;: 4, &quot;justification&quot;: &quot;Légère imprécision sur l&#39;heure (14h20 vs 14h22), le reste est correct.&quot;}</span>
+</code></pre>
+</div>
+
+<h3 id="forme-2-comparaison-par-paire-pairwise">Forme 2 — Comparaison par paire (pairwise)</h3>
+
+<p>Le juge compare deux réponses et désigne la meilleure. Plus fiable que le score absolu car il élimine la variance d'échelle.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">PAIRWISE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Compare ces deux réponses à la même question. Désigne laquelle est meilleure.</span>
+
+<span class="s2">QUESTION : </span><span class="si">{question}</span>
+
+<span class="s2">RÉPONSE A : </span><span class="si">{response_a}</span>
+
+<span class="s2">RÉPONSE B : </span><span class="si">{response_b}</span>
+
+<span class="s2">CRITÈRES (par ordre d&#39;importance) :</span>
+<span class="s2">1. Exactitude factuelle</span>
+<span class="s2">2. Clarté pour un ingénieur non-expert</span>
+<span class="s2">3. Concision</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;winner&quot;: &quot;A&quot; | &quot;B&quot; | &quot;tie&quot;, &quot;reason&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_responses</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_b</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">PAIRWISE_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                <span class="n">response_a</span><span class="o">=</span><span class="n">response_a</span><span class="p">,</span>
+                <span class="n">response_b</span><span class="o">=</span><span class="n">response_b</span>
+            <span class="p">)</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>:::callout-insight
+<strong>Pourquoi pairwise est plus fiable que scoring</strong></p>
+
+<p>Demander "note cette réponse de 1 à 5" dépend de l'interprétation de l'échelle. Demander "laquelle est meilleure entre A et B" est une comparaison relative — le LLM juge un rapport, pas une valeur absolue. C'est aussi plus cohérent avec ce qu'on veut vraiment savoir : "est-ce que le prompt v2 est meilleur que v1 ?"
+:::</p>
+
+<h3 id="forme-3-checklist-décomposée-g-eval">Forme 3 — Checklist décomposée (G-Eval)</h3>
+
+<p>Le pattern <strong>G-Eval</strong> décompose le critère en sous-questions binaires, puis agrège. Réduit la variance et donne une justification structurée.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">GEVAL_COHERENCE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Évalue la COHÉRENCE de ce résumé par rapport au document source.</span>
+
+<span class="s2">DOCUMENT SOURCE :</span>
+<span class="si">{document}</span>
+
+<span class="s2">RÉSUMÉ :</span>
+<span class="si">{summary}</span>
+
+<span class="s2">Réponds à chaque question par oui ou non :</span>
+<span class="s2">1. Le résumé ne contient-il aucune affirmation absente du document source ?</span>
+<span class="s2">2. Le résumé ne contredit-il aucun fait du document ?</span>
+<span class="s2">3. Les relations causales sont-elles correctement préservées ?</span>
+<span class="s2">4. Les dates et chiffres cités sont-ils exacts ?</span>
+
+<span class="s2">Réponds avec ce JSON :</span>
+<span class="s2">{{&quot;answers&quot;: [true|false, true|false, true|false, true|false], &quot;score&quot;: &lt;moyenne sur 4&gt;}}&quot;&quot;&quot;</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="les-biais-du-juge-ce-que-tout-le-monde-oublie">Les biais du juge — ce que tout le monde oublie</h2>
+
+<p>:::warning
+<strong>Trois biais documentés qui faussent les résultats</strong></p>
+
+<p><strong>1. Biais de position</strong> : quand on compare A vs B, le LLM favorise systématiquement la réponse en première position. Correction : inverser l'ordre sur la moitié des évaluations et agréger.</p>
+
+<p><strong>2. Biais de verbosité</strong> : les LLM tendent à préférer les réponses plus longues, indépendamment de leur qualité. Correction : inclure "la concision est une qualité, ne favorise pas la longueur" dans le prompt.</p>
+
+<p><strong>3. Auto-favoritisme</strong> : Claude préférera les réponses générées par Claude, GPT-4 préférera celles de GPT-4. Correction : utiliser un modèle différent comme juge, ou comparer les résultats entre juges.
+:::</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">robust_pairwise</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">response_a</span><span class="p">,</span> <span class="n">response_b</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare A vs B et B vs A, répète n_trials fois, agrège.</span>
+<span class="sd">    Corrige le biais de position.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">votes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;tie&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="c1"># A en premier</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">compare_responses</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">response_a</span><span class="p">,</span> <span class="n">response_b</span><span class="p">)</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">r1</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># B en premier (inverser)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">compare_responses</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">response_b</span><span class="p">,</span> <span class="n">response_a</span><span class="p">)</span>
+        <span class="c1"># Ré-inverser le résultat</span>
+        <span class="n">inverted</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;tie&quot;</span><span class="p">:</span> <span class="s2">&quot;tie&quot;</span><span class="p">}[</span><span class="n">r2</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">inverted</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">votes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">votes</span><span class="o">.</span><span class="n">get</span><span class="p">),</span> <span class="n">votes</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="calibration-du-juge-valider-avant-de-faire-confiance">Calibration du juge — valider avant de faire confiance</h2>
+
+<p>Avant d'utiliser un LLM-as-judge en production, il faut vérifier que ses jugements corrèlent avec les jugements humains.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># 1. Annoter ~50 cas manuellement (ground truth humaine)</span>
+<span class="n">human_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>  <span class="c1"># scores humains</span>
+
+<span class="c1"># 2. Faire noter les mêmes cas par le juge LLM</span>
+<span class="n">llm_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">judge_factuality</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">resp</span><span class="p">)[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">resp</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">]</span>
+
+<span class="c1"># 3. Mesurer la corrélation (Spearman, plus robuste que Pearson pour des rangs)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">spearmanr</span>
+<span class="n">correlation</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">human_labels</span><span class="p">,</span> <span class="n">llm_scores</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Corrélation Spearman : </span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (p=</span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Seuil acceptable : ρ &gt; 0.7</span>
+<span class="c1"># En dessous : le critère est mal défini ou le juge n&#39;est pas fiable sur ce critère</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="quand-utiliser-le-llm-as-judge">Quand utiliser le LLM-as-judge</h2>
+
+<ul>
+<li>Tâches ouvertes : résumé, génération de texte, conversation, raisonnement</li>
+<li>Comparaison de versions (prompt A vs prompt B)</li>
+<li>Quand l'annotation humaine est trop coûteuse à grande échelle</li>
+<li>En complément des métriques de tâche classiques, jamais en remplacement si les métriques exactes sont disponibles</li>
+</ul>
+
+<h2 id="quand-ne-pas-lutiliser-seul">Quand ne pas l'utiliser seul</h2>
+
+<ul>
+<li>Quand la tâche est exacte et vérifiable (extraction de données structurées, calcul, classification) — une métrique de tâche directe est plus fiable et moins coûteuse</li>
+<li>Quand le modèle juge a une fenêtre de contexte insuffisante pour lire le document source en entier</li>
+<li>Sans calibration préalable sur des annotations humaines — les scores sont arbitraires sans validation</li>
+</ul>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le LLM-as-judge ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un patron où un <strong>LLM note la sortie d'un autre LLM</strong> selon des critères définis. Utilisé quand la tâche est ouverte et qu'une comparaison exacte avec une ground truth est impossible.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi la comparaison par paire (pairwise) est-elle plus fiable que le score absolu ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Elle mesure un <strong>rapport relatif</strong> ("A est meilleure que B") plutôt qu'une valeur absolue dont l'interprétation varie. Elle répond directement à la vraie question : est-ce que la nouvelle version est meilleure ?</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le biais de position dans le LLM-as-judge ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le LLM tend à <strong>préférer la réponse placée en premier</strong> dans le prompt, indépendamment de sa qualité. Correction : inverser l'ordre sur la moitié des évaluations et agréger les votes.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment valider qu'un LLM-as-judge est fiable ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Annoter ~50 cas manuellement, faire noter les mêmes cas par le juge, mesurer la <strong>corrélation de Spearman</strong>. Seuil acceptable : ρ > 0.7.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que G-Eval ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un pattern qui <strong>décompose un critère d'évaluation en sous-questions binaires</strong>, puis agrège. Réduit la variance et donne une justification structurée plutôt qu'un score opaque.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>
