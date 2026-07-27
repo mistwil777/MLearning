@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréMéthode : du brief client à l'architecture techniqueProgram</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,180 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Méthode : du brief client à l'architecture technique</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<p><strong>Définition.</strong> Un projet ML ne commence jamais par le code. Il commence par une demande — souvent vague, parfois contradictoire — qu'il faut transformer en problème résolvable par une machine. La méthode ci-dessous est un processus en 5 étapes qui structure ce travail de traduction.</p>
 
-<hr />
+<p>:::situation
+<strong class="lbl-situation">&#x1f4cd; Situation réelle — La demande vague</strong></p>
 
-<h2 id="fondations">Fondations</h2>
+<p>Un directeur digital de grande surface vous convoque. Il dit : "On veut faire de l'IA pour améliorer l'expérience client." Silence. Il attend. Il ne sait pas ce qu'il veut exactement, mais il a lu un article sur Amazon. Votre réponse à cet instant définit la qualité de tout le projet qui suivra.
+:::</p>
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+<h3 id="étape-1-reformuler-le-problème-métier-en-problème-ml">Étape 1 — Reformuler le problème métier en problème ML</h3>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="régression">Régression</h2>
-
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="classification">Classification</h2>
-
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
-</tr>
-<tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
-</tr>
-<tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
-
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="séries-temporelles">Séries temporelles</h2>
-
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
+<p>La plupart des demandes métier sont des symptômes. "Améliorer l'expérience client" est un objectif business, pas un problème ML. Pour le transformer, il faut poser les bonnes questions :</p>
 
 <ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
+<li>Quel comportement client vous coûte de l'argent en ce moment ?</li>
+<li>Pouvez-vous me donner un exemple concret de "mauvaise expérience" ?</li>
+<li>Si vous deviez mesurer le succès dans 6 mois, que regarderiez-vous ?</li>
 </ul>
+
+<p>Ces questions font émerger un problème précis : "30% des clients abandonnent leur panier avant de payer, et on ne sait pas pourquoi." C'est un problème ML : prédire l'abandon de panier pour déclencher une intervention en temps réel.</p>
+
+<p><strong>La règle de reformulation.</strong> Un problème ML valide contient : une variable à prédire, un contexte d'utilisation, et un critère de succès mesurable. "Améliorer l'expérience" ne contient aucun des trois.</p>
+
+<h3 id="étape-2-auditer-les-données-disponibles">Étape 2 — Auditer les données disponibles</h3>
+
+<p><strong>Définition.</strong> Un audit de données répond à quatre questions : Est-ce que les données existent ? Sont-elles de bonne qualité ? Couvrent-elles le phénomène qu'on veut prédire ? Peut-on les utiliser légalement ?</p>
+
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Questions à poser</th>
+  <th>Signal d'alarme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Existence</strong></td>
+  <td>Les données sont-elles collectées ? Depuis quand ?</td>
+  <td>Données &lt; 6 mois pour un phénomène annuel</td>
+</tr>
+<tr>
+  <td><strong>Qualité</strong></td>
+  <td>Taux de valeurs manquantes ? Erreurs de saisie ?</td>
+  <td>&gt; 20% de valeurs manquantes sur des features clés</td>
+</tr>
+<tr>
+  <td><strong>Labels</strong></td>
+  <td>La variable cible est-elle disponible ? Fiable ?</td>
+  <td>Labels créés manuellement par des humains fatigués</td>
+</tr>
+<tr>
+  <td><strong>Légalité</strong></td>
+  <td>RGPD, consentement, données sensibles ?</td>
+  <td>Données de santé sans DPO consulté</td>
+</tr>
+<tr>
+  <td><strong>Volume</strong></td>
+  <td>Assez d'exemples du phénomène rare ?</td>
+  <td>0,1% d'événements positifs sur 10k lignes</td>
+</tr>
+<tr>
+  <td><strong>Fraîcheur</strong></td>
+  <td>Les données de 2019 reflètent-elles 2024 ?</td>
+  <td>Data pre-Covid pour prédire comportements post-Covid</td>
+</tr>
+</tbody>
+</table>
+
+<p>:::warning
+<strong class="lbl-warn">&#x26a1; Piège — Le biais de confirmation dans l'audit</strong></p>
+
+<p>Il est tentant de déclarer les données "suffisantes" pour ne pas décevoir le client. C'est la principale cause d'échec de projets ML. Un projet lancé sur des données insuffisantes échouera dans 6 mois avec 5× plus de coût qu'un refus honnête dès le départ.
+:::</p>
+
+<h3 id="étape-3-choisir-larchitecture">Étape 3 — Choisir l'architecture</h3>
+
+<p>Le choix de l'architecture est la décision la plus structurante. Elle dépend de l'audit des données, de la contrainte de latence, du besoin d'explicabilité et du budget.</p>
+
+<p><strong>Arbre de décision simplifié :</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">choisir_architecture</span><span class="p">(</span><span class="n">problem</span><span class="p">):</span>
+    <span class="c1"># Règles d&#39;abord — souvent sous-estimées</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">regles_metier_claires</span> <span class="ow">and</span> <span class="n">problem</span><span class="o">.</span><span class="n">volume_faible</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Règles if/else + validation humaine&quot;</span>
+
+    <span class="c1"># ML classique — le cheval de bataille</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_tabulaires</span> <span class="ow">and</span> <span class="n">problem</span><span class="o">.</span><span class="n">volume</span> <span class="o">&lt;</span> <span class="mi">10_000_000</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">interpretabilite_requise</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Logistic Regression ou Decision Tree&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;XGBoost (Gradient Boosting)&quot;</span>
+
+    <span class="c1"># Séries temporelles</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;prévision_temporelle&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">patterns_saisonniers</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Prophet + XGBoost pour anomalies&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;LSTM ou Transformer temporel&quot;</span>
+
+    <span class="c1"># Deep Learning — seulement si données non-structurées</span>
+    <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_images</span> <span class="ow">or</span> <span class="n">problem</span><span class="o">.</span><span class="n">donnees_texte</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem</span><span class="o">.</span><span class="n">budget_inference_eleve</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Fine-tuning LLM&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;BERT/CamemBERT classifié&quot;</span>
+
+    <span class="c1"># Hybride — le cas le plus fréquent en entreprise</span>
+    <span class="k">return</span> <span class="s2">&quot;Pipeline hybride : ML classique + règles métier&quot;</span>
+</code></pre>
+</div>
+
+<p>:::rule
+<strong class="lbl-rule">&#x2705; Règle d'or — La complexité doit être justifiée</strong></p>
+
+<p>Un LLM coûte entre 100× et 1000× plus cher à l'inférence qu'un XGBoost. Avant de le choisir, il faut démontrer qu'un modèle plus simple ne suffit pas. Ce n'est pas un choix par défaut.
+:::</p>
+
+<h3 id="étape-4-définir-les-métriques-de-succès">Étape 4 — Définir les métriques de succès</h3>
+
+<p><strong>Définition.</strong> Une métrique est une mesure quantitative qui dit si un modèle remplit son objectif. Il en faut deux types : les métriques <strong>techniques</strong> (précision, rappel, AUC…) et les métriques <strong>métier</strong> (chiffre d'affaires supplémentaire, taux de réduction des incidents, temps économisé).</p>
+
+<p>La confusion entre les deux est une source fréquente de conflits. Un modèle peut avoir une excellente AUC et un impact métier nul, parce que les décisions prises sur sa base n'étaient pas les bonnes.</p>
+
+<table>
+<thead>
+<tr>
+  <th>Contexte</th>
+  <th>Métrique technique</th>
+  <th>Métrique métier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Détection de fraude</td>
+  <td>Recall sur fraudes (minimiser faux négatifs)</td>
+  <td>Montant frauduleux évité / mois</td>
+</tr>
+<tr>
+  <td>Recommandation</td>
+  <td>NDCG@10 (classement des suggestions)</td>
+  <td>CTR, panier moyen, conversions</td>
+</tr>
+<tr>
+  <td>Prévision de stock</td>
+  <td>MAE (écart absolu moyen)</td>
+  <td>Coût de rupture + coût de surstock</td>
+</tr>
+<tr>
+  <td>Classification texte</td>
+  <td>F1-macro</td>
+  <td>Temps économisé par les agents</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="étape-5-planifier-le-cycle-de-vie">Étape 5 — Planifier le cycle de vie</h3>
+
+<p><strong>Définition.</strong> Un modèle ML n'est pas un livrable statique. C'est un système vivant qui se dégrade avec le temps parce que le monde change. Le cycle de vie couvre : entraînement initial, déploiement, monitoring, et ré-entraînement.</p>
+
+<div class="mindmap">Entraînement ──► Validation ──► Déploiement ──► Monitoring
+     ▲                                               │
+     └─────────────── Ré-entraînement ◄──────────────┘
+                     (dérive détectée)
+</div>
+
+<p>La cadence de ré-entraînement dépend de la vitesse à laquelle le phénomène évolue : quotidien pour la détection de fraude, hebdomadaire pour la prévision de stock, mensuel pour la recommandation.</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre une métrique technique et une métrique métier ? Donnez un exemple.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une <strong>métrique technique</strong> mesure la performance du modèle (ex : AUC = 0.87 pour détecter la fraude). Une <strong>métrique métier</strong> mesure l'impact réel (ex : 450 000 € de fraude évités par mois). Un modèle peut avoir une excellente AUC et un impact métier nul si les décisions prises sur sa base sont mauvaises.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un LLM n'est pas le bon choix par défaut pour un problème de classification ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un LLM coûte <strong>100× à 1000×</strong> plus cher à l'inférence qu'un XGBoost. Pour un problème de classification sur données tabulaires, XGBoost est plus rapide, plus interprétable, et plus précis. Le LLM ne se justifie que si le problème nécessite de la compréhension de texte libre ou de la génération.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un audit de données et quand faut-il refuser de démarrer un projet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un audit de données vérifie l'existence, la qualité, les labels, la légalité et le volume. Il faut <strong>refuser de démarrer</strong> si les labels sont absents ou peu fiables, si les données ne couvrent pas le phénomène prédit, ou si des contraintes RGPD n'ont pas été traitées par le DPO.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Que contient un problème ML "valide" selon la règle de reformulation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un problème ML valide contient <strong>trois éléments</strong> : une variable à prédire (ex : abandon de panier), un contexte d'utilisation (ex : en temps réel pendant la navigation), et un critère de succès mesurable (ex : réduire le taux d'abandon de 30% à 22%).</p></div></div></div></div></div>
+
+<hr />
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

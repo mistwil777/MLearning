@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréÉvaluer et monitorer un système hybrideProgramme7 jours3-4h</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,161 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Évaluer et monitorer un système hybride</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<h3 id="pourquoi-le-monitoring-llm-est-différent-du-monitoring-ml">Pourquoi le monitoring LLM est différent du monitoring ML</h3>
 
-<hr />
+<p>Un modèle ML classique dérive progressivement lorsque la distribution des données d'entrée change (data drift). C'est détectable : on surveille les distributions de features, les métriques de performance sur des échantillons labellisés.</p>
 
-<h2 id="fondations">Fondations</h2>
+<p>Un LLM dérive d'une façon différente et plus insidieuse :
+- Les réponses changent avec les mises à jour du modèle fournisseur
+- Le contenu du vector store (RAG) vieillit sans que le modèle ne le signale
+- Les réponses peuvent être factuellement incorrectes sans être statistiquement anomales
+- On ne peut pas comparer "ancienne réponse" vs "nouvelle réponse" avec une simple métrique</p>
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+<h3 id="métriques-spécifiques-aux-llm-et-systèmes-rag">Métriques spécifiques aux LLM et systèmes RAG</h3>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
+<p><strong>Hallucination rate</strong> : proportion de réponses qui contiennent des informations factuelles incorrectes ou inventées. Se mesure par un juge LLM ou par annotation humaine sur un échantillon. Une hallucination rate de 2% signifie que sur 1000 réponses, 20 contiennent des erreurs factuelles.</p>
 
-<hr />
+<p><strong>Faithfulness</strong> : mesure si la réponse s'appuie effectivement sur les documents récupérés, ou si le LLM "improvise" au-delà des sources. Une réponse peut être correcte mais non-faithfull (le LLM a répondu depuis ses paramètres, pas depuis les chunks) — c'est un risque car le comportement peut diverger à tout moment.</p>
 
-<h2 id="régression">Régression</h2>
+<p><strong>Answer relevance</strong> : mesure si la réponse répond vraiment à la question posée, indépendamment de sa factualité. Un système peut retourner des informations vraies mais hors-sujet.</p>
 
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
+<p><strong>Context precision</strong> : sur les chunks récupérés, quelle proportion est vraiment utile pour répondre ? Un retrieval qui ramène 10 chunks dont 8 sont hors-sujet dégrade la qualité de la génération.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
+<h3 id="ragas-framework-dévaluation-rag">Ragas : framework d'évaluation RAG</h3>
 
-<hr />
+<p><strong>Ragas</strong> est un framework open-source qui automatise l'évaluation des pipelines RAG. Il utilise un LLM juge pour calculer les métriques ci-dessus sans annotation humaine.</p>
 
-<h2 id="classification">Classification</h2>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># pip install ragas datasets</span>
 
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c1"># Jeu de test : questions + réponses du système + chunks récupérés + réponses de référence</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Quelle est la procédure d&#39;escalade P1 ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Quel est le SLA pour les incidents P2 ?&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;En cas d&#39;incident P1, notifier le responsable via PagerDuty dans les 10 min.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Les incidents P2 doivent être résolus sous 4 heures selon notre SLA standard.&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;[doc ITSM v2.3, p14] Incident P1 : notification PagerDuty &lt; 10 min...&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;[doc SLA 2024, p3] P2 resolution target : 4 hours...&quot;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ground_truth&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;L&#39;escalade P1 requiert une notification PagerDuty dans les 10 minutes.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Le SLA P2 est de 4 heures.&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+
+<span class="c1"># Évaluation automatisée (utilise un LLM juge en interne)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="c1"># → {&#39;faithfulness&#39;: 0.95, &#39;answer_relevancy&#39;: 0.88, &#39;context_precision&#39;: 0.92}</span>
+<span class="c1"># Si faithfulness &lt; 0.8 → le LLM &quot;improvise&quot; trop souvent → revoir le prompt</span>
+</code></pre>
+</div>
+
+<h3 id="coût-et-latence-en-production-les-chiffres-réels">Coût et latence en production : les chiffres réels</h3>
 
 <table>
 <thead>
 <tr>
-  <th>Concept</th>
-  <th>Fichier</th>
+  <th>Composant</th>
+  <th>Latence</th>
+  <th>Coût par appel</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
+  <td>XGBoost (inférence)</td>
+  <td>&lt; 1 ms</td>
+  <td>~0,000001 €</td>
 </tr>
 <tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
+  <td>Embedding (ada-002)</td>
+  <td>50–150 ms</td>
+  <td>~0,0001 €</td>
 </tr>
 <tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
+  <td>FAISS search (100k vecteurs)</td>
+  <td>2–10 ms</td>
+  <td>0 € (local)</td>
+</tr>
+<tr>
+  <td>LLM GPT-4o (1k tokens in/out)</td>
+  <td>1–3 s</td>
+  <td>~0,01 €</td>
+</tr>
+<tr>
+  <td>LLM Claude Opus (1k tokens)</td>
+  <td>2–5 s</td>
+  <td>~0,02 €</td>
+</tr>
+<tr>
+  <td>LLM Claude Haiku (1k tokens)</td>
+  <td>200–500 ms</td>
+  <td>~0,0003 €</td>
 </tr>
 </tbody>
 </table>
 
-<hr />
+<p>Un LLM coûte <strong>100× à 10 000×</strong> plus cher qu'une inférence ML classique. Sur un système traitant 100 000 requêtes/jour, la différence est de 1€/jour (ML) vs 1 000€/jour (LLM GPT-4o).</p>
 
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
+<h3 id="stratégies-doptimisation-en-production">Stratégies d'optimisation en production</h3>
 
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
+<p><strong>Caching sémantique</strong> : si deux questions ont une similarité cosinus &gt; 0.95, retourner la réponse mise en cache plutôt que d'interroger le LLM. Réduit les coûts de 30-60% sur les questions fréquentes.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
+<p><strong>Routing intelligent</strong> : utiliser un modèle léger pour classer la difficulté de la question. Questions simples → modèle bon marché (Claude Haiku, GPT-4o-mini). Questions complexes → modèle puissant.</p>
 
-<hr />
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">router_question</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classe la complexité de la question et choisit le bon modèle.&quot;&quot;&quot;</span>
+    <span class="c1"># Heuristiques simples + classification rapide</span>
+    <span class="n">mots_complexes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;compare&quot;</span><span class="p">,</span> <span class="s2">&quot;analyse&quot;</span><span class="p">,</span> <span class="s2">&quot;explique pourquoi&quot;</span><span class="p">,</span> <span class="s2">&quot;quelles sont toutes&quot;</span><span class="p">]</span>
+    <span class="n">est_complexe</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">mot</span> <span class="ow">in</span> <span class="n">question</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">mot</span> <span class="ow">in</span> <span class="n">mots_complexes</span><span class="p">)</span>
 
-<h2 id="séries-temporelles">Séries temporelles</h2>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">question</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">est_complexe</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;claude-haiku-4-5&quot;</span>      <span class="c1"># 0.0003€/1k tokens</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;claude-opus-4-5&quot;</span>       <span class="c1"># 0.02€/1k tokens</span>
+</code></pre>
+</div>
 
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
+<h3 id="situation-réelle-dérive-dun-chatbot-rag-après-3-mois">Situation réelle : dérive d'un chatbot RAG après 3 mois</h3>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
+<p>:::warning
+<strong>Ce qui s'est passé</strong> : une équipe déploie un chatbot RAG sur leur documentation produit en janvier. En mars, des utilisateurs signalent des réponses bizarres. Investigation : la documentation a été mise à jour (nouvelles versions du produit), mais le vector store n'a pas été ré-indexé. Le chatbot répond avec des informations périmées, avec la même confiance qu'avant.</p>
+
+<p><strong>Second problème</strong> : le fournisseur LLM a mis à jour son modèle en février. Les nouvelles versions du modèle ont une tendance légèrement différente à interpréter les prompts — le taux de réponses "Je ne sais pas" a augmenté de 2% à 18%, sans que personne ne s'en aperçoive.</p>
+
+<p><strong>Ce qui manquait</strong> :
+- Pipeline de ré-indexation automatique déclenché à chaque mise à jour de doc
+- Dashboard de monitoring : faithfulness, answer relevancy, volume de "Je ne sais pas"
+- Tests de régression automatiques sur un golden dataset de 50 questions</p>
+
+<p><strong>Leçon</strong> : un système RAG en production requiert autant de surveillance qu'un modèle ML classique — avec des métriques différentes.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Définissez faithfulness dans le contexte RAG.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La faithfulness mesure si les réponses du LLM s'appuient réellement sur les chunks récupérés, ou si le LLM répond depuis ses paramètres internes (hors-sources). Une faible faithfulness signifie que le RAG ne remplit pas son rôle d'ancrage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi le caching sémantique réduit-il les coûts LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Si deux questions ont une similarité cosinus > 0.95 (très proches sémantiquement), on retourne la réponse en cache sans appeler le LLM. Sur des systèmes avec des questions répétitives, 30-60% des requêtes peuvent être servies depuis le cache.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que Ragas et à quoi sert-il ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Ragas est un framework open-source qui automatise l'évaluation des pipelines RAG. Il utilise un LLM juge pour calculer faithfulness, answer relevancy, context precision — sans annotation humaine, sur un jeu de test de questions/réponses.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un chatbot RAG fonctionne bien en janvier et dérive en mars sans changement de code. Deux causes possibles ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">(1) La documentation source a été mise à jour mais le vector store n'a pas été ré-indexé → réponses périmées. (2) Le fournisseur LLM a mis à jour son modèle → comportement légèrement différent (prompt interpretation, refusals, etc.).</p></div></div></div></div></div>
 
 <hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
-
-<ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
-</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

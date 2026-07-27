@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréServir un modèle : FastAPI + DockerProgramme7 jours3-4h/jou</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,147 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Servir un modèle : FastAPI + Docker</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<p><strong>Définition du serving</strong> : Servir un modèle signifie l'exposer comme un service — une application peut lui envoyer des données et recevoir une prédiction en retour. C'est la jonction entre le monde ML (un objet Python en mémoire) et le monde applicatif (une application web, mobile, ou un autre service qui a besoin de prédictions).</p>
 
-<hr />
+<p><strong>FastAPI : exposer un modèle en 20 lignes</strong></p>
 
-<h2 id="fondations">Fondations</h2>
+<p>FastAPI est une bibliothèque Python pour créer des services web rapides. Elle gère automatiquement la validation des données entrantes, la documentation interactive, et la sérialisation JSON.</p>
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># app.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mlflow</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>  <span class="c1"># validation automatique des données</span>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Scoring Crédit BNP&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
 
-<hr />
+<span class="c1"># Charger le modèle au démarrage (une seule fois)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;models:/credit-scoring/Production&quot;</span><span class="p">)</span>
 
-<h2 id="régression">Régression</h2>
+<span class="c1"># Définir le format des données attendues</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CreditRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">revenu_annuel</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">anciennete_emploi</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">montant_credit</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">apport</span><span class="p">:</span> <span class="nb">float</span>
 
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
+<span class="k">class</span><span class="w"> </span><span class="nc">PredictionResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">probabilite_defaut</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">decision</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># &quot;accordé&quot; ou &quot;refusé&quot;</span>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/predict&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">PredictionResponse</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">CreditRequest</span><span class="p">):</span>
+    <span class="c1"># Convertir en DataFrame (format attendu par le modèle)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">request</span><span class="o">.</span><span class="n">dict</span><span class="p">()])</span>
 
-<hr />
+    <span class="c1"># Prédiction</span>
+    <span class="n">proba</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># probabilité de défaut</span>
+    <span class="n">decision</span> <span class="o">=</span> <span class="s2">&quot;refusé&quot;</span> <span class="k">if</span> <span class="n">proba</span> <span class="o">&gt;</span> <span class="mf">0.3</span> <span class="k">else</span> <span class="s2">&quot;accordé&quot;</span>
 
-<h2 id="classification">Classification</h2>
+    <span class="k">return</span> <span class="n">PredictionResponse</span><span class="p">(</span>
+        <span class="n">probabilite_defaut</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">proba</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="n">decision</span><span class="o">=</span><span class="n">decision</span>
+    <span class="p">)</span>
 
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/health&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">health_check</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;credit-scoring/Production&quot;</span><span class="p">}</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Lancer le service (port 8000)</span>
+uvicorn<span class="w"> </span>app:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+
+<span class="c1"># FastAPI génère automatiquement une documentation interactive sur :</span>
+<span class="c1"># http://localhost:8000/docs</span>
+</code></pre>
+</div>
+
+<p><strong>Docker : packager l'environnement</strong></p>
+
+<p><strong>Définition</strong> : Docker est un outil qui encapsule une application et tout son environnement (Python, bibliothèques, configuration) dans un conteneur — une boîte isolée qui tourne de façon identique sur n'importe quelle machine. Sans Docker : "ça marche sur mon laptop" mais pas sur le serveur de prod (version de numpy différente, dépendance manquante). Avec Docker : l'environnement est figé et transportable.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c"># Dockerfile</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">python:3.11-slim</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Copier et installer les dépendances</span>
+<span class="k">COPY</span><span class="w"> </span>requirements.txt<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c"># Copier le code</span>
+<span class="k">COPY</span><span class="w"> </span>app.py<span class="w"> </span>.
+
+<span class="c"># Exposer le port et démarrer</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">8000</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;uvicorn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;app:app&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--host&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--port&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;8000&quot;</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Construire l&#39;image Docker</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>credit-scoring-api:v1.0<span class="w"> </span>.
+
+<span class="c1"># Lancer le conteneur</span>
+docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>credit-scoring-api:v1.0
+
+<span class="c1"># Le service est maintenant accessible sur http://localhost:8000</span>
+</code></pre>
+</div>
+
+<p><strong>Batch vs Real-time inference</strong></p>
 
 <table>
 <thead>
 <tr>
-  <th>Concept</th>
-  <th>Fichier</th>
+  <th></th>
+  <th>Batch</th>
+  <th>Real-time</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
+  <td>Quand</td>
+  <td>Toutes les nuits / semaines</td>
+  <td>À chaque requête (&lt;100ms)</td>
 </tr>
 <tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
+  <td>Volume</td>
+  <td>Millions de prédictions d'un coup</td>
+  <td>Une prédiction à la fois</td>
 </tr>
 <tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
+  <td>Latence</td>
+  <td>Peu importe (minutes)</td>
+  <td>Critique (ms)</td>
+</tr>
+<tr>
+  <td>Exemple</td>
+  <td>Scorer tous les clients actifs chaque nuit</td>
+  <td>Valider une transaction en caisse</td>
+</tr>
+<tr>
+  <td>Infrastructure</td>
+  <td>Script + cron job</td>
+  <td>FastAPI + Docker + load balancer</td>
 </tr>
 </tbody>
 </table>
 
-<hr />
+<p><strong>Situation réelle : BNP Paribas, détection de fraude</strong></p>
 
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
+<p>Chaque transaction bancaire (carte, virement) doit être scorée en moins de 50ms — le client attend sa confirmation. Le modèle XGBoost tourne dans un conteneur Docker derrière un load balancer. À 50ms de latence maximale, un modèle de deep learning serait trop lent (200-500ms d'inférence CPU) ; XGBoost répond en 5-10ms.</p>
 
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi utiliser Docker pour déployer un modèle ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Pour garantir que l'environnement est <strong>identique partout</strong> (dev, staging, prod). Sans Docker, une différence de version de numpy entre le laptop du data scientist et le serveur de prod peut suffire à faire planter le service. Docker fige l'environnement dans une image transportable.</p></div></div></div>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand choisir batch inference plutôt que real-time ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Batch</strong> quand la prédiction n'est pas urgente (scorer les clients chaque nuit pour les campagnes marketing). <strong>Real-time</strong> quand la prédiction déclenche une action immédiate (valider une transaction, personnaliser une page web). Le coût d'infrastructure est très différent : le batch peut tourner sur une machine classique ; le real-time nécessite un service toujours actif avec SLA de latence.</p></div></div></div></div></div>
 
 <hr />
-
-<h2 id="séries-temporelles">Séries temporelles</h2>
-
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
-
-<ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
-</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

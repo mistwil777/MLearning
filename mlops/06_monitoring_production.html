@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréLe monitoring en productionProgramme7 jours3-4h/jour</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,128 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Le monitoring en production</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<p><strong>Définition</strong> : Le monitoring est la surveillance continue d'un système en production pour détecter les problèmes avant qu'ils deviennent critiques. Pour un modèle ML, il y a trois niveaux à surveiller simultanément : les métriques techniques (est-ce que le service répond ?), les métriques data (les données ont-elles changé ?), et les métriques métier (les prédictions produisent-elles toujours les bons résultats ?).</p>
 
-<hr />
+<p><strong>Ce qu'il faut surveiller</strong></p>
 
-<h2 id="fondations">Fondations</h2>
+<div class="mindmap">NIVEAU 1 — Technique (temps réel, alertes immédiates)
+─────────────────────────────────────────────────────
+• Latence (P50, P95, P99) — combien de temps prend une prédiction
+• Taux d'erreur — % de requêtes qui échouent
+• Disponibilité — est-ce que le service répond ?
+• Volume de requêtes — pic ou chute anormale
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+NIVEAU 2 — Data (hebdomadaire, alertes si dérive détectée)
+──────────────────────────────────────────────────────────
+• Distribution des features d'entrée (PSI, test KS)
+• Valeurs manquantes inattendues
+• Nouvelles catégories non vues à l'entraînement
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
+NIVEAU 3 — Métier (mensuel, délai incompressible)
+──────────────────────────────────────────────────
+• Performance réelle sur les décisions effectuées
+  (nécessite d'attendre le résultat réel : défaut, churn, clic...)
+• Taux de conversion des recommandations
+• Coût des faux positifs / faux négatifs
+</div>
 
-<hr />
+<p><strong>Shadow mode : tester un nouveau modèle sans risque</strong></p>
 
-<h2 id="régression">Régression</h2>
+<p><strong>Définition</strong> : Le shadow mode (ou shadow deployment) consiste à faire tourner un nouveau modèle en parallèle du modèle en production, sans que ses prédictions soient utilisées. Le nouveau modèle "observe" les requêtes réelles, ses prédictions sont loguées, mais c'est toujours l'ancien modèle qui agit.</p>
 
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
+<div class="mindmap">Requête réelle
+      ↓
+┌─────────────────┐
+│ Modèle en PROD  │ → Prédiction utilisée → Action réelle
+└─────────────────┘
+      ↓ (copie)
+┌─────────────────┐
+│ Nouveau modèle  │ → Prédiction loguée → Jamais utilisée
+│  (shadow)       │
+└─────────────────┘
+</div>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="300" y="18" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Shadow Mode — Architecture de déploiement</text>
 
-<hr />
+  <!-- Requête entrante -->
+  <rect x="20" y="85" width="100" height="40" rx="8" fill="#26232f" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="70" y="108" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="600">Requête</text>
+  <text x="70" y="121" text-anchor="middle" fill="#9e95b5" font-size="9">utilisateur</text>
 
-<h2 id="classification">Classification</h2>
+  <!-- Flèche vers splitter -->
+  <line x1="122" y1="105" x2="158" y2="105" stroke="#3987e5" stroke-width="2" marker-end="url(#arr-shadow)"/>
 
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
+  <!-- Point de division -->
+  <circle cx="165" cy="105" r="5" fill="#e8a600"/>
+  <!-- Flèche vers prod (haut) -->
+  <line x1="165" y1="100" x2="165" y2="60" stroke="#1baf7a" stroke-width="1.5"/>
+  <line x1="165" y1="60" x2="255" y2="60" stroke="#1baf7a" stroke-width="1.5" marker-end="url(#arr-aqua2)"/>
+  <!-- Flèche vers shadow (bas) -->
+  <line x1="165" y1="110" x2="165" y2="155" stroke="#716989" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="165" y1="155" x2="255" y2="155" stroke="#716989" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-grey)"/>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
-</tr>
-<tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
-</tr>
-<tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
-</tr>
-</tbody>
-</table>
+  <!-- Boîte Modèle PROD -->
+  <rect x="258" y="38" width="160" height="44" rx="8" fill="rgba(27,175,122,0.2)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="338" y="60" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Modèle PROD</text>
+  <text x="338" y="74" text-anchor="middle" fill="#9e95b5" font-size="9">version stable en production</text>
 
-<hr />
+  <!-- Boîte Nouveau modèle (shadow) -->
+  <rect x="258" y="133" width="160" height="44" rx="8" fill="rgba(113,105,137,0.2)" stroke="#716989" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="338" y="155" text-anchor="middle" fill="#9e95b5" font-size="12" font-weight="700">Nouveau modèle</text>
+  <text x="338" y="169" text-anchor="middle" fill="#716989" font-size="9">(shadow — en observation)</text>
 
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
+  <!-- Sortie PROD → utilisée -->
+  <line x1="420" y1="60" x2="470" y2="60" stroke="#1baf7a" stroke-width="1.5" marker-end="url(#arr-aqua2)"/>
+  <rect x="472" y="44" width="110" height="32" rx="6" fill="rgba(27,175,122,0.15)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="527" y="62" text-anchor="middle" fill="#1baf7a" font-size="10" font-weight="600">Prédiction utilisée</text>
+  <text x="527" y="74" text-anchor="middle" fill="#9e95b5" font-size="8">→ action réelle</text>
 
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
+  <!-- Sortie Shadow → loguée seulement -->
+  <line x1="420" y1="155" x2="470" y2="155" stroke="#716989" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-grey)"/>
+  <rect x="472" y="139" width="110" height="32" rx="6" fill="rgba(113,105,137,0.1)" stroke="#716969" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="527" y="157" text-anchor="middle" fill="#716989" font-size="10" font-weight="600">Prédiction loguée</text>
+  <text x="527" y="169" text-anchor="middle" fill="#716989" font-size="8">→ jamais utilisée</text>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
+  <!-- Label division -->
+  <text x="148" y="100" text-anchor="end" fill="#e8a600" font-size="9">copie</text>
+
+  <!-- Note bas -->
+  <text x="300" y="200" text-anchor="middle" fill="#716989" font-size="10">Après 1-2 semaines : comparaison des distributions → décision de bascule</text>
+
+  <defs>
+    <marker id="arr-shadow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#3987e5"/>
+    </marker>
+    <marker id="arr-aqua2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#1baf7a"/>
+    </marker>
+    <marker id="arr-grey" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#716989"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<p>Après 1-2 semaines, on compare les distributions de prédictions des deux modèles. Si le nouveau est cohérent et meilleur → on le bascule en production. Si ses prédictions divergent fortement → on investigue avant de déployer.</p>
+
+<p><strong>Situation réelle : modèle de recommandation e-commerce</strong></p>
+
+<p>Un site e-commerce déploie un nouveau modèle de recommandation. Sans monitoring : les ventes issues des recommandations chutent de 15% sur 3 semaines avant que quelqu'un remarque que les recommandations sont devenues absurdes (le modèle recommande des produits en rupture de stock). Avec un monitoring métier hebdomadaire sur le taux de clic des recommandations, l'alerte aurait été déclenchée en 4 jours.</p>
+
+<p>:::warning
+<strong>Le piège du monitoring technique seul</strong> : un service peut être techniquement parfait (latence 12ms, zéro erreur, disponibilité 100%) tout en produisant des prédictions complètement fausses. Les métriques techniques ne mesurent pas la qualité des prédictions — elles mesurent que le service répond. Le monitoring métier est obligatoire, même s'il est plus difficile à mettre en place.
+:::</p>
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le shadow mode et pourquoi l'utiliser ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Faire tourner un nouveau modèle <strong>en parallèle</strong> du modèle en prod, sans que ses prédictions soient utilisées. But : valider le comportement du nouveau modèle sur des données réelles avant de le déployer. Permet de détecter des problèmes (prédictions aberrantes, latence trop élevée) sans risque pour la production.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi les métriques techniques (latence, disponibilité) ne suffisent-elles pas pour monitorer un modèle ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Parce qu'elles mesurent que <strong>le service répond</strong>, pas que <strong>les prédictions sont bonnes</strong>. Un modèle peut répondre en 10ms avec zéro erreur tout en produisant des recommandations absurdes ou un scoring complètement dérivé. Le monitoring métier (taux de conversion, performance sur les décisions réelles) est obligatoire.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quels sont les 3 niveaux de monitoring à mettre en place pour un modèle en production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1. Technique</strong> (temps réel) : latence, taux d'erreur, disponibilité. <strong>2. Data</strong> (hebdomadaire) : drift des features d'entrée via Evidently/PSI. <strong>3. Métier</strong> (mensuel, avec délai) : performance réelle sur les décisions prises — nécessite d'attendre les résultats observables.</p></div></div></div></div></div>
 
 <hr />
-
-<h2 id="séries-temporelles">Séries temporelles</h2>
-
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
-
-<ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
-</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

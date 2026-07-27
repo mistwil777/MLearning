@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML Accélérédarts : la boîte à outils complèteProgramme7 jours3-4h/jour</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,160 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>darts : la boîte à outils complète</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<h3 id="ce-que-darts-apporte-que-prophet-et-statsmodels-nont-pas">Ce que darts apporte que Prophet et statsmodels n'ont pas</h3>
 
-<hr />
+<p><strong>darts</strong> est une bibliothèque Python open-source (Unit8, 2020) conçue pour unifier dans une même interface tous les types de modèles de séries temporelles : des statistiques classiques (ARIMA, Theta) aux modèles deep learning spécialisés (N-BEATS, TFT, LightGBM temporal).</p>
 
-<h2 id="fondations">Fondations</h2>
+<p>La valeur ajoutée de darts s'exprime dans trois scénarios que ni Prophet ni statsmodels ne couvrent bien :</p>
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+<p><strong>1. Séries multivariées</strong> : prévoir simultanément plusieurs KPIs en capturant leurs interactions. Par exemple, prévoir à la fois la production éolienne et la production solaire, sachant qu'elles dépendent toutes deux de la même météo. darts gère les <code>TimeSeries</code> multivariées comme objets natifs.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
+<p><strong>2. Très longues séries avec patterns complexes</strong> : des modèles comme N-BEATS (Neural Basis Expansion Analysis) apprennent des patterns sur des milliers d'observations et surpassent souvent ARIMA sur des horizons longs.</p>
 
-<hr />
+<p><strong>3. Intervalles de confiance calibrés</strong> : darts propose des méthodes de quantile regression et de conformal prediction pour produire des intervalles de prévision statistiquement calibrés, ce que Prophet approxime seulement.</p>
 
-<h2 id="régression">Régression</h2>
+<h3 id="n-beats-et-tft-les-deux-architectures-clés">N-BEATS et TFT : les deux architectures clés</h3>
 
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
+<p><strong>N-BEATS (2020, Element AI)</strong> est un réseau de neurones profond conçu uniquement pour les séries temporelles. Son architecture en "blocs" force le modèle à séparer explicitement tendance et saisonnalité, ce qui le rend interprétable malgré sa profondeur.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
+<p><strong>TFT — Temporal Fusion Transformer (2021, Google)</strong> est un transformer adapté aux séries temporelles. Il gère nativement les variables covariantes (variables extérieures connues dans le futur), les séries multivariées, et produit des prévisions multi-horizons avec intervalles de confiance.</p>
 
-<hr />
+<h3 id="code-comparatif-prophet-vs-darts-sur-le-même-problème">Code comparatif : Prophet vs darts sur le même problème</h3>
 
-<h2 id="classification">Classification</h2>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># before</span>
+<span class="c1"># Prophet — approche standard</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prophet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prophet</span>
 
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;ds&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span>  <span class="c1"># production éolienne journalière EDF</span>
+<span class="p">})</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">600</span><span class="p">])</span>
+<span class="n">future</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+<span class="c1"># Prophet : une seule série, pas de gestion native du multivarié</span>
+</code></pre>
+</div>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># after</span>
+<span class="c1"># darts — même problème avec gestion multivariée et intervalles calibrés</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">NBEATSModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mae</span><span class="p">,</span> <span class="n">mape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">darts.dataprocessing.transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Scaler</span>
+
+<span class="c1"># Créer une TimeSeries darts à partir d&#39;un DataFrame</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<span class="n">production_eolienne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+<span class="n">vitesse_vent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">730</span><span class="p">)</span>
+
+<span class="c1"># TimeSeries multivariée : production + vent en entrée covariante</span>
+<span class="n">serie_target</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">from_times_and_values</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">production_eolienne</span><span class="p">)</span>
+<span class="n">serie_covariate</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="o">.</span><span class="n">from_times_and_values</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">vitesse_vent</span><span class="p">)</span>
+
+<span class="c1"># Normaliser (obligatoire pour les modèles deep learning)</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">Scaler</span><span class="p">()</span>
+<span class="n">serie_target_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">serie_target</span><span class="p">)</span>
+
+<span class="c1"># Séparer train/test (temporellement !)</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">serie_target_scaled</span><span class="p">[:</span><span class="mi">600</span><span class="p">],</span> <span class="n">serie_target_scaled</span><span class="p">[</span><span class="mi">600</span><span class="p">:]</span>
+
+<span class="c1"># Modèle N-BEATS</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NBEATSModel</span><span class="p">(</span>
+    <span class="n">input_chunk_length</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>   <span class="c1"># fenêtre d&#39;entrée : 60 jours d&#39;historique</span>
+    <span class="n">output_chunk_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># horizon de prévision : 30 jours</span>
+    <span class="n">n_epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Prévision avec intervalles de confiance (quantile regression)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Métriques sur le jeu de validation</span>
+<span class="n">pred_val</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+<span class="n">val_orig</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="p">(</span><span class="n">val_orig</span><span class="p">,</span><span class="w"> </span><span class="n">pred_val</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GWh&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAPE : </span><span class="si">{</span><span class="n">mape</span><span class="p">(</span><span class="n">val_orig</span><span class="p">,</span><span class="w"> </span><span class="n">pred_val</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="quand-choisir-darts-vs-prophet-vs-statsmodels">Quand choisir darts vs Prophet vs statsmodels</h3>
 
 <table>
 <thead>
 <tr>
-  <th>Concept</th>
-  <th>Fichier</th>
+  <th>Critère</th>
+  <th>statsmodels</th>
+  <th>Prophet</th>
+  <th>darts</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
+  <td>Facilité de prise en main</td>
+  <td>moyen</td>
+  <td>✓ facile</td>
+  <td>moyen</td>
 </tr>
 <tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
+  <td>Séries multivariées</td>
+  <td>✗</td>
+  <td>✗</td>
+  <td>✓</td>
 </tr>
 <tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
+  <td>Intervalles calibrés</td>
+  <td>✓</td>
+  <td>approximatif</td>
+  <td>✓</td>
+</tr>
+<tr>
+  <td>Longues séries (&gt; 5 ans quotidien)</td>
+  <td>lent</td>
+  <td>correct</td>
+  <td>✓</td>
+</tr>
+<tr>
+  <td>Événements ponctuels</td>
+  <td>manuel</td>
+  <td>✓</td>
+  <td>via covariates</td>
+</tr>
+<tr>
+  <td>Interprétabilité des composantes</td>
+  <td>✓</td>
+  <td>✓</td>
+  <td>partielle (N-BEATS)</td>
 </tr>
 </tbody>
 </table>
 
-<hr />
+<p>:::limit
+<strong class="lbl-limit">&#x26d4; Quand ne pas l'utiliser</strong> : Si la série contient moins de 500 observations, les modèles deep learning de darts (N-BEATS, TFT) n'ont pas assez de données pour converger. Utiliser SARIMA ou Prophet dans ce cas. darts propose aussi des modèles statistiques (ExponentialSmoothing, ARIMA) utilisables sur petits volumes.
+:::</p>
 
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
+<p><strong>Situation réelle : EDF, prévision de production éolienne multivariée</strong></p>
 
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
+<p>EDF exploite un parc éolien réparti sur tout le territoire. La production de chaque éolienne dépend de la vitesse du vent, de la direction, de la température (densité de l'air), et de l'état de maintenance. Prévoir la production à J+2 est essentiel pour équilibrer le réseau : une erreur de 10% sur 5 GW d'éolien représente 500 MW à compenser en urgence. darts permet de construire un modèle TFT multivarié qui ingère simultanément la météo prévue (covariate future connue) et l'historique de production, surpassant les modèles univariés de 15 à 20% sur l'erreur de prévision.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence principale entre darts et Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">darts gère les séries multivariées nativement et propose des modèles deep learning (N-BEATS, TFT). Prophet est univarié et conçu pour la simplicité d'usage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que N-BEATS ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un réseau de neurones profond pour séries temporelles dont l'architecture force la décomposition explicite tendance/saisonnalité. Interprétable et performant sur longues séries.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi normaliser les données avant NBEATSModel ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les réseaux de neurones sont sensibles aux échelles. Sans normalisation, des valeurs de production en GWh (milliers) écraseraient les gradients et bloqueraient l'apprentissage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand darts s'impose face à Prophet ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Séries multivariées (plusieurs KPIs liés), très longues séries (> 5 ans quotidien), besoin d'intervalles de confiance calibrés statistiquement, ou besoin de benchmarker plusieurs architectures sur le même problème.</p></div></div></div></div></div>
 
 <hr />
-
-<h2 id="séries-temporelles">Séries temporelles</h2>
-
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
-
-<ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
-</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

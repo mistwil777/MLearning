@@ -1,0 +1,490 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréMétriques de tâche — Définir ce que "réussir" veut dire pou</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#deeee3;--ink2:#8fb89a;--ink3:#5e876a;
+  --blue:#2db87a;--violet:#e8830a;--aqua:#17c49a;
+  --yellow:#e8c400;--red:#e66767;--orange:#e8830a;
+  --blue-bg:rgba(45,184,122,.15);--violet-bg:rgba(232,131,10,.15);
+  --aqua-bg:rgba(23,196,154,.14);--yellow-bg:rgba(232,196,0,.13);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(232,131,10,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:240px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:28px 14px}
+.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px}
+.toc a:hover{color:var(--ink1);background:var(--s2)}
+.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
+.toc a.h3{padding-left:22px}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.main{flex:1;max-width:860px;padding:52px 44px 120px;min-width:0}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(45,184,122,.22) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(232,131,10,.15) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(45,184,122,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--orange) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body><div class="layout">
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Métriques de tâche — <em>Définir ce que "réussir" veut dire pour un agent</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+
+<hr />
+
+<h2 id="définition">Définition</h2>
+
+<p>Une <strong>métrique de tâche</strong> est une mesure quantitative qui indique si un agent a accompli ce qu'on lui demandait — pas si sa réponse semble bien, mais si elle est correcte selon un critère objectif et vérifiable.</p>
+
+<p>La distinction est fondamentale : une réponse peut paraître fluide, polie, bien formulée, et être complètement fausse sur le fond. Sans métrique de tâche, on mesure la forme, pas le résultat.</p>
+
+<hr />
+
+<p>:::situation
+<strong>Capgemini, 2024 — Agent de traitement de contrats</strong></p>
+
+<p>L'équipe déploie un agent qui extrait les clauses de résiliation de contrats clients et les classe (résiliation unilatérale, résiliation pour faute, résiliation amiable). En démo, l'agent répond avec assurance. En production, les juristes remontent des erreurs de classification tous les jours. Le problème : l'évaluation avait été faite "à l'œil" — un ingénieur lisait 20 sorties et les trouvait cohérentes. Il n'y avait pas de métrique de tâche définie.
+:::</p>
+
+<hr />
+
+<h2 id="le-problème-évaluer-sans-critère-cest-ne-pas-évaluer">Le problème : évaluer sans critère c'est ne pas évaluer</h2>
+
+<p>:::problem
+<strong>Avant — évaluation subjective</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Ce qu&#39;on faisait (et ce que tout le monde fait au début)</span>
+<span class="n">responses</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">test_contracts</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>  <span class="c1"># on lit, ça &quot;semble bien&quot;</span>
+
+<span class="c1"># Résultat : 0 % de confiance sur le comportement en production</span>
+<span class="c1"># On ne sait pas ce qu&#39;on ne sait pas</span>
+</code></pre>
+</div>
+
+<p>Le problème n'est pas la mauvaise volonté — c'est l'absence de ground truth (vérité terrain) et de critère de succès explicite. Sans ça, impossible de :
+- Comparer deux versions de l'agent
+- Détecter une régression après une modification du prompt
+- Savoir si le modèle sous-jacent a changé de comportement
+:::</p>
+
+<hr />
+
+<h2 id="les-trois-familles-de-métriques-de-tâche">Les trois familles de métriques de tâche</h2>
+
+<div class="mindmap-svg"><button class="mindmap-fs-btn" onclick="toggleMindmapFS(this)" title="Plein écran">&#x26F6;</button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Connecteurs -->
+  <path d="M550,60 C550,100 200,100 200,140" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,60 L550,140" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+  <path d="M550,60 C550,100 900,100 900,140" fill="none" stroke="#4a4360" stroke-width="1.5"/>
+
+  <!-- Famille 1 vers enfants -->
+  <path d="M200,175 C200,215 100,215 100,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M200,175 C200,215 200,215 200,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M200,175 C200,215 310,215 310,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <!-- Famille 2 vers enfants -->
+  <path d="M550,175 C550,215 460,215 460,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M550,175 C550,215 550,215 550,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M550,175 C550,215 650,215 650,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <!-- Famille 3 vers enfants -->
+  <path d="M900,175 C900,215 800,215 800,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M900,175 C900,215 900,215 900,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+  <path d="M900,175 C900,215 1000,215 1000,250" fill="none" stroke="#4a4360" stroke-width="1.2"/>
+
+  <!-- ROOT -->
+  <rect x="350" y="30" width="400" height="44" rx="22" fill="rgba(57,135,229,.15)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="550" y="57" text-anchor="middle" fill="#3987e5" font-size="14" font-weight="800">Métriques de tâche</text>
+
+  <!-- Famille 1 -->
+  <rect x="100" y="140" width="200" height="38" rx="19" fill="rgba(27,175,122,.15)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="200" y="163" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">Résultat final</text>
+
+  <!-- Famille 2 -->
+  <rect x="400" y="140" width="300" height="38" rx="19" fill="rgba(144,133,233,.15)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="550" y="163" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">Processus / Actions</text>
+
+  <!-- Famille 3 -->
+  <rect x="750" y="140" width="300" height="38" rx="19" fill="rgba(232,166,0,.15)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="900" y="163" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="700">Contraintes opérationnelles</text>
+
+  <!-- Enfants famille 1 -->
+  <rect x="30" y="250" width="140" height="34" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="100" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Exactitude</text>
+
+  <rect x="130" y="250" width="140" height="34" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="200" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Taux de complétion</text>
+
+  <rect x="238" y="250" width="140" height="34" rx="8" fill="rgba(27,175,122,.08)" stroke="#1baf7a" stroke-width="1"/>
+  <text x="308" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Qualité métier</text>
+
+  <!-- Enfants famille 2 -->
+  <rect x="388" y="250" width="140" height="34" rx="8" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1"/>
+  <text x="458" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Nb d'étapes</text>
+
+  <rect x="480" y="250" width="140" height="34" rx="8" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1"/>
+  <text x="550" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Taux d'erreur outil</text>
+
+  <rect x="580" y="250" width="140" height="34" rx="8" fill="rgba(144,133,233,.08)" stroke="#9085e9" stroke-width="1"/>
+  <text x="650" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Boucles inutiles</text>
+
+  <!-- Enfants famille 3 -->
+  <rect x="728" y="250" width="140" height="34" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="798" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Latence p50/p95</text>
+
+  <rect x="828" y="250" width="140" height="34" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="898" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Coût par appel</text>
+
+  <rect x="928" y="250" width="140" height="34" rx="8" fill="rgba(232,166,0,.08)" stroke="#e8a600" stroke-width="1"/>
+  <text x="998" y="271" text-anchor="middle" fill="#c8c0d8" font-size="11">Nb tokens consommés</text>
+
+  <!-- Exemples concrets en bas -->
+  <rect x="80" y="330" width="940" height="100" rx="10" fill="rgba(57,135,229,.06)" stroke="rgba(57,135,229,.2)" stroke-width="1"/>
+  <text x="550" y="352" text-anchor="middle" fill="#3987e5" font-size="11" font-weight="700">EXEMPLES CONCRETS</text>
+  <text x="200" y="375" text-anchor="middle" fill="#c8c0d8" font-size="11">Résultat final</text>
+  <text x="200" y="393" text-anchor="middle" fill="#8f8a9e" font-size="10">"l'agent a classé correctement</text>
+  <text x="200" y="408" text-anchor="middle" fill="#8f8a9e" font-size="10">87 % des contrats"</text>
+  <text x="550" y="375" text-anchor="middle" fill="#c8c0d8" font-size="11">Processus</text>
+  <text x="550" y="393" text-anchor="middle" fill="#8f8a9e" font-size="10">"l'agent utilise en moyenne</text>
+  <text x="550" y="408" text-anchor="middle" fill="#8f8a9e" font-size="10">3,2 appels d'outil par tâche"</text>
+  <text x="900" y="375" text-anchor="middle" fill="#c8c0d8" font-size="11">Contraintes</text>
+  <text x="900" y="393" text-anchor="middle" fill="#8f8a9e" font-size="10">"p95 latence = 4,1 s,</text>
+  <text x="900" y="408" text-anchor="middle" fill="#8f8a9e" font-size="10">coût moyen = 0,02 €/requête"</text>
+</svg></div>
+
+<hr />
+
+<h2 id="comment-ça-marche-construire-ses-métriques-de-tâche">Comment ça marche — construire ses métriques de tâche</h2>
+
+<h3 id="étape-1-construire-un-dataset-de-test-avec-ground-truth">Étape 1 — Construire un dataset de test avec ground truth</h3>
+
+<p>La <strong>ground truth</strong> (vérité terrain) est la réponse correcte connue à l'avance, annotée par un humain ou générée à partir de données réelles.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># dataset de test : liste de cas avec la réponse attendue</span>
+<span class="n">TEST_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Extrait la clause de résiliation de ce contrat : [...texte...]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;résiliation_unilatérale&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expected_délai_préavis_jours&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Extrait la clause de résiliation de ce contrat : [...texte...]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;résiliation_pour_faute&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expected_délai_préavis_jours&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="c1"># ... minimum 50-100 cas pour avoir des résultats fiables</span>
+<span class="p">]</span>
+</code></pre>
+</div>
+
+<p>:::callout-insight
+<strong>Pourquoi au moins 50 cas ?</strong></p>
+
+<p>Avec 20 cas, un écart de 1 erreur représente 5 points de pourcentage. Vos métriques ont une variance trop haute pour être fiables. Avec 100 cas, 1 erreur = 1 point. C'est le seuil minimal pour détecter une régression entre deux versions.
+:::</p>
+
+<h3 id="étape-2-définir-la-fonction-de-succès">Étape 2 — Définir la fonction de succès</h3>
+
+<p>Pour chaque tâche, la question à poser : <strong>qu'est-ce qu'une réponse correcte, formalisable en code ?</strong></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_correct</span><span class="p">(</span><span class="n">agent_output</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Succès = catégorie correcte ET délai dans ±2 jours.</span>
+<span class="sd">    Partial credit non géré ici — on commence par du binaire.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">category_ok</span> <span class="o">=</span> <span class="n">agent_output</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;expected_category&quot;</span><span class="p">]</span>
+    <span class="n">delay_ok</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+        <span class="n">agent_output</span><span class="p">[</span><span class="s2">&quot;délai_préavis_jours&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;expected_délai_préavis_jours&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">category_ok</span> <span class="ow">and</span> <span class="n">delay_ok</span>
+</code></pre>
+</div>
+
+<p>:::warning
+<strong>Le piège du critère trop strict ou trop lâche</strong></p>
+
+<p>Trop strict : <code>agent_output["text"] == expected["text"]</code> — une virgule différente = échec. L'agent peut être juste sur le fond et échouer à 100%.</p>
+
+<p>Trop lâche : <code>any(word in agent_output for word in expected_keywords)</code> — l'agent peut mentionner le bon mot par hasard sans avoir compris.</p>
+
+<p>La bonne pratique : définir d'abord ce qui compte métier (ici : catégorie + délai), pas ce qui est facile à mesurer.
+:::</p>
+
+<h3 id="étape-3-la-boucle-dévaluation-complète">Étape 3 — La boucle d'évaluation complète</h3>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EvalResult</span><span class="p">:</span>
+    <span class="n">total</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">correct</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">latencies_ms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p50_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latencies_ms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">s</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p95_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latencies_ms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.95</span><span class="p">)]</span> <span class="k">if</span> <span class="n">s</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_eval</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">test_cases</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EvalResult</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">EvalResult</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">test_cases</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+            <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">latencies_ms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latency_ms</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_correct</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">case</span><span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">correct</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][:</span><span class="mi">80</span><span class="p">],</span>
+                    <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;expected_category&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;got&quot;</span><span class="p">:</span> <span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">),</span>
+                <span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][:</span><span class="mi">80</span><span class="p">],</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="c1"># Utilisation</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_eval</span><span class="p">(</span><span class="n">my_agent</span><span class="p">,</span> <span class="n">TEST_CASES</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy : </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latence p50 : </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">p50_ms</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms | p95 : </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">p95_ms</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreurs : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">total</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="étape-4-suivre-lévolution-dans-le-temps">Étape 4 — Suivre l'évolution dans le temps</h3>
+
+<p>Une métrique prise une fois n'a aucune valeur. La valeur vient de la <strong>comparaison entre versions</strong>.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_eval</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvalResult</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval_history.jsonl&quot;</span><span class="p">):</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">accuracy</span><span class="p">,</span>
+        <span class="s2">&quot;p50_ms&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">p50_ms</span><span class="p">,</span>
+        <span class="s2">&quot;p95_ms&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">p95_ms</span><span class="p">,</span>
+        <span class="s2">&quot;n_errors&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">),</span>
+        <span class="s2">&quot;n_total&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">total</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Après chaque modification du prompt ou du modèle :</span>
+<span class="n">save_eval</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v1.2-prompt-refacto&quot;</span><span class="p">)</span>
+
+<span class="c1"># Détecter une régression : si accuracy baisse de plus de 3 points → bloquer le déploiement</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_regression</span><span class="p">(</span><span class="n">current</span><span class="p">:</span> <span class="n">EvalResult</span><span class="p">,</span> <span class="n">baseline_accuracy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.03</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">regression</span> <span class="o">=</span> <span class="n">baseline_accuracy</span> <span class="o">-</span> <span class="n">current</span><span class="o">.</span><span class="n">accuracy</span>
+    <span class="k">if</span> <span class="n">regression</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠ Régression détectée : </span><span class="si">{</span><span class="n">regression</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> de dégradation&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="cas-réel-complet-agent-de-qualification-de-leads-bnp-paribas-leasing">Cas réel complet — Agent de qualification de leads (BNP Paribas Leasing)</h2>
+
+<p>:::situation
+<strong>Contexte</strong> : un agent reçoit des fiches de prospects entrants (secteur d'activité, taille, CA déclaré, besoin exprimé) et doit les qualifier en trois catégories — chaud, tiède, froid — pour prioriser les appels commerciaux.</p>
+
+<p><strong>Enjeu métier</strong> : un faux négatif (prospect chaud classé froid) = opportunité perdue. Un faux positif (prospect froid classé chaud) = temps commercial gaspillé. Les deux erreurs n'ont pas le même coût.
+:::</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Ici la métrique de tâche doit refléter l&#39;asymétrie des coûts</span>
+<span class="c1"># Manquer un prospect chaud coûte 5x plus que appeler un froid inutilement</span>
+
+<span class="n">COST_MATRIX</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># (réel, prédit) : coût</span>
+    <span class="p">(</span><span class="s2">&quot;chaud&quot;</span><span class="p">,</span> <span class="s2">&quot;froid&quot;</span><span class="p">):</span>  <span class="mf">5.0</span><span class="p">,</span>   <span class="c1"># faux négatif : très coûteux</span>
+    <span class="p">(</span><span class="s2">&quot;chaud&quot;</span><span class="p">,</span> <span class="s2">&quot;tiède&quot;</span><span class="p">):</span>  <span class="mf">2.0</span><span class="p">,</span>   <span class="c1"># faux négatif partiel</span>
+    <span class="p">(</span><span class="s2">&quot;tiède&quot;</span><span class="p">,</span> <span class="s2">&quot;chaud&quot;</span><span class="p">):</span>  <span class="mf">0.5</span><span class="p">,</span>   <span class="c1"># faux positif léger</span>
+    <span class="p">(</span><span class="s2">&quot;froid&quot;</span><span class="p">,</span> <span class="s2">&quot;chaud&quot;</span><span class="p">):</span>  <span class="mf">1.0</span><span class="p">,</span>   <span class="c1"># faux positif : temps gaspillé</span>
+    <span class="p">(</span><span class="s2">&quot;chaud&quot;</span><span class="p">,</span> <span class="s2">&quot;chaud&quot;</span><span class="p">):</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># correct</span>
+    <span class="p">(</span><span class="s2">&quot;tiède&quot;</span><span class="p">,</span> <span class="s2">&quot;tiède&quot;</span><span class="p">):</span>  <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;froid&quot;</span><span class="p">,</span> <span class="s2">&quot;froid&quot;</span><span class="p">):</span>  <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_cost</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">pred</span><span class="p">,</span> <span class="n">true</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
+        <span class="n">total_cost</span> <span class="o">+=</span> <span class="n">COST_MATRIX</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total_cost</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Résultat : on optimise le coût pondéré, pas l&#39;accuracy brute</span>
+<span class="c1"># Un modèle à 85% accuracy mais qui rate tous les prospects chauds</span>
+<span class="c1"># sera battu par un modèle à 78% qui ne rate aucun chaud.</span>
+</code></pre>
+</div>
+
+<p>:::callout-insight
+<strong>L'accuracy n'est presque jamais la bonne métrique</strong></p>
+
+<p>Pour un agent de qualification leads où 5 % sont "chauds" : un agent qui répond "froid" à tout le monde a 95 % d'accuracy. C'est le <strong>problème des classes déséquilibrées</strong>. La métrique juste ici est le recall sur les "chauds" (combien de prospects chauds on capture) ou le coût pondéré comme ci-dessus.
+:::</p>
+
+<hr />
+
+<h2 id="quand-utiliser-des-métriques-de-tâche">Quand utiliser des métriques de tâche</h2>
+
+<ul>
+<li>Dès qu'on a un agent en production ou en approche de production</li>
+<li>Avant de modifier un prompt, un modèle ou une configuration</li>
+<li>Pour comparer deux agents sur le même problème</li>
+<li>Comme condition de déploiement : "ne passe en prod que si accuracy ≥ seuil X"</li>
+</ul>
+
+<h2 id="quand-ne-pas-sy-fier-seul">Quand ne pas s'y fier seul</h2>
+
+<ul>
+<li>Quand la tâche est ouverte (génération créative, conversation libre) — les métriques de tâche binaires ne s'appliquent pas, il faut un LLM-as-judge</li>
+<li>Quand le dataset de test n'est pas représentatif de la vraie distribution de production</li>
+<li>Quand la ground truth a été annotée par une seule personne — l'accord inter-annotateurs doit être vérifié (kappa de Cohen &gt; 0.7 est le seuil usuel)</li>
+</ul>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une métrique de tâche ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une mesure quantitative qui indique si un agent a <strong>accompli sa tâche</strong> selon un critère objectif — pas si sa réponse semble bien, mais si elle est <strong>correcte sur le fond</strong>.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un dataset de test a-t-il besoin d'au moins 50-100 cas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Avec 20 cas, 1 erreur = <strong>5 points de variance</strong>. Les métriques sont trop instables pour détecter une régression. Avec 100 cas, 1 erreur = <strong>1 point</strong> — seuil minimal pour comparer deux versions.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la ground truth ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">La <strong>réponse correcte connue à l'avance</strong>, annotée par un humain ou issue de données réelles vérifiées. Sans ground truth, on ne peut pas calculer de métrique de tâche.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi l'accuracy n'est-elle presque jamais la bonne métrique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Sur des classes déséquilibrées, un agent qui répond toujours "non" peut avoir <strong>95 % d'accuracy</strong> si 95 % des cas sont négatifs. Il faut des métriques adaptées à l'enjeu métier : recall, F1, ou coût pondéré.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la régression dans le contexte de l'évaluation d'agent ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une <strong>dégradation de performance</strong> entre deux versions — détectée en comparant les métriques avant/après modification. Exemple : l'accuracy passe de 87 % à 83 % après un changement de prompt.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

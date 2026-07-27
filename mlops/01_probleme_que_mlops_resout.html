@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréProgramme ML — Du concept à la productionProgramme7 jours3-</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréLe problème que MLOps résoutProgramme7 jours3-4h/jour</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
@@ -132,378 +132,138 @@ details>*:not(summary){padding:0 20px 20px}
 .mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body><div class="layout">
-<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Programme ML — <em>Du concept à la production</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div></nav><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Le problème que MLOps résout</h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
-<blockquote>
-  <p><strong>Objectif</strong> : Être capable d'architecturer une solution IA fiable pour n'importe quel client — ML classique, deep learning, GenAI ou hybride.</p>
-  
-  <p><strong>Philosophie</strong> : Chaque concept prend le temps qu'il faut. Un sujet difficile mérite plusieurs sessions. Aucune contrainte de durée.</p>
-</blockquote>
+<p><strong>Définition</strong> : MLOps (Machine Learning Operations) désigne l'ensemble des pratiques, outils et processus qui permettent de faire passer un modèle ML d'un notebook de développement à un système fiable et maintenable en production. C'est la jonction entre le travail du data scientist (construire un modèle) et celui de l'ingénieur (faire tourner un système en continu).</p>
 
-<hr />
+<p>Sans MLOps, un modèle ML reste une expérience de laboratoire. Avec MLOps, il devient un service.</p>
 
-<h2 id="fondations">Fondations</h2>
+<p><strong>La vallée de la mort</strong></p>
 
-<p>Avant de toucher un algorithme : comprendre le paysage, quand utiliser le ML, et comment décider.</p>
+<p>Selon les études sectorielles, entre 70 et 80% des modèles ML développés ne passent jamais en production. Les raisons ne sont presque jamais techniques — le modèle fonctionne. Elles sont organisationnelles et opérationnelles :</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi le ML existe</td>
-  <td><a href="fondations/01_pourquoi_le_ml_existe.html">fondations/01</a></td>
-</tr>
-<tr>
-  <td>Quand utiliser le ML</td>
-  <td><a href="fondations/02_quand_utiliser_le_ml.html">fondations/02</a></td>
-</tr>
-<tr>
-  <td>Taxonomie du ML — la carte complète</td>
-  <td><a href="fondations/03_taxonomie_ml.html">fondations/03</a></td>
-</tr>
-<tr>
-  <td>La carte des bibliothèques Python</td>
-  <td><a href="fondations/04_bibliotheques_python.html">fondations/04</a></td>
-</tr>
-<tr>
-  <td>Le framework de décision client</td>
-  <td><a href="fondations/05_framework_de_decision.html">fondations/05</a></td>
-</tr>
-<tr>
-  <td>Ce que le ML ne fait pas</td>
-  <td><a href="fondations/06_ce_que_le_ml_ne_fait_pas.html">fondations/06</a></td>
-</tr>
-</tbody>
-</table>
+<div class="mindmap">Ce qui marche en notebook :
+─────────────────────────────────────────────────────
+✓ Les données sont propres (le data scientist les a nettoyées)
+✓ L'environnement est fixe (Python 3.11, pandas 2.0, exact)
+✓ Les prédictions sont rapides (200 lignes de test)
+✓ Si ça plante, on relance manuellement
 
-<hr />
+Ce qui arrive en production :
+─────────────────────────────────────────────────────
+✗ Les données arrivent en flux, avec des formats inattendus
+✗ Le serveur de prod a une version différente de numpy
+✗ Le modèle doit répondre en 50ms sur 10 000 requêtes/heure
+✗ Si ça plante à 3h du matin, personne ne le sait
+</div>
 
-<h2 id="régression">Régression</h2>
+<p><strong>Situation réelle : Société Générale, modèle de scoring "en production"</strong></p>
 
-<p>Prédire une valeur numérique — du cas simple à la régularisation.</p>
+<p>Une équipe data de la Société Générale a développé un excellent modèle de scoring de crédit. Il est "en production" depuis 8 mois. En réalité : chaque lundi matin, un data scientist exporte les prédictions du modèle dans un fichier Excel, qu'il envoie par email à l'équipe crédit, qui copie-colle les valeurs dans le système interne. Si le data scientist est en vacances, le scoring n'est pas fait. Si le format du fichier source change, le modèle plante silencieusement. C'est ce que MLOps est censé rendre impossible.</p>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Régression linéaire — ce qu'elle fait vraiment</td>
-  <td><a href="regression/01_regression_lineaire.html">regression/01</a></td>
-</tr>
-<tr>
-  <td>Overfitting — le problème central</td>
-  <td><a href="regression/02_overfitting.html">regression/02</a></td>
-</tr>
-<tr>
-  <td>Ridge (L2) — pénaliser les grands coefficients</td>
-  <td><a href="regression/03_ridge_l2.html">regression/03</a></td>
-</tr>
-<tr>
-  <td>Lasso (L1) — sélection automatique de features</td>
-  <td><a href="regression/04_lasso_l1.html">regression/04</a></td>
-</tr>
-<tr>
-  <td>Régression polynomiale — modéliser les courbes</td>
-  <td><a href="regression/05_regression_polynomiale.html">regression/05</a></td>
-</tr>
-<tr>
-  <td>Choisir entre les modèles de régression</td>
-  <td><a href="regression/06_choisir_entre_modeles.html">regression/06</a></td>
-</tr>
-<tr>
-  <td>Régression logistique — classification binaire</td>
-  <td><a href="regression/07_regression_logistique.html">regression/07</a></td>
-</tr>
-</tbody>
-</table>
+<p><strong>Le cycle de vie d'un modèle ML</strong></p>
 
-<hr />
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">1. DÉVELOPPEMENT
+   Expérimentation → feature engineering → entraînement → évaluation
+   Outils : Jupyter, sklearn, XGBoost, MLflow tracking
 
-<h2 id="classification">Classification</h2>
+2. VALIDATION
+   Tests de performance, tests de robustesse, validation métier
+   Outils : pytest, MLflow, comparaison de versions
 
-<p>Prédire une catégorie — les algorithmes incontournables en production.</p>
+3. DÉPLOIEMENT
+   Packager le modèle, l'exposer via une API, gérer les dépendances
+   Outils : FastAPI, Docker, MLflow serving
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Les trois familles d'algorithmes classiques</td>
-  <td><a href="classification/01_trois_familles_algorithmes.html">classification/01</a></td>
-</tr>
-<tr>
-  <td>Arbres de décision et Random Forest</td>
-  <td><a href="classification/02_arbres_random_forest.html">classification/02</a></td>
-</tr>
-<tr>
-  <td>XGBoost et gradient boosting</td>
-  <td><a href="classification/03_xgboost_gradient_boosting.html">classification/03</a></td>
-</tr>
-</tbody>
-</table>
+4. MONITORING
+   Surveiller les performances réelles, détecter la dérive
+   Outils : Evidently, Prometheus, dashboards métier
 
-<hr />
+5. RÉ-ENTRAÎNEMENT
+   Déclencher automatiquement quand les performances chutent
+   Outils : Airflow, Prefect, MLflow registry
+</code></pre></div>
 
-<h2 id="pipeline-amp-évaluation">Pipeline &amp; Évaluation</h2>
+<p>:::callout-insight
+MLOps n'est pas une technologie — c'est une discipline. On peut faire du MLOps correct avec des outils simples (MLflow + FastAPI + un cron job), ou du MLOps défaillant avec une stack Kubernetes/Kubeflow mal configurée. Ce qui compte : la traçabilité, la reproductibilité, et l'automatisation des tâches répétitives.
+:::</p>
 
-<p>Assembler un pipeline propre et mesurer ce qui compte vraiment.</p>
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que MLOps et pourquoi ça existe ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">MLOps = pratiques + outils pour passer un modèle du notebook à la production. Ça existe parce que <strong>70-80% des modèles ne passent jamais en prod</strong> — non par problème technique, mais par manque de traçabilité, de reproductibilité et d'automatisation.</p></div></div></div>
 
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pipeline sklearn complet</td>
-  <td><a href="pipeline_evaluation/01_pipeline_sklearn_complet.html">pipeline_evaluation/01</a></td>
-</tr>
-<tr>
-  <td>Métriques — choisir la bonne selon le problème</td>
-  <td><a href="pipeline_evaluation/02_metriques_choisir_la_bonne.html">pipeline_evaluation/02</a></td>
-</tr>
-</tbody>
-</table>
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Cite 3 raisons concrètes pour lesquelles un modèle qui marche en notebook échoue en production.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1.</strong> Les données réelles arrivent en flux avec des formats inattendus. <strong>2.</strong> L'environnement de prod a des versions de bibliothèques différentes. <strong>3.</strong> Pas de monitoring — le modèle peut planter ou dériver pendant des semaines sans que personne le sache.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelles sont les 5 étapes du cycle de vie d'un modèle ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1.</strong> Développement (expérimentation) → <strong>2.</strong> Validation (tests) → <strong>3.</strong> Déploiement (API + packaging) → <strong>4.</strong> Monitoring (surveillance en prod) → <strong>5.</strong> Ré-entraînement (automatisé sur dérive détectée).</p></div></div></div></div></div>
+
+<div style="margin:24px 0;background:var(--s1,#1e1c24);border:1px solid #2e2b3a;border-radius:12px;padding:20px;overflow-x:auto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" font-family="'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Titre -->
+  <text x="300" y="20" text-anchor="middle" fill="#9e95b5" font-size="13" font-weight="700">Cycle de vie d'un modèle ML</text>
+
+  <!-- 5 étapes disposées en pentagone autour du centre (300, 210) -->
+  <!-- Angles : haut=270°, puis +72° = 342°, 54°, 126°, 198° -->
+  <!-- Positions centres (rayon=140) :
+    1. Développement : 300+140*cos(270°)=300, 210+140*sin(270°)=70 → (300, 70)
+    2. Validation     : 300+140*cos(342°)=433, 210+140*sin(342°)=167 → (433, 167)
+    3. Déploiement    : 300+140*cos(54°) =382, 210+140*sin(54°) =323 → (382, 323)
+    4. Monitoring     : 300+140*cos(126°)=218, 210+140*sin(126°)=323 → (218, 323)
+    5. Ré-entraîn.    : 300+140*cos(198°)=167, 210+140*sin(198°)=167 → (167, 167)
+  -->
+
+  <!-- Flèches entre boîtes (arc de cercle approximé par des lignes courbes) -->
+  <!-- 1→2 Développement→Validation -->
+  <path d="M 355,75 Q 430,95 420,155" fill="none" stroke="#3987e5" stroke-width="1.5" marker-end="url(#arr-cycle)"/>
+  <!-- 2→3 Validation→Déploiement -->
+  <path d="M 445,210 Q 455,270 425,310" fill="none" stroke="#9085e9" stroke-width="1.5" marker-end="url(#arr-cycle)"/>
+  <!-- 3→4 Déploiement→Monitoring -->
+  <path d="M 355,340 Q 300,360 245,340" fill="none" stroke="#1baf7a" stroke-width="1.5" marker-end="url(#arr-cycle)"/>
+  <!-- 4→5 Monitoring→Ré-entraînement -->
+  <path d="M 175,310 Q 145,270 155,210" fill="none" stroke="#e8a600" stroke-width="1.5" marker-end="url(#arr-cycle)"/>
+  <!-- 5→1 Ré-entraînement→Développement -->
+  <path d="M 175,145 Q 200,90 245,78" fill="none" stroke="#e66767" stroke-width="1.5" marker-end="url(#arr-cycle)"/>
+
+  <!-- Boîte 1 : Développement (bleu) -->
+  <rect x="240" y="38" width="120" height="60" rx="10" fill="rgba(57,135,229,0.2)" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="300" y="62" text-anchor="middle" fill="#3987e5" font-size="12" font-weight="700">1. Développement</text>
+  <text x="300" y="76" text-anchor="middle" fill="#9e95b5" font-size="9">Expérimentation</text>
+  <text x="300" y="88" text-anchor="middle" fill="#716989" font-size="8">Jupyter · sklearn · MLflow</text>
+
+  <!-- Boîte 2 : Validation (violet) -->
+  <rect x="375" y="140" width="115" height="60" rx="10" fill="rgba(144,133,233,0.2)" stroke="#9085e9" stroke-width="1.5"/>
+  <text x="432" y="164" text-anchor="middle" fill="#9085e9" font-size="12" font-weight="700">2. Validation</text>
+  <text x="432" y="178" text-anchor="middle" fill="#9e95b5" font-size="9">Tests &amp; perf</text>
+  <text x="432" y="190" text-anchor="middle" fill="#716989" font-size="8">pytest · MLflow</text>
+
+  <!-- Boîte 3 : Déploiement (aqua) -->
+  <rect x="325" y="298" width="115" height="60" rx="10" fill="rgba(27,175,122,0.2)" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="382" y="322" text-anchor="middle" fill="#1baf7a" font-size="12" font-weight="700">3. Déploiement</text>
+  <text x="382" y="336" text-anchor="middle" fill="#9e95b5" font-size="9">API + packaging</text>
+  <text x="382" y="348" text-anchor="middle" fill="#716989" font-size="8">FastAPI · Docker</text>
+
+  <!-- Boîte 4 : Monitoring (yellow) -->
+  <rect x="160" y="298" width="115" height="60" rx="10" fill="rgba(232,166,0,0.18)" stroke="#e8a600" stroke-width="1.5"/>
+  <text x="217" y="322" text-anchor="middle" fill="#e8a600" font-size="12" font-weight="700">4. Monitoring</text>
+  <text x="217" y="336" text-anchor="middle" fill="#9e95b5" font-size="9">Surveillance dérive</text>
+  <text x="217" y="348" text-anchor="middle" fill="#716989" font-size="8">Evidently · dashboards</text>
+
+  <!-- Boîte 5 : Ré-entraînement (red) -->
+  <rect x="110" y="140" width="125" height="60" rx="10" fill="rgba(230,103,103,0.2)" stroke="#e66767" stroke-width="1.5"/>
+  <text x="172" y="162" text-anchor="middle" fill="#e66767" font-size="11" font-weight="700">5. Ré-entraînement</text>
+  <text x="172" y="176" text-anchor="middle" fill="#9e95b5" font-size="9">Auto sur dérive détectée</text>
+  <text x="172" y="188" text-anchor="middle" fill="#716989" font-size="8">Airflow · Prefect</text>
+
+  <!-- Marqueur flèche -->
+  <defs>
+    <marker id="arr-cycle" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#716989"/>
+    </marker>
+  </defs>
+
+  <!-- Centre : boucle -->
+  <text x="300" y="205" text-anchor="middle" fill="#716989" font-size="10" font-style="italic">boucle continue</text>
+  <circle cx="300" cy="215" r="18" fill="none" stroke="#2e2b3a" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="300" y="220" text-anchor="middle" fill="#716989" font-size="14">↻</text>
+</svg>
+</div>
 
 <hr />
-
-<h2 id="séries-temporelles">Séries temporelles</h2>
-
-<p>Un cas à part : les données sont ordonnées dans le temps.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les ST sont un cas à part</td>
-  <td><a href="series_temporelles/01_pourquoi_cas_a_part.html">series_temporelles/01</a></td>
-</tr>
-<tr>
-  <td>Décomposition — tendance, saisonnalité, résidus</td>
-  <td><a href="series_temporelles/02_decomposition_tendance_saisonnalite.html">series_temporelles/02</a></td>
-</tr>
-<tr>
-  <td>Modèles statistiques classiques — ARIMA</td>
-  <td><a href="series_temporelles/03_statsmodels_arima.html">series_temporelles/03</a></td>
-</tr>
-<tr>
-  <td>Prophet</td>
-  <td><a href="series_temporelles/04_prophet.html">series_temporelles/04</a></td>
-</tr>
-<tr>
-  <td>Darts — la boîte à outils complète</td>
-  <td><a href="series_temporelles/05_darts.html">series_temporelles/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer une prévision temporelle</td>
-  <td><a href="series_temporelles/06_evaluer_une_prevision.html">series_temporelles/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="deep-learning">Deep Learning</h2>
-
-<p>Réseaux de neurones, transfer learning, HuggingFace — quand et comment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Ce qu'est vraiment un réseau de neurones</td>
-  <td><a href="deep_learning/01_ce_quest_un_reseau_de_neurones.html">deep_learning/01</a></td>
-</tr>
-<tr>
-  <td>Quand le deep learning s'impose</td>
-  <td><a href="deep_learning/02_quand_deep_learning_simpose.html">deep_learning/02</a></td>
-</tr>
-<tr>
-  <td>Transfer Learning</td>
-  <td><a href="deep_learning/03_transfer_learning.html">deep_learning/03</a></td>
-</tr>
-<tr>
-  <td>HuggingFace en profondeur</td>
-  <td><a href="deep_learning/04_huggingface.html">deep_learning/04</a></td>
-</tr>
-<tr>
-  <td>Les architectures clés</td>
-  <td><a href="deep_learning/05_architectures_cles.html">deep_learning/05</a></td>
-</tr>
-<tr>
-  <td>Déployer un modèle PyTorch</td>
-  <td><a href="deep_learning/06_deployer_modele_pytorch.html">deep_learning/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="mlops">MLOps</h2>
-
-<p>Du notebook au système qui tourne en production.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Le problème que MLOps résout</td>
-  <td><a href="mlops/01_probleme_que_mlops_resout.html">mlops/01</a></td>
-</tr>
-<tr>
-  <td>MLflow — tracking, registry, serving</td>
-  <td><a href="mlops/02_mlflow.html">mlops/02</a></td>
-</tr>
-<tr>
-  <td>Data drift et model drift</td>
-  <td><a href="mlops/03_data_drift_model_drift.html">mlops/03</a></td>
-</tr>
-<tr>
-  <td>Orchestration — Airflow et Prefect</td>
-  <td><a href="mlops/04_orchestration_airflow_prefect.html">mlops/04</a></td>
-</tr>
-<tr>
-  <td>Serving — FastAPI et Docker</td>
-  <td><a href="mlops/05_serving_fastapi_docker.html">mlops/05</a></td>
-</tr>
-<tr>
-  <td>Monitoring en production</td>
-  <td><a href="mlops/06_monitoring_production.html">mlops/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="architectures-hybrides">Architectures hybrides</h2>
-
-<p>ML classique + GenAI — comment les assembler intelligemment.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Pourquoi les architectures hybrides</td>
-  <td><a href="architectures_hybrides/01_pourquoi_hybride.html">architectures_hybrides/01</a></td>
-</tr>
-<tr>
-  <td>RAG — le LLM ancré dans des données réelles</td>
-  <td><a href="architectures_hybrides/02_rag.html">architectures_hybrides/02</a></td>
-</tr>
-<tr>
-  <td>Embeddings et vector stores</td>
-  <td><a href="architectures_hybrides/03_embeddings_vector_stores.html">architectures_hybrides/03</a></td>
-</tr>
-<tr>
-  <td>Agents et tool use</td>
-  <td><a href="architectures_hybrides/04_agents_tool_use.html">architectures_hybrides/04</a></td>
-</tr>
-<tr>
-  <td>Pipeline ML classique + LLM</td>
-  <td><a href="architectures_hybrides/05_pipeline_ml_llm.html">architectures_hybrides/05</a></td>
-</tr>
-<tr>
-  <td>Évaluer un système hybride</td>
-  <td><a href="architectures_hybrides/06_evaluer_systeme_hybride.html">architectures_hybrides/06</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="évaluation-des-systèmes-agentiques">Évaluation des systèmes agentiques</h2>
-
-<p>Mesurer rigoureusement ce qu'un agent fait vraiment — LLM-as-judge, red teaming, guardrails.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><em>(À construire)</em></td>
-  <td><a href="evaluation_agentique/index.html">evaluation_agentique/</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="cas-pratiques">Cas pratiques</h2>
-
-<p>Passer d'un brief client flou à une architecture technique argumentée.</p>
-
-<table>
-<thead>
-<tr>
-  <th>Concept</th>
-  <th>Fichier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Méthode — du brief client à l'architecture</td>
-  <td><a href="cas_pratiques/00_methode_brief_vers_architecture.html">cas_pratiques/00</a></td>
-</tr>
-<tr>
-  <td>Cas Fnac — recommandation e-commerce</td>
-  <td><a href="cas_pratiques/01_fnac_recommandation.html">cas_pratiques/01</a></td>
-</tr>
-<tr>
-  <td>Cas Carrefour — ruptures de stock</td>
-  <td><a href="cas_pratiques/02_carrefour_ruptures_stock.html">cas_pratiques/02</a></td>
-</tr>
-<tr>
-  <td>Cas SNCF — réclamations hybride</td>
-  <td><a href="cas_pratiques/03_sncf_reclamations_hybride.html">cas_pratiques/03</a></td>
-</tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="ressources-transversales">Ressources transversales</h2>
-
-<ul>
-<li><a href="decision_framework.html">decision_framework.md</a> — Framework de décision cumulatif</li>
-<li><a href="annexes/index.html">annexes/</a> — Clarifications et compléments</li>
-</ul>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>
