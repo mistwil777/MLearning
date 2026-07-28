@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Programme ML AccéléréLire les résultats d'un modèle — Interpréter ce qu'on voit </title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"><style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0f1a12;--s1:#162019;--s2:#1c2a1f;--s3:#233228;
+  --border:rgba(255,255,255,.08);--border-md:rgba(255,255,255,.14);
+  --ink1:#deeee3;--ink2:#8fb89a;--ink3:#5e876a;
+  --blue:#2db87a;--violet:#e8830a;--aqua:#17c49a;
+  --yellow:#e8c400;--red:#e66767;--orange:#e8830a;
+  --blue-bg:rgba(45,184,122,.15);--violet-bg:rgba(232,131,10,.15);
+  --aqua-bg:rgba(23,196,154,.14);--yellow-bg:rgba(232,196,0,.13);
+  --red-bg:rgba(230,103,103,.16);--orange-bg:rgba(232,131,10,.15);
+  --r:14px;--rs:8px;--rx:5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink1);line-height:1.8;font-size:16px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;min-height:100vh}
+.toc{width:260px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:20px 14px 60px;transition:width .22s ease,opacity .18s ease;display:flex;flex-direction:column}
+.layout.toc-closed .toc{width:0;padding:0;overflow:hidden;opacity:0;border-right:none}
+.toc-links{flex:1;overflow-y:auto;padding-bottom:8px}
+.toc-section{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:16px 10px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-section:first-child{padding-top:6px}
+.toc a.nav-page{display:block;color:var(--ink2);text-decoration:none;font-size:12px;font-weight:500;padding:4px 10px 4px 16px;border-radius:var(--rs);transition:all .15s;line-height:1.4;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc a.nav-page:hover{color:var(--ink1);background:var(--s2)}
+.toc a.nav-page.active{color:var(--blue);background:var(--s2);font-weight:700}
+.toc-sep{height:1px;background:var(--border);margin:14px 8px}
+.toc-close-btn{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center}
+.toc-close-btn button{background:var(--s2);border:1px solid var(--border-md);border-radius:8px;color:var(--ink3);font-size:12px;font-weight:700;padding:6px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.toc-close-btn button:hover{color:var(--ink1);background:var(--s3);border-color:var(--blue)}
+.toc-open-btn{position:fixed;top:16px;left:0;z-index:300;background:var(--s2);border:1px solid var(--border-md);border-left:none;border-radius:0 8px 8px 0;color:var(--ink2);font-size:13px;font-weight:700;padding:8px 10px;cursor:pointer;display:none;align-items:center;transition:all .15s}
+.toc-open-btn:hover{color:var(--ink1);background:var(--s3)}
+.layout.toc-closed .toc-open-btn{display:flex}
+.main{flex:1;padding:52px 64px 120px;min-width:0;max-width:100%}
+.hero{position:relative;border-radius:var(--r);padding:48px 52px;margin-bottom:52px;overflow:hidden;background:var(--s1);border:1px solid var(--border-md)}
+.hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(45,184,122,.22) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-60px;left:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(232,131,10,.15) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--blue-bg);border:1px solid rgba(45,184,122,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%}
+.hero h1{font-size:2.3rem;font-weight:800;line-height:1.15;color:var(--ink1);margin-bottom:16px;border:none;padding:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero-desc{color:var(--ink2);font-size:15.5px;max-width:480px;line-height:1.65}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-tag{background:var(--s2);border:1px solid var(--border-md);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--ink2);font-weight:500}
+h2{font-size:1.45rem;font-weight:800;color:var(--ink1);margin:60px 0 24px;letter-spacing:-.02em;display:flex;align-items:center;gap:14px}
+.h2-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:linear-gradient(135deg,var(--blue) 0%,var(--orange) 100%);border-radius:8px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;padding:0 8px}
+.h2-line{flex:1;height:1px;background:var(--border)}
+h3{font-size:1.05rem;font-weight:700;color:var(--violet);margin:36px 0 14px;letter-spacing:-.01em}
+h4{font-size:.85rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--ink1)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--ink1);font-weight:700}
+ul,ol{padding-left:22px;margin-bottom:16px}
+li{margin-bottom:7px;color:var(--ink1)}
+hr{border:none;border-top:1px solid var(--border);margin:44px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--s2);color:var(--violet);padding:2px 7px;border-radius:var(--rx);border:1px solid var(--border-md)}
+.code-wrap{margin:22px 0}
+.code-label{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--rs) var(--rs) 0 0;position:relative;z-index:1}
+.code-label.before{background:rgba(230,103,103,.15);color:var(--red);border:1px solid rgba(230,103,103,.25);border-bottom:none}
+.code-label.after{background:rgba(27,175,122,.15);color:var(--aqua);border:1px solid rgba(27,175,122,.25);border-bottom:none}
+.code-label.example{background:rgba(57,135,229,.12);color:var(--blue);border:1px solid rgba(57,135,229,.25);border-bottom:none}
+.code-label.shell{background:rgba(232,166,0,.12);color:var(--yellow);border:1px solid rgba(232,166,0,.25);border-bottom:none}
+pre{background:#12111a !important;border:1px solid var(--border-md);border-radius:0 var(--rs) var(--rs) var(--rs);padding:20px 22px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.7}
+pre.before{border-color:rgba(230,103,103,.25)}
+pre.after{border-color:rgba(27,175,122,.25)}
+pre code{background:none !important;border:none !important;padding:0 !important;color:inherit;font-size:inherit}
+.callout{border-radius:var(--r);padding:20px 24px;margin:24px 0;border:1px solid;position:relative;overflow:hidden}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.callout-head{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.callout p{margin-bottom:8px;color:var(--ink1)}.callout p:last-child{margin:0}
+.callout.situation{background:var(--violet-bg);border-color:rgba(144,133,233,.35)}.callout.situation::before{background:var(--violet)}.callout.situation .callout-head{color:var(--violet)}
+.callout.problem{background:var(--red-bg);border-color:rgba(230,103,103,.35)}.callout.problem::before{background:var(--red)}.callout.problem .callout-head{color:var(--red)}
+.callout.rule{background:var(--aqua-bg);border-color:rgba(27,175,122,.30)}.callout.rule::before{background:var(--aqua)}.callout.rule .callout-head{color:var(--aqua)}
+.callout.insight{background:var(--blue-bg);border-color:rgba(57,135,229,.35)}.callout.insight::before{background:var(--blue)}.callout.insight .callout-head{color:var(--blue)}
+.callout.warning{background:var(--yellow-bg);border-color:rgba(232,166,0,.32)}.callout.warning::before{background:var(--yellow)}.callout.warning .callout-head{color:var(--yellow)}
+.callout.limit{background:var(--orange-bg);border-color:rgba(217,89,38,.32)}.callout.limit::before{background:var(--orange)}.callout.limit .callout-head{color:var(--orange)}
+blockquote{background:var(--blue-bg);border:1px solid rgba(57,135,229,.2);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:16px 20px;margin:22px 0}
+blockquote p{margin:0}
+.lbl-situation{color:var(--violet);font-weight:700}
+.lbl-problem{color:var(--red);font-weight:700}
+.lbl-create{color:var(--blue);font-weight:700}
+.lbl-concrete{color:var(--aqua);font-weight:700}
+.lbl-limit{color:var(--orange);font-weight:700}
+.lbl-warn{color:var(--yellow);font-weight:700}
+.lbl-rule{color:var(--aqua);font-weight:700}
+.lbl-bad{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border-md);font-size:14px}
+thead tr{background:var(--s2)}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--border-md)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink1)}
+tbody tr{background:var(--s1);transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tr:last-child td{border-bottom:none}
+.mindmap{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:24px 28px;margin:22px 0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;overflow-x:auto;white-space:pre;color:var(--ink2)}
+details{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);margin:14px 0;overflow:hidden}
+summary{padding:14px 20px;cursor:pointer;font-weight:700;font-size:14px;color:var(--blue);display:flex;align-items:center;gap:10px;user-select:none;list-style:none}
+summary::-webkit-details-marker{display:none}
+.arrow{font-size:9px;color:var(--ink3);transition:transform .2s;display:inline-block;flex-shrink:0}
+details[open] .arrow{transform:rotate(90deg)}
+details>*:not(summary){padding:0 20px 20px}
+.back-nav{display:inline-flex;align-items:center;gap:8px;color:var(--ink3);font-size:13px;font-weight:600;margin-bottom:36px;padding:8px 16px;background:var(--s1);border:1px solid var(--border-md);border-radius:20px;text-decoration:none;transition:all .15s}
+.back-nav:hover{color:var(--ink1);border-color:var(--blue);text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+/* ── Flashcards ─────────────────────────────────────────────────── */
+.flashcards{margin:40px 0}
+.flashcards-title{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.flashcards-title::before{content:'';flex:1;height:1px;background:var(--border)}
+.flashcards-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Scroll horizontal pour parcourir les cartes, hauteur fixe pour le scroll vertical interne */
+.flashcards-grid{display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:visible;padding-bottom:12px;scroll-snap-type:x mandatory;align-items:stretch}
+.flashcards-grid::-webkit-scrollbar{height:5px}
+.flashcards-grid::-webkit-scrollbar-track{background:var(--s2);border-radius:3px}
+.flashcards-grid::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+/* Flip container */
+.fc{cursor:pointer;border-radius:var(--r);border:1px solid var(--border-md);position:relative;flex:0 0 300px;scroll-snap-align:start}
+.fc-inner{position:relative;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow-y:auto}
+.fc-front{background:var(--s2);position:relative}
+.fc-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:var(--r) var(--r) 0 0}
+.fc-back{background:var(--s1);position:absolute;top:0;left:0;right:0;bottom:0;transform:rotateY(180deg);box-sizing:border-box;overflow-y:auto}
+.fc-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:var(--r) var(--r) 0 0}
+.fc-q{font-size:14px;font-weight:600;color:var(--ink1);line-height:1.55;margin:0}
+.fc-hint{font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.fc-hint::after{content:'↻';font-size:13px;color:var(--violet)}
+.fc-a{font-size:13.5px;color:var(--ink1);line-height:1.6;margin:0}
+.fc-a strong{color:var(--aqua)}
+.fc-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+
+/* ── Mindmap ─────────────────────────────────────────────────────── */
+.mindmap-svg{background:var(--s1);border:1px solid var(--border-md);border-radius:var(--r);padding:20px;margin:22px 0;overflow:auto;position:relative}
+.mindmap-svg svg{display:block;min-width:1100px;height:auto}
+.mindmap-fs-btn{position:absolute;top:10px;right:10px;background:var(--s2);border:1px solid var(--border-md);border-radius:6px;color:var(--ink3);font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;letter-spacing:.05em;z-index:2;transition:all .15s}
+.mindmap-fs-btn:hover{background:var(--s3);color:var(--ink1)}
+.mindmap-fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;padding:40px;overflow:auto;margin:0}
+.mindmap-fullscreen svg{min-width:unset;width:100%;height:auto}
+@media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
+</style></head><body>
+<div class="layout" id="layout">
+<nav class="toc" id="tocNav"><div class="toc-links"><span class="toc-section">Fondations</span>
+<a href="../fondations/01_pourquoi_le_ml_existe.html" class="nav-page ">Pourquoi le ML existe</a>
+<a href="../fondations/02_quand_utiliser_le_ml.html" class="nav-page ">Quand utiliser le ML</a>
+<a href="../fondations/03_taxonomie_ml.html" class="nav-page ">Taxonomie du ML</a>
+<a href="../fondations/04_bibliotheques_python.html" class="nav-page ">Bibliothèques Python</a>
+<a href="../fondations/05_framework_de_decision.html" class="nav-page ">Framework de décision</a>
+<a href="../fondations/06_ce_que_le_ml_ne_fait_pas.html" class="nav-page ">Ce que le ML ne fait pas</a>
+<span class="toc-section">Régression</span>
+<a href="../regression/01_regression_lineaire.html" class="nav-page ">Régression linéaire</a>
+<a href="../regression/02_overfitting.html" class="nav-page ">Overfitting</a>
+<a href="../regression/03_ridge_l2.html" class="nav-page ">Ridge (L2)</a>
+<a href="../regression/04_lasso_l1.html" class="nav-page ">Lasso (L1)</a>
+<a href="../regression/05_regression_polynomiale.html" class="nav-page ">Régression polynomiale</a>
+<a href="../regression/06_choisir_entre_modeles.html" class="nav-page ">Choisir entre les modèles</a>
+<a href="../regression/07_regression_logistique.html" class="nav-page ">Régression logistique</a>
+<span class="toc-section">Classification</span>
+<a href="../classification/01_trois_familles_algorithmes.html" class="nav-page ">3 familles d'algorithmes</a>
+<a href="../classification/02_arbres_random_forest.html" class="nav-page ">Arbres & Random Forest</a>
+<a href="../classification/03_xgboost_gradient_boosting.html" class="nav-page ">XGBoost & gradient boosting</a>
+<span class="toc-section">Pipeline & Évaluation</span>
+<a href="../pipeline_evaluation/01_pipeline_sklearn_complet.html" class="nav-page ">Pipeline sklearn complet</a>
+<a href="../pipeline_evaluation/02_metriques_choisir_la_bonne.html" class="nav-page ">Choisir la bonne métrique</a>
+<span class="toc-section">Séries temporelles</span>
+<a href="../series_temporelles/01_pourquoi_cas_a_part.html" class="nav-page ">Pourquoi un cas à part</a>
+<a href="../series_temporelles/02_decomposition_tendance_saisonnalite.html" class="nav-page ">Tendance, saisonnalité</a>
+<a href="../series_temporelles/03_statsmodels_arima.html" class="nav-page ">ARIMA</a>
+<a href="../series_temporelles/04_prophet.html" class="nav-page ">Prophet</a>
+<a href="../series_temporelles/05_darts.html" class="nav-page ">Darts</a>
+<a href="../series_temporelles/06_evaluer_une_prevision.html" class="nav-page ">Évaluer une prévision</a>
+<span class="toc-section">Deep Learning</span>
+<a href="../deep_learning/01_ce_quest_un_reseau_de_neurones.html" class="nav-page ">Réseau de neurones</a>
+<a href="../deep_learning/02_quand_deep_learning_simpose.html" class="nav-page ">Quand le DL s'impose</a>
+<a href="../deep_learning/03_transfer_learning.html" class="nav-page ">Transfer Learning</a>
+<a href="../deep_learning/04_huggingface.html" class="nav-page ">HuggingFace</a>
+<a href="../deep_learning/05_architectures_cles.html" class="nav-page ">Architectures clés</a>
+<a href="../deep_learning/06_deployer_modele_pytorch.html" class="nav-page ">Déployer PyTorch</a>
+<span class="toc-section">MLOps</span>
+<a href="../mlops/01_probleme_que_mlops_resout.html" class="nav-page ">Le problème MLOps résout</a>
+<a href="../mlops/02_mlflow.html" class="nav-page ">MLflow</a>
+<a href="../mlops/03_data_drift_model_drift.html" class="nav-page ">Data drift & model drift</a>
+<a href="../mlops/04_orchestration_airflow_prefect.html" class="nav-page ">Airflow & Prefect</a>
+<a href="../mlops/05_serving_fastapi_docker.html" class="nav-page ">FastAPI & Docker</a>
+<a href="../mlops/06_monitoring_production.html" class="nav-page ">Monitoring production</a>
+<span class="toc-section">Architectures hybrides</span>
+<a href="../architectures_hybrides/01_pourquoi_hybride.html" class="nav-page ">Pourquoi hybride</a>
+<a href="../architectures_hybrides/02_rag.html" class="nav-page ">RAG</a>
+<a href="../architectures_hybrides/03_embeddings_vector_stores.html" class="nav-page ">Embeddings & vector stores</a>
+<a href="../architectures_hybrides/04_agents_tool_use.html" class="nav-page ">Agents & tool use</a>
+<a href="../architectures_hybrides/05_pipeline_ml_llm.html" class="nav-page ">Pipeline ML + LLM</a>
+<a href="../architectures_hybrides/06_evaluer_systeme_hybride.html" class="nav-page ">Évaluer un système hybride</a>
+<span class="toc-section">Évaluation agentique</span>
+<a href="../evaluation_agentique/01_metriques_de_tache.html" class="nav-page ">Métriques de tâche</a>
+<a href="../evaluation_agentique/02_llm_as_judge.html" class="nav-page ">LLM-as-judge</a>
+<a href="../evaluation_agentique/03_outils_evaluation.html" class="nav-page ">Outils (Ragas, DeepEval…)</a>
+<a href="../evaluation_agentique/04_evaluer_rag.html" class="nav-page ">Évaluer un pipeline RAG</a>
+<a href="../evaluation_agentique/05_pipeline_evaluation_ci.html" class="nav-page ">Pipeline CI/CD</a>
+<span class="toc-section">Cas pratiques</span>
+<a href="../cas_pratiques/00_methode_brief_vers_architecture.html" class="nav-page ">Brief → architecture</a>
+<a href="../cas_pratiques/01_fnac_recommandation.html" class="nav-page ">Cas Fnac — recommandation</a>
+<a href="../cas_pratiques/02_carrefour_ruptures_stock.html" class="nav-page ">Cas Carrefour — stocks</a>
+<a href="../cas_pratiques/03_sncf_reclamations_hybride.html" class="nav-page ">Cas SNCF — hybride</a></div><div class="toc-close-btn"><button onclick="closeSidebar()">&#x276E; Réduire</button></div></nav><button class="toc-open-btn" id="tocOpenBtn" onclick="openSidebar()" title="Afficher le sommaire">&#x276F;</button><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Lire les résultats d'un modèle — <em>Interpréter ce qu'on voit vraiment</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+
+<hr />
+
+<h2 id="définition">Définition</h2>
+
+<p>Calculer des métriques ne suffit pas — il faut savoir ce qu'elles signifient dans ton contexte précis, où le modèle se trompe, et pourquoi. Cette lecture est ce qui distingue un ingénieur ML d'un script qui tourne.</p>
+
+<hr />
+
+<p>:::situation
+<strong>La Banque Postale — Modèle de scoring crédit</strong></p>
+
+<p>L'équipe livre un modèle avec accuracy=0.94 et F1=0.81. Le chef de projet valide. Trois mois plus tard, les analystes crédit remontent que le modèle refuse systématiquement les demandes de clients de moins de 30 ans avec peu d'historique — un profil qui était sous-représenté dans les données d'entraînement. L'accuracy globale était bonne, mais le modèle avait un angle mort entier. Une lecture sérieuse de la matrice de confusion par segment aurait détecté ça en 10 minutes.
+:::</p>
+
+<hr />
+
+<h2 id="lire-une-matrice-de-confusion-sur-de-vraies-données">Lire une matrice de confusion sur de vraies données</h2>
+
+<p>Voici ce qu'affiche sklearn sur un vrai problème de détection de fraude :</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">ConfusionMatrixDisplay</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">disp</span> <span class="o">=</span> <span class="n">ConfusionMatrixDisplay</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">=</span><span class="n">cm</span><span class="p">,</span> <span class="n">display_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="s2">&quot;Fraude&quot;</span><span class="p">])</span>
+<span class="n">disp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Matrice de confusion — Détection fraude&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;confusion_matrix.png&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Résultat affiché :
+                 Prédit Normal    Prédit Fraude
+Réel Normal          9 412              88
+Réel Fraude            43              57
+</code></pre></div>
+
+<p><strong>Comment lire ça ligne par ligne :</strong></p>
+
+<ul>
+<li><strong>9 412</strong> transactions normales correctement identifiées — pas de problème</li>
+<li><strong>88</strong> transactions normales bloquées à tort — 88 clients innocents bloqués</li>
+<li><strong>43</strong> fraudes manquées — 43 fois où de l'argent a disparu sans alerte</li>
+<li><strong>57</strong> fraudes détectées — ce que le modèle fait bien</li>
+</ul>
+
+<p><strong>La question immédiate à poser : est-ce acceptable ?</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Rappel sur les fraudes = 57 / (57 + 43) = 57%
+
+Le modèle rate 43% des fraudes réelles.
+</code></pre></div>
+
+<p>Pour une banque, c'est probablement inacceptable. Le problème ne se voit pas dans l'accuracy globale (99.3%) — il se voit dans la matrice.</p>
+
+<p>:::callout-insight
+<strong>Toujours regarder la matrice par classe, jamais seulement le chiffre global.</strong></p>
+
+<p>Un modèle peut avoir d'excellentes performances sur la classe majoritaire et être complètement inutile sur la classe minoritaire — celle qui t'intéresse le plus. L'accuracy globale cache systématiquement ce problème.
+:::</p>
+
+<hr />
+
+<h2 id="lire-un-rapport-de-classification-complet">Lire un rapport de classification complet</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">target_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="s2">&quot;Fraude&quot;</span><span class="p">]))</span>
+</code></pre>
+</div>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">              precision    recall  f1-score   support
+
+      Normal       1.00      0.99      0.99      9500
+      Fraude       0.39      0.57      0.47       100
+
+    accuracy                           0.99      9600
+   macro avg       0.70      0.78      0.73      9600
+weighted avg       0.99      0.99      0.99      9600
+</code></pre></div>
+
+<p><strong>Décodage colonne par colonne :</strong></p>
+
+<ul>
+<li><strong>precision 0.39 sur Fraude</strong> : quand le modèle dit "fraude", il a raison 39% du temps. 61% des alertes sont des fausses alarmes.</li>
+<li><strong>recall 0.57 sur Fraude</strong> : il détecte 57% des fraudes réelles. 43% passent inaperçues.</li>
+<li><strong>support 100</strong> : il y a 100 vraies fraudes dans le jeu de test.</li>
+<li><strong>weighted avg</strong> : moyenne pondérée par le nombre d'exemples — dominée par "Normal" (9500 cas). Ce chiffre est trompeur ici.</li>
+<li><strong>macro avg</strong> : moyenne simple des deux classes — plus honnête sur les classes déséquilibrées.</li>
+</ul>
+
+<p>:::warning
+<strong>Ne jamais regarder seulement "accuracy" et "weighted avg" sur un dataset déséquilibré.</strong> Ces deux chiffres sont dominés par la classe majoritaire. La ligne qui compte, c'est celle de la classe rare — celle que tu veux détecter.
+:::</p>
+
+<hr />
+
+<h2 id="lire-limportance-des-features">Lire l'importance des features</h2>
+
+<p>L'importance des features te dit sur quoi le modèle s'appuie réellement pour décider. C'est indispensable pour deux raisons : vérifier que le modèle utilise des informations légitimes, et détecter un data leakage.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Récupérer les importances depuis le modèle entraîné</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="n">num_features</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;preprocessing&quot;</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">named_transformers_</span><span class="p">[</span><span class="s2">&quot;cat&quot;</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;encoder&quot;</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(</span><span class="n">cat_features</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">importances</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;modele&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">feature_importances_</span>
+
+<span class="c1"># Trier et afficher</span>
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="n">feature_names</span><span class="p">,</span> <span class="s2">&quot;importance&quot;</span><span class="p">:</span> <span class="n">importances</span><span class="p">})</span>
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">df_imp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;importance&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="n">df_imp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;importance&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Importance des features&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Importance relative&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;feature_importance.png&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Ce que tu lis sur ce graphique :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">montant_transaction   ████████████████  0.42   ← normal, c'est discriminant
+heure_transaction     ████████          0.21   ← les fraudes arrivent la nuit
+pays_origine          ██████            0.15   ← certains pays = plus de fraudes
+age_compte_jours      ████              0.12   ← comptes récents = plus risqués
+type_carte            ██                0.07   ← impact mineur
+</code></pre></div>
+
+<p><strong>Les questions à se poser sur chaque feature importante :</strong></p>
+
+<ol>
+<li><p><strong>C'est logique métier ?</strong> Si "montant" est en tête, c'est cohérent — les grosses transactions sont plus ciblées. Si "id_client" est en tête, c'est un data leakage — le modèle a mémorisé des clients spécifiques.</p></li>
+<li><p><strong>Cette information sera disponible en production ?</strong> Si tu utilises "résultat_enquête" comme feature pour prédire la fraude, cette info n'existe pas encore au moment de la décision. Leakage.</p></li>
+<li><p><strong>La feature la plus importante est-elle légitime ?</strong> Une importance très dominante (&gt;60%) sur une seule feature mérite investigation — le modèle est peut-être trop dépendant d'une variable fragile.</p></li>
+</ol>
+
+<hr />
+
+<h2 id="analyser-où-le-modèle-se-trompe-par-segment">Analyser où le modèle se trompe — par segment</h2>
+
+<p>La matrice globale ne suffit pas. Il faut regarder les erreurs par sous-groupe.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Créer un dataframe avec les prédictions et les vraies valeurs</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_test</span><span class="o">.</span><span class="n">values</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_pred</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;correct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span>
+
+<span class="c1"># Performance par tranche d&#39;âge</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;age_groupe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                                <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&lt;25&quot;</span><span class="p">,</span> <span class="s2">&quot;25-35&quot;</span><span class="p">,</span> <span class="s2">&quot;35-50&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;50&quot;</span><span class="p">])</span>
+
+<span class="n">perf_par_age</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;age_groupe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">n_cas</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">),</span>
+    <span class="n">taux_correct</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+    <span class="n">n_fraudes_reelles</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;y_true&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">),</span>
+    <span class="n">n_fraudes_detectees</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;y_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">perf_par_age</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">            n_cas  taux_correct  n_fraudes_reelles  n_fraudes_detectees
+age_groupe
+&lt;25           312         0.871                 18                    6   ← problème !
+25-35         890         0.982                 32                   29   ← correct
+35-50        1240         0.991                 28                   27   ← correct
+&gt;50           558         0.988                 22                   21   ← correct
+</code></pre></div>
+
+<p>Les clients de moins de 25 ans : le modèle ne détecte que 6 fraudes sur 18 (33% de rappel). C'est l'angle mort. Sans cette analyse par segment, on ne l'aurait pas vu.</p>
+
+<hr />
+
+<h2 id="le-diagnostic-complet-en-5-questions">Le diagnostic complet en 5 questions</h2>
+
+<p>Après avoir entraîné un modèle, parcours systématiquement ces 5 questions avant de conclure :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">1. Accuracy globale → est-elle trompeuse (classes déséquilibrées) ?
+   → Si oui, regarder F1 et AUC-ROC
+
+2. Matrice de confusion → combien de FN et FP ?
+   → FN coûteux (fraude, maladie) → optimiser le rappel
+   → FP coûteux (spam, blocage client) → optimiser la précision
+
+3. Importance des features → les top features sont-elles légitimes ?
+   → Chercher un data leakage sur toute feature avec importance &gt; 40%
+
+4. Performance par segment → y a-t-il un sous-groupe mal couvert ?
+   → Découper par âge, région, période, type de client
+
+5. Erreurs concrètes → regarder les exemples mal classés
+   → Lire 10-20 faux négatifs pour comprendre ce que le modèle rate
+</code></pre></div>
+
+<hr />
+
+<h2 id="regarder-les-exemples-mal-classés">Regarder les exemples mal classés</h2>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Les faux négatifs — fraudes manquées par le modèle</span>
+<span class="n">faux_negatifs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span>
+    <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fraudes manquées :&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">faux_negatifs</span><span class="p">[[</span><span class="s2">&quot;montant&quot;</span><span class="p">,</span> <span class="s2">&quot;heure&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;pays&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</code></pre>
+</div>
+
+<p>Lire ces exemples manuellement révèle souvent un pattern : les fraudes manquées ont peut-être un petit montant (atypique pour une fraude), ou proviennent d'un pays jamais vu en entraînement. C'est une information que les métriques globales ne donnent jamais.</p>
+
+<hr />
+
+<div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">La matrice de confusion affiche 43 faux négatifs sur 100 fraudes réelles. Quel est le rappel ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Rappel = VP / (VP + FN) = 57 / (57 + 43) = <strong>57%</strong>. Le modèle rate 43% des fraudes réelles — probablement inacceptable pour une banque.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Dans un rapport de classification, "weighted avg f1 = 0.99" sur un dataset avec 99% de cas normaux. Est-ce un bon signe ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Non — le weighted avg est dominé par la classe majoritaire (99% des cas). Il masque les performances sur la classe rare. Il faut regarder la ligne "Fraude" séparément, pas la moyenne pondérée.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment détecter un data leakage via l'importance des features ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une feature avec importance très élevée (>50%) qui n'a pas de sens métier, ou une feature qui contient <strong>une information du futur</strong> (résultat d'enquête, montant remboursé...) est suspecte. AUC proche de 1.0 sans raison évidente → chercher un leakage.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi analyser les performances par segment (âge, région...) et pas seulement globalement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un modèle peut être excellent en moyenne et avoir un angle mort complet sur un sous-groupe sous-représenté dans les données d'entraînement. La métrique globale cache ces inégalités — seule l'analyse par segment les révèle.</p></div></div></div>
+
+<div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Tu regardes les faux négatifs d'un modèle de fraude et tu constates qu'ils ont tous un montant < 50€. Qu'est-ce que ça t'apprend ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le modèle <strong>ne détecte pas les petites fraudes</strong>. Probablement parce que les données d'entraînement contenaient peu de fraudes à faible montant, ou parce qu'une feature "montant" est trop dominante. Action : rééquilibrer le dataset ou ajuster le seuil de décision.</p></div></div></div></div></div>
+</main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>
