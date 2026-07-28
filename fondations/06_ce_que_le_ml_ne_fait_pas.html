@@ -17,14 +17,12 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .layout{display:flex;min-height:100vh}
 .toc{width:260px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--border);padding:20px 14px 60px;transition:width .22s ease,opacity .18s ease;display:flex;flex-direction:column}
 .layout.toc-closed .toc{width:0;padding:0;overflow:hidden;opacity:0;border-right:none}
-.toc-logo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:8px;padding:0 8px;white-space:nowrap}
-.toc-logo::before{content:'';width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0}
-.toc-links{flex:1;overflow-y:auto}
-.toc a{display:block;color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--rs);transition:all .15s;line-height:1.45;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.toc a:hover{color:var(--ink1);background:var(--s2)}
-.toc a.active{color:var(--blue);background:var(--s2)}
-.toc a.h2{font-weight:700;color:var(--ink2);margin-top:14px;font-size:13px}
-.toc a.h3{padding-left:22px;font-size:12px}
+.toc-links{flex:1;overflow-y:auto;padding-bottom:8px}
+.toc-section{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:16px 10px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-section:first-child{padding-top:6px}
+.toc a.nav-page{display:block;color:var(--ink2);text-decoration:none;font-size:12px;font-weight:500;padding:4px 10px 4px 16px;border-radius:var(--rs);transition:all .15s;line-height:1.4;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc a.nav-page:hover{color:var(--ink1);background:var(--s2)}
+.toc a.nav-page.active{color:var(--blue);background:var(--s2);font-weight:700}
 .toc-sep{height:1px;background:var(--border);margin:14px 8px}
 .toc-close-btn{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center}
 .toc-close-btn button{background:var(--s2);border:1px solid var(--border-md);border-radius:8px;color:var(--ink3);font-size:12px;font-weight:700;padding:6px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
@@ -142,10 +140,67 @@ details>*:not(summary){padding:0 20px 20px}
 @media(max-width:860px){.toc{display:none}.main{padding:28px 20px 80px}.hero{padding:32px 24px}.hero h1{font-size:1.8rem}}
 </style></head><body>
 <div class="layout" id="layout">
-<nav class="toc" id="tocNav"><div class="toc-logo">ML Accéléré</div><div class="toc-sep"></div><div class="toc-links"><a href="#illusion-1-le-ml-va-trouver-la-solution-tout-seul" class="h3">Illusion 1 : "Le ML va trouver la solution tout seul"</a>
-<a href="#illusion-2-plus-de-données-meilleur-modèle" class="h3">Illusion 2 : "Plus de données = meilleur modèle"</a>
-<a href="#illusion-3-le-deep-learning-est-toujours-meilleur" class="h3">Illusion 3 : "Le deep learning est toujours meilleur"</a>
-<a href="#illusion-4-le-modèle-en-prod-le-modèle-en-dev" class="h3">Illusion 4 : "Le modèle en prod = le modèle en dev"</a></div><div class="toc-close-btn"><button onclick="closeSidebar()">&#x276E; Réduire</button></div></nav><button class="toc-open-btn" id="tocOpenBtn" onclick="openSidebar()" title="Afficher le sommaire">&#x276F;</button><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Ce que le ML ne fait PAS — <em>Les illusions à éviter</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
+<nav class="toc" id="tocNav"><div class="toc-links"><span class="toc-section">Fondations</span>
+<a href="../fondations/01_pourquoi_le_ml_existe.html" class="nav-page ">Pourquoi le ML existe</a>
+<a href="../fondations/02_quand_utiliser_le_ml.html" class="nav-page ">Quand utiliser le ML</a>
+<a href="../fondations/03_taxonomie_ml.html" class="nav-page ">Taxonomie du ML</a>
+<a href="../fondations/04_bibliotheques_python.html" class="nav-page ">Bibliothèques Python</a>
+<a href="../fondations/05_framework_de_decision.html" class="nav-page ">Framework de décision</a>
+<a href="../fondations/06_ce_que_le_ml_ne_fait_pas.html" class="nav-page active">Ce que le ML ne fait pas</a>
+<span class="toc-section">Régression</span>
+<a href="../regression/01_regression_lineaire.html" class="nav-page ">Régression linéaire</a>
+<a href="../regression/02_overfitting.html" class="nav-page ">Overfitting</a>
+<a href="../regression/03_ridge_l2.html" class="nav-page ">Ridge (L2)</a>
+<a href="../regression/04_lasso_l1.html" class="nav-page ">Lasso (L1)</a>
+<a href="../regression/05_regression_polynomiale.html" class="nav-page ">Régression polynomiale</a>
+<a href="../regression/06_choisir_entre_modeles.html" class="nav-page ">Choisir entre les modèles</a>
+<a href="../regression/07_regression_logistique.html" class="nav-page ">Régression logistique</a>
+<span class="toc-section">Classification</span>
+<a href="../classification/01_trois_familles_algorithmes.html" class="nav-page ">3 familles d'algorithmes</a>
+<a href="../classification/02_arbres_random_forest.html" class="nav-page ">Arbres & Random Forest</a>
+<a href="../classification/03_xgboost_gradient_boosting.html" class="nav-page ">XGBoost & gradient boosting</a>
+<span class="toc-section">Pipeline & Évaluation</span>
+<a href="../pipeline_evaluation/01_pipeline_sklearn_complet.html" class="nav-page ">Pipeline sklearn complet</a>
+<a href="../pipeline_evaluation/02_metriques_choisir_la_bonne.html" class="nav-page ">Choisir la bonne métrique</a>
+<span class="toc-section">Séries temporelles</span>
+<a href="../series_temporelles/01_pourquoi_cas_a_part.html" class="nav-page ">Pourquoi un cas à part</a>
+<a href="../series_temporelles/02_decomposition_tendance_saisonnalite.html" class="nav-page ">Tendance, saisonnalité</a>
+<a href="../series_temporelles/03_statsmodels_arima.html" class="nav-page ">ARIMA</a>
+<a href="../series_temporelles/04_prophet.html" class="nav-page ">Prophet</a>
+<a href="../series_temporelles/05_darts.html" class="nav-page ">Darts</a>
+<a href="../series_temporelles/06_evaluer_une_prevision.html" class="nav-page ">Évaluer une prévision</a>
+<span class="toc-section">Deep Learning</span>
+<a href="../deep_learning/01_ce_quest_un_reseau_de_neurones.html" class="nav-page ">Réseau de neurones</a>
+<a href="../deep_learning/02_quand_deep_learning_simpose.html" class="nav-page ">Quand le DL s'impose</a>
+<a href="../deep_learning/03_transfer_learning.html" class="nav-page ">Transfer Learning</a>
+<a href="../deep_learning/04_huggingface.html" class="nav-page ">HuggingFace</a>
+<a href="../deep_learning/05_architectures_cles.html" class="nav-page ">Architectures clés</a>
+<a href="../deep_learning/06_deployer_modele_pytorch.html" class="nav-page ">Déployer PyTorch</a>
+<span class="toc-section">MLOps</span>
+<a href="../mlops/01_probleme_que_mlops_resout.html" class="nav-page ">Le problème MLOps résout</a>
+<a href="../mlops/02_mlflow.html" class="nav-page ">MLflow</a>
+<a href="../mlops/03_data_drift_model_drift.html" class="nav-page ">Data drift & model drift</a>
+<a href="../mlops/04_orchestration_airflow_prefect.html" class="nav-page ">Airflow & Prefect</a>
+<a href="../mlops/05_serving_fastapi_docker.html" class="nav-page ">FastAPI & Docker</a>
+<a href="../mlops/06_monitoring_production.html" class="nav-page ">Monitoring production</a>
+<span class="toc-section">Architectures hybrides</span>
+<a href="../architectures_hybrides/01_pourquoi_hybride.html" class="nav-page ">Pourquoi hybride</a>
+<a href="../architectures_hybrides/02_rag.html" class="nav-page ">RAG</a>
+<a href="../architectures_hybrides/03_embeddings_vector_stores.html" class="nav-page ">Embeddings & vector stores</a>
+<a href="../architectures_hybrides/04_agents_tool_use.html" class="nav-page ">Agents & tool use</a>
+<a href="../architectures_hybrides/05_pipeline_ml_llm.html" class="nav-page ">Pipeline ML + LLM</a>
+<a href="../architectures_hybrides/06_evaluer_systeme_hybride.html" class="nav-page ">Évaluer un système hybride</a>
+<span class="toc-section">Évaluation agentique</span>
+<a href="../evaluation_agentique/01_metriques_de_tache.html" class="nav-page ">Métriques de tâche</a>
+<a href="../evaluation_agentique/02_llm_as_judge.html" class="nav-page ">LLM-as-judge</a>
+<a href="../evaluation_agentique/03_outils_evaluation.html" class="nav-page ">Outils (Ragas, DeepEval…)</a>
+<a href="../evaluation_agentique/04_evaluer_rag.html" class="nav-page ">Évaluer un pipeline RAG</a>
+<a href="../evaluation_agentique/05_pipeline_evaluation_ci.html" class="nav-page ">Pipeline CI/CD</a>
+<span class="toc-section">Cas pratiques</span>
+<a href="../cas_pratiques/00_methode_brief_vers_architecture.html" class="nav-page ">Brief → architecture</a>
+<a href="../cas_pratiques/01_fnac_recommandation.html" class="nav-page ">Cas Fnac — recommandation</a>
+<a href="../cas_pratiques/02_carrefour_ruptures_stock.html" class="nav-page ">Cas Carrefour — stocks</a>
+<a href="../cas_pratiques/03_sncf_reclamations_hybride.html" class="nav-page ">Cas SNCF — hybride</a></div><div class="toc-close-btn"><button onclick="closeSidebar()">&#x276E; Réduire</button></div></nav><button class="toc-open-btn" id="tocOpenBtn" onclick="openSidebar()" title="Afficher le sommaire">&#x276F;</button><main class="main"><a href="../README.html" class="back-nav">&#x2190; Retour au programme</a><div class="hero"><div class="hero-glow"></div><div class="hero-glow2"></div><div class="hero-pill">Programme ML Accéléré</div><h1>Ce que le ML ne fait PAS — <em>Les illusions à éviter</em></h1><div class="hero-tags"><span class="hero-tag">Programme</span><span class="hero-tag">7 jours</span><span class="hero-tag">3-4h/jour</span></div></div>
 
 <h3 id="illusion-1-le-ml-va-trouver-la-solution-tout-seul">Illusion 1 : "Le ML va trouver la solution tout seul"</h3>
 
