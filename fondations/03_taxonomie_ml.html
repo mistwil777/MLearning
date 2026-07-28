@@ -449,6 +449,64 @@ Taux d'occupation d'un hôtel — chaque nuit
 - Détecter une anomalie dans une série de capteurs (→ Isolation Forest)
 - Classifier des tickets support en 5 catégories fixes (→ sklearn, ou même regex)</p>
 
+<h3 id="36-ml-classique-vs-deep-learning-la-vraie-différence">3.6 ML classique vs Deep Learning — la vraie différence</h3>
+
+<p>Ces deux termes désignent des façons d'entraîner un modèle. Un modèle, dans les deux cas, c'est la même chose : un jeu de paramètres numériques que l'algorithme a ajustés pour minimiser ses erreurs sur les données d'entraînement. Ni cerveau, ni magie — des nombres.</p>
+
+<p>La différence est dans <strong>ce que tu dois préparer avant de lancer l'entraînement</strong>.</p>
+
+<hr />
+
+<p><strong>ML classique — tu extrais toi-même les indices pertinents</strong></p>
+
+<p>Exemple concret : tu veux prédire le prix d'un appartement avec scikit-learn.</p>
+
+<p>Tu ne peux pas lui donner les photos de l'appartement. Tu dois d'abord transformer tes données en mesures explicites que tu as choisies toi-même : surface en m², étage, arrondissement, année de construction, présence d'un ascenseur.</p>
+
+<p>L'algorithme reçoit un tableau de chiffres. Il apprend quels chiffres comptent le plus et comment les combiner. Mais si tu oublies une information importante — comme la distance au métro — il ne peut pas la deviner. Elle n'est pas dans tes données.</p>
+
+<div class="mindmap">Ce que tu fournis à scikit-learn :
+┌──────────┬────────┬──────────────┬───────────────┐
+│ surface  │ étage  │ arrondissmt  │ année constr  │
+├──────────┼────────┼──────────────┼───────────────┤
+│ 65       │ 3      │ 11           │ 1978          │
+│ 42       │ 7      │ 16           │ 2005          │
+└──────────┴────────┴──────────────┴───────────────┘
+→ tu as fait le travail de "quoi regarder" avant l'entraînement
+</div>
+
+<hr />
+
+<p><strong>Deep learning — le réseau détecte lui-même les indices pertinents</strong></p>
+
+<p>Même problème, mais tu as des photos des appartements. Un réseau de neurones peut recevoir directement les images en entrée. Pendant l'entraînement, il va apprendre de lui-même que la luminosité, l'état du parquet, la hauteur sous plafond, la vue sur cour ou sur rue sont des indices corrélés au prix. Tu n'as pas nommé ces indices — le réseau les a découverts dans les pixels.</p>
+
+<div class="mindmap">Ce que tu fournis au réseau :
+┌──────────────────────────────────────────────┐
+│  [photo brute de l'appartement]              │
+│  3 456 × 4 624 pixels × 3 canaux RGB        │
+└──────────────────────────────────────────────┘
+→ le réseau fait lui-même le travail de "quoi regarder"
+   via ses couches internes (c'est ça les "couches cachées")
+</div>
+
+<p>"Deep" veut dire "profond" — beaucoup de couches empilées. Une régression logistique a une couche. Mistral 7B en a 32. C'est uniquement une question d'architecture, pas de nature différente.</p>
+
+<hr />
+
+<p><strong>Ce qui ne change pas : ta responsabilité sur les données</strong></p>
+
+<p>Dans les deux cas, si tes données sont mauvaises, ton modèle sera mauvais. Des photos floues ou prises dans des conditions non représentatives donnent un mauvais modèle deep learning. Un tableau avec de mauvaises colonnes donne un mauvais modèle sklearn. La qualité et la pertinence des données restent entièrement de ta responsabilité — le type d'algorithme ne change rien à ça.</p>
+
+<p>:::rule
+<strong>La distinction pratique :</strong>
+ML classique → toi tu construis les features (les mesures explicites) avant l'entraînement.
+Deep learning → le réseau apprend lui-même quelles features extraire depuis les données brutes (images, texte, son).
+Dans les deux cas : données de mauvaise qualité = modèle de mauvaise qualité.
+:::</p>
+
+<hr />
+
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Criteo prédit les clics pub. Supervisé ou non-supervisé ? Classification ou régression ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Supervisé</strong> (ils ont des millions d'exemples labelisés : cliqué / pas cliqué). <strong>Classification binaire</strong> (0 ou 1) — pas une régression car la sortie est une catégorie, pas un nombre continu.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Carrefour veut segmenter 10M de clients sans avoir défini les profils à l'avance. Quel type de ML ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Non-supervisé — clustering</strong>. Pas de label "type de client" existant → impossible de faire du supervisé. L'algo (K-Means, DBSCAN) trouve lui-même les groupes naturels dans les comportements d'achat.</p></div></div></div>
