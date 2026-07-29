@@ -441,5 +441,174 @@ AUC = 1.0 → modèle parfait (suspect — probablement du data leakage)
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Un modèle de prédiction de prix de maison a RMSE=15 000€ et MAE=8 000€. Que signifie l'écart RMSE > MAE ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">L'écart signifie qu'il existe quelques <strong>grosses erreurs</strong> qui tirent le RMSE vers le haut (le RMSE pénalise les écarts au carré). La plupart des prédictions ont une erreur ≈ 8 000€ (MAE), mais certaines ont des erreurs bien supérieures — des cas atypiques mal prédits.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- L'accuracy est inutile sur les classes déséquilibrées — regarder F1 ou AUC-ROC en priorité
+- Le choix précision vs rappel se décide par le coût métier des erreurs, pas par les données seules
+- AUC proche de 1.0 sans explication évidente → chercher un data leakage avant de valider le modèle
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-calculer-précision-rappel-et-f1-depuis-une-matrice-de-confusion">Exercice 1 — Calculer précision, rappel et F1 depuis une matrice de confusion</h3>
+
+<p>BNP Paribas déploie un détecteur de fraude sur les transactions e-commerce. Sur 10 000 transactions de test, la matrice de confusion donne : 45 vraies fraudes détectées (VP), 30 transactions normales bloquées à tort (FP), 55 fraudes passées inaperçues (FN) et 9 870 transactions normales correctement acceptées (VN). Calculer les trois métriques clés à partir de ces chiffres.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># BNP Paribas — détecteur de fraude sur transactions e-commerce</span>
+<span class="c1"># Sur 10 000 transactions : VP=45, FP=30, FN=55, VN=9870</span>
+
+<span class="n">VP</span> <span class="o">=</span> <span class="n">___</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="n">___</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="n">___</span>
+<span class="n">VN</span> <span class="o">=</span> <span class="n">___</span>
+
+<span class="n">precision</span> <span class="o">=</span> <span class="n">VP</span> <span class="o">/</span> <span class="p">(</span><span class="n">VP</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+<span class="n">rappel</span>    <span class="o">=</span> <span class="n">VP</span> <span class="o">/</span> <span class="p">(</span><span class="n">VP</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+<span class="n">f1</span>        <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">rappel</span> <span class="o">/</span> <span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision : </span><span class="si">{</span><span class="n">precision</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    : </span><span class="si">{</span><span class="n">rappel</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F1-score  : </span><span class="si">{</span><span class="n">f1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Précision : 0.600
+Rappel    : 0.450
+F1-score  : 0.514
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">VP</span> <span class="o">=</span> <span class="mi">45</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="mi">55</span>
+<span class="n">VN</span> <span class="o">=</span> <span class="mi">9870</span>
+
+<span class="n">precision</span> <span class="o">=</span> <span class="n">VP</span> <span class="o">/</span> <span class="p">(</span><span class="n">VP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>   <span class="c1"># 45 / 75  = 0.600</span>
+<span class="n">rappel</span>    <span class="o">=</span> <span class="n">VP</span> <span class="o">/</span> <span class="p">(</span><span class="n">VP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>   <span class="c1"># 45 / 100 = 0.450</span>
+<span class="n">f1</span>        <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">rappel</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">rappel</span><span class="p">)</span>  <span class="c1"># 0.514</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision : </span><span class="si">{</span><span class="n">precision</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    : </span><span class="si">{</span><span class="n">rappel</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F1-score  : </span><span class="si">{</span><span class="n">f1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Le rappel de 0.45 signifie que 55% des fraudes passent inaperçues — inacceptable en production. L'équipe métier doit décider si elle préfère abaisser le seuil de décision (rappel monte, précision baisse) ou maintenir peu de fausses alertes (précision reste haute, rappel reste faible).
+</details></p>
+
+<hr />
+
+<h3 id="exercice-2-interpréter-lécart-rmse-mae">Exercice 2 — Interpréter l'écart RMSE / MAE</h3>
+
+<p>Le département data de la SNCF entraîne un modèle de prédiction du prix des billets TGV pour six liaisons. Les prédictions sur le jeu de test contiennent une forte erreur sur une liaison (Paris–Marseille en période de pointe). Calculer RMSE et MAE, puis interpréter l'écart entre les deux.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+
+<span class="c1"># SNCF — prédiction du prix de billets TGV (6 liaisons)</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">89</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">310</span><span class="p">]</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">92</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">312</span><span class="p">]</span>  <span class="c1"># forte erreur sur la liaison à 200€</span>
+
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">))</span>
+<span class="n">mae</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE : </span><span class="si">{</span><span class="n">rmse</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ratio RMSE/MAE : </span><span class="si">{</span><span class="n">rmse</span><span class="o">/</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">RMSE : 61.3 €
+MAE  : 27.7 €
+Ratio RMSE/MAE : 2.22
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">89</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">310</span><span class="p">]</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">92</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">312</span><span class="p">]</span>
+
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="n">mae</span>  <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE : </span><span class="si">{</span><span class="n">rmse</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE  : </span><span class="si">{</span><span class="n">mae</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ratio RMSE/MAE : </span><span class="si">{</span><span class="n">rmse</span><span class="o">/</span><span class="n">mae</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Les erreurs sont [3, -5, 3, 150, 3, 2] €. La MAE reflète l'erreur typique (~28€). Le RMSE est plus du double (61€) à cause de la seule erreur de 150€ sur la liaison Paris–Marseille — le carré de 150 domine la somme. Un ratio RMSE/MAE &gt; 2 indique la présence d'au moins un cas atypique mal prédit : il faut l'analyser séparément plutôt que de chercher à améliorer le modèle globalement.
+</details></p>
+
+<hr />
+
+<h3 id="exercice-3-choisir-le-seuil-de-décision-par-le-coût-métier">Exercice 3 — Choisir le seuil de décision par le coût métier</h3>
+
+<p>Doctolib veut anticiper les rendez-vous non honorés (no-show) pour libérer les créneaux à temps. Relancer un patient inutilement coûte 0,50€ (SMS + temps administratif). Un no-show non anticipé coûte 8,00€ (créneau perdu). Pour huit rendez-vous dont on connaît les probabilités prédites, trouver le seuil qui minimise le coût total.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Doctolib — anticipation des rendez-vous non honorés</span>
+<span class="c1"># Coût d&#39;un faux positif (patient relancé inutilement) : 0.50€</span>
+<span class="c1"># Coût d&#39;un faux négatif (no-show non anticipé)        : 8.00€</span>
+
+<span class="n">y_true</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">y_proba</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">]</span>
+
+<span class="n">cout_fp</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># coût d&#39;un faux positif</span>
+<span class="n">cout_fn</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># coût d&#39;un faux négatif</span>
+<span class="n">seuils</span>  <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">seuil</span> <span class="ow">in</span> <span class="n">seuils</span><span class="p">:</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">seuil</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">y_proba</span><span class="p">]</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">vt</span><span class="p">,</span> <span class="n">vp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="k">if</span> <span class="n">vt</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">vp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">vt</span><span class="p">,</span> <span class="n">vp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="k">if</span> <span class="n">vt</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">vp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout_total</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">*</span> <span class="n">___</span> <span class="o">+</span> <span class="n">fn</span> <span class="o">*</span> <span class="n">___</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Seuil </span><span class="si">{</span><span class="n">seuil</span><span class="si">}</span><span class="s2"> → FP=</span><span class="si">{</span><span class="n">fp</span><span class="si">}</span><span class="s2">, FN=</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">, coût total=</span><span class="si">{</span><span class="n">cout_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">€&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Seuil 0.3 → FP=3, FN=0, coût total=1.50€
+Seuil 0.5 → FP=1, FN=0, coût total=0.50€
+Seuil 0.6 → FP=0, FN=0, coût total=0.00€
+Seuil 0.7 → FP=0, FN=1, coût total=8.00€
+Seuil 0.8 → FP=0, FN=2, coût total=16.00€
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">y_true</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">y_proba</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">]</span>
+
+<span class="n">cout_fp</span> <span class="o">=</span> <span class="mf">0.50</span>
+<span class="n">cout_fn</span> <span class="o">=</span> <span class="mf">8.00</span>
+<span class="n">seuils</span>  <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">seuil</span> <span class="ow">in</span> <span class="n">seuils</span><span class="p">:</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">seuil</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">y_proba</span><span class="p">]</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">vt</span><span class="p">,</span> <span class="n">vp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="k">if</span> <span class="n">vt</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">vp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">vt</span><span class="p">,</span> <span class="n">vp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="k">if</span> <span class="n">vt</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">vp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cout_total</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">*</span> <span class="n">cout_fp</span> <span class="o">+</span> <span class="n">fn</span> <span class="o">*</span> <span class="n">cout_fn</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Seuil </span><span class="si">{</span><span class="n">seuil</span><span class="si">}</span><span class="s2"> → FP=</span><span class="si">{</span><span class="n">fp</span><span class="si">}</span><span class="s2">, FN=</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">, coût total=</span><span class="si">{</span><span class="n">cout_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">€&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Le seuil optimal est 0.6 sur ce jeu de données : toutes les probabilités des vrais no-show (0.85, 0.65, 0.92, 0.72) sont supérieures à 0.6, et aucune probabilité des présents (0.15, 0.55, 0.45, 0.35) ne l'atteint. En pratique, ce seuil se détermine sur un jeu de validation représentatif, pas sur 8 exemples — mais la logique est identique : minimiser le coût total, pas l'erreur symétrique.
+</details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

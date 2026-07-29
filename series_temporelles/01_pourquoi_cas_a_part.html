@@ -265,5 +265,198 @@ details>*:not(summary){padding:0 20px 20px}
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi un Random Forest classique échoue-t-il sur une série temporelle sans transformation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Il suppose l'indépendance des observations. Il ignore l'ordre temporel et peut utiliser des données futures pour prédire le passé si le split est mal fait.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- L'ordre des observations est de l'information : le mélanger ou le supprimer casse le modèle.
+- Autocorrélation forte au lag k = cycle de période k exploitable comme feature.
+- Utiliser PACF (pas ACF) pour choisir les paramètres AR d'un modèle ARIMA.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-vérifier-un-cycle-parfait-sur-des-données-vélib">Exercice 1 — Vérifier un cycle parfait sur des données Vélib'</h3>
+
+<p>Les relevés de locations Vélib' à Paris montrent un schéma très régulier selon l'heure de la journée. On dispose ici de données simplifiées agrégées par créneaux de 4 heures sur 3 jours consécutifs, sans variation aléatoire.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Locations Vélib&#39; Paris, par créneau de 4h (données simulées, 3 jours)</span>
+<span class="c1"># Schéma : faible la nuit, fort le matin et en soirée</span>
+<span class="n">locations_4h</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>   <span class="c1"># créneaux 0h-4h, 4h-8h, 8h-12h, 12h-16h — jour 1</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>   <span class="c1"># jour 2 (schéma identique)</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>   <span class="c1"># jour 3 (schéma identique)</span>
+<span class="p">])</span>
+
+<span class="c1"># Calculer l&#39;autocorrélation au lag correspondant à un cycle complet (4 créneaux = 1 journée)</span>
+<span class="n">autocorr</span> <span class="o">=</span> <span class="n">locations_4h</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation au lag 4 : </span><span class="si">{</span><span class="n">autocorr</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Autocorrélation au lag 4 : 1.0
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">locations_4h</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>
+<span class="p">])</span>
+
+<span class="c1"># Le cycle dure 4 créneaux, donc lag=4</span>
+<span class="n">autocorr</span> <span class="o">=</span> <span class="n">locations_4h</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation au lag 4 : </span><span class="si">{</span><span class="n">autocorr</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Résultat : 1.0 — la série est parfaitement périodique, les valeurs à t et t-4 sont identiques.</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-détecter-la-saisonnalité-hebdomadaire-des-ventes-picard">Exercice 2 — Détecter la saisonnalité hebdomadaire des ventes Picard</h3>
+
+<p>Une enseigne Picard Surgelés observe que ses ventes journalières suivent un rythme hebdomadaire marqué : faibles le lundi, élevées le vendredi et samedi. On veut confirmer ce cycle visuellement avec l'ACF.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.graphics.tsaplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_acf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># Ventes journalières simulées sur 8 semaines (lundi = 0, dimanche = 6)</span>
+<span class="n">base_hebdo</span> <span class="o">=</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">70</span><span class="p">]</span>
+<span class="n">ventes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">base_hebdo</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">56</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="c1"># Tracer l&#39;ACF sur 3 semaines de lags pour voir les pics répétitifs</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">ventes</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">___</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;ACF des ventes Picard — 8 semaines&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;acf_picard.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+
+<span class="c1"># Vérifier que le lag 7 est le plus corrélé parmi les lags 1 à 10</span>
+<span class="n">acf_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">ventes</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
+<span class="n">lag_dominant</span> <span class="o">=</span> <span class="n">acf_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">acf_values</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lag avec la plus forte autocorrélation : </span><span class="si">{</span><span class="n">lag_dominant</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Lag avec la plus forte autocorrélation : 7
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.graphics.tsaplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_acf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">base_hebdo</span> <span class="o">=</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">70</span><span class="p">]</span>
+<span class="n">ventes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">base_hebdo</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">56</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="c1"># 21 lags = 3 semaines : on voit les pics répétitifs à lag 7, 14, 21</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">ventes</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;ACF des ventes Picard — 8 semaines&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;acf_picard.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+
+<span class="n">acf_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">ventes</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
+<span class="n">lag_dominant</span> <span class="o">=</span> <span class="n">acf_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">acf_values</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lag avec la plus forte autocorrélation : </span><span class="si">{</span><span class="n">lag_dominant</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Résultat : 7 — confirme le cycle hebdomadaire.</span>
+<span class="c1"># Sur le graphique, des pics significatifs apparaissent à lag 7, 14, 21.</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-montrer-que-mélanger-les-observations-détruit-linformation">Exercice 3 — Montrer que mélanger les observations détruit l'information</h3>
+
+<p>Météo-France relève les températures quotidiennes à Lyon. La série présente une progression douce (printemps) avec une forte dépendance entre jours consécutifs. Cet exercice compare l'autocorrélation de la série originale et de la même série dont les valeurs ont été mélangées aléatoirement.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Températures journalières simulées à Lyon — progression de janvier à mars</span>
+<span class="c1"># Série déterministe : pas de bruit, pour des résultats reproductibles</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="mi">5</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="c1"># Autocorrélation à lag 1 sur la série originale (jours consécutifs sont proches)</span>
+<span class="n">autocorr_original</span> <span class="o">=</span> <span class="n">temperatures</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+
+<span class="c1"># Mélanger les observations et recalculer</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">temperatures_melangees</span> <span class="o">=</span> <span class="n">temperatures</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">autocorr_melange</span> <span class="o">=</span> <span class="n">temperatures_melangees</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation originale (lag 1)  : </span><span class="si">{</span><span class="n">autocorr_original</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation après mélange      : </span><span class="si">{</span><span class="n">autocorr_melange</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ratio : </span><span class="si">{</span><span class="n">autocorr_original</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">autocorr_melange</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">x plus élevée sur la série originale&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Autocorrélation originale (lag 1)  : 0.99
+Autocorrélation après mélange      : valeur proche de 0 (entre -0.15 et 0.15)
+Ratio : plusieurs dizaines de fois plus élevée sur la série originale
+</code></pre></div>
+
+<p>La série originale a une autocorrélation quasi parfaite à lag 1 car chaque jour est proche du suivant. Après mélange, la dépendance temporelle est nulle : l'ordre ne porte plus d'information.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">temperatures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="mi">5</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="c1"># lag=1 : corrélation entre chaque jour et le jour suivant</span>
+<span class="n">autocorr_original</span> <span class="o">=</span> <span class="n">temperatures</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">temperatures_melangees</span> <span class="o">=</span> <span class="n">temperatures</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">autocorr_melange</span> <span class="o">=</span> <span class="n">temperatures_melangees</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation originale (lag 1)  : </span><span class="si">{</span><span class="n">autocorr_original</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Autocorrélation après mélange      : </span><span class="si">{</span><span class="n">autocorr_melange</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ratio : </span><span class="si">{</span><span class="n">autocorr_original</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">autocorr_melange</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">x plus élevée sur la série originale&quot;</span><span class="p">)</span>
+
+<span class="c1"># Interprétation :</span>
+<span class="c1"># - La série originale (sin progressif) a des valeurs très proches d&#39;un jour à l&#39;autre → autocorr ≈ 0.99</span>
+<span class="c1"># - Après mélange, les valeurs adjacentes sont aléatoires → autocorr ≈ 0</span>
+<span class="c1"># Conclusion : mélanger une série temporelle détruit la structure qui permet la prévision.</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

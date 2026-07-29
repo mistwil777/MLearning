@@ -333,5 +333,228 @@ MLOps n'est pas une technologie — c'est une discipline. On peut faire du MLOps
 </svg>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Un modèle qui exige une intervention manuelle hebdomadaire n'est pas en production — c'est un outil artisanal.
+- MLOps = traçabilité + reproductibilité + automatisation, indépendamment de la stack choisie.
+- Sans monitoring, tout modèle finit par dériver en silence : le cycle de vie est une boucle, pas une ligne droite.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-identifier-les-étapes-du-cycle-de-vie">Exercice 1 — Identifier les étapes du cycle de vie</h3>
+
+<p>Une équipe data chez La Redoute vient de terminer un modèle de recommandation produit. Vous observez les actions suivantes. Associez chaque action à l'étape du cycle de vie ML correspondante.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Associez chaque action à l&#39;étape correcte du cycle ML</span>
+<span class="c1"># Étapes possibles : &quot;développement&quot;, &quot;validation&quot;, &quot;déploiement&quot;, &quot;monitoring&quot;, &quot;ré-entraînement&quot;</span>
+
+<span class="n">actions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Lancer pytest sur le modèle avec des données de test offline&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+    <span class="s2">&quot;Exporter le modèle dans un conteneur Docker et l&#39;exposer via FastAPI&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+    <span class="s2">&quot;Vérifier chaque semaine si le taux de clics sur les recommandations chute&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+    <span class="s2">&quot;Relancer l&#39;entraînement après détection d&#39;une dérive sur les nouvelles collections&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+    <span class="s2">&quot;Tester différentes valeurs de profondeur d&#39;arbre dans un notebook Jupyter&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">etape</span> <span class="ow">in</span> <span class="n">actions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">etape</span><span class="si">:</span><span class="s2">&gt;18</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Résultat attendu :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">          validation | Lancer pytest sur le modèle avec des données de test offline
+         déploiement | Exporter le modèle dans un conteneur Docker et l'exposer via FastAPI
+          monitoring | Vérifier chaque semaine si le taux de clics sur les recommandations chute
+     ré-entraînement | Relancer l'entraînement après détection d'une dérive sur les nouvelles collections
+       développement | Tester différentes valeurs de profondeur d'arbre dans un notebook Jupyter
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">actions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Lancer pytest sur le modèle avec des données de test offline&quot;</span><span class="p">:</span> <span class="s2">&quot;validation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Exporter le modèle dans un conteneur Docker et l&#39;exposer via FastAPI&quot;</span><span class="p">:</span> <span class="s2">&quot;déploiement&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Vérifier chaque semaine si le taux de clics sur les recommandations chute&quot;</span><span class="p">:</span> <span class="s2">&quot;monitoring&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Relancer l&#39;entraînement après détection d&#39;une dérive sur les nouvelles collections&quot;</span><span class="p">:</span> <span class="s2">&quot;ré-entraînement&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Tester différentes valeurs de profondeur d&#39;arbre dans un notebook Jupyter&quot;</span><span class="p">:</span> <span class="s2">&quot;développement&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">etape</span> <span class="ow">in</span> <span class="n">actions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">etape</span><span class="si">:</span><span class="s2">&gt;18</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-diagnostiquer-un-pipeline-mlops-défaillant">Exercice 2 — Diagnostiquer un pipeline MLOps défaillant</h3>
+
+<p>L'équipe ML de Decathlon déploie un modèle de prévision de rupture de stock. Voici leur pipeline actuel. Pour chaque point de défaillance, identifiez l'étape du cycle ML concernée et le problème MLOps correspondant.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Décrivez les 3 problèmes MLOps dans ce pipeline</span>
+<span class="n">pipeline_decathlon</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;entraînement&quot;</span><span class="p">:</span> <span class="s2">&quot;Le data scientist entraîne le modèle sur son poste local avec Python 3.10&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;déploiement&quot;</span><span class="p">:</span> <span class="s2">&quot;Il copie le fichier model.pkl sur le serveur de prod via clé USB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;opérations&quot;</span><span class="p">:</span> <span class="s2">&quot;Le modèle tourne en production depuis 6 mois, personne ne vérifie ses prédictions&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">problemes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;entraînement&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>  <span class="c1"># Quel problème MLOps ?</span>
+    <span class="s2">&quot;déploiement&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>   <span class="c1"># Quel problème MLOps ?</span>
+    <span class="s2">&quot;opérations&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>    <span class="c1"># Quel problème MLOps ?</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">etape</span><span class="p">,</span> <span class="n">probleme</span> <span class="ow">in</span> <span class="n">problemes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">etape</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">probleme</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Résultat attendu (formulation libre, les 3 problèmes doivent être identifiés) :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">[entraînement] Absence de reproductibilité : l'environnement local n'est pas versionné ni isolé
+[déploiement] Absence de traçabilité et d'automatisation : déploiement manuel non auditable
+[opérations] Absence de monitoring : dérive non détectée, performances inconnues depuis 6 mois
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">pipeline_decathlon</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;entraînement&quot;</span><span class="p">:</span> <span class="s2">&quot;Le data scientist entraîne le modèle sur son poste local avec Python 3.10&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;déploiement&quot;</span><span class="p">:</span> <span class="s2">&quot;Il copie le fichier model.pkl sur le serveur de prod via clé USB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;opérations&quot;</span><span class="p">:</span> <span class="s2">&quot;Le modèle tourne en production depuis 6 mois, personne ne vérifie ses prédictions&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">problemes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;entraînement&quot;</span><span class="p">:</span> <span class="s2">&quot;Absence de reproductibilité : l&#39;environnement local n&#39;est pas versionné ni isolé&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;déploiement&quot;</span><span class="p">:</span> <span class="s2">&quot;Absence de traçabilité et d&#39;automatisation : déploiement manuel non auditable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;opérations&quot;</span><span class="p">:</span> <span class="s2">&quot;Absence de monitoring : dérive non détectée, performances inconnues depuis 6 mois&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">etape</span><span class="p">,</span> <span class="n">probleme</span> <span class="ow">in</span> <span class="n">problemes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">etape</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">probleme</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-calculer-limpact-opérationnel-dun-mlops-défaillant">Exercice 3 — Calculer l'impact opérationnel d'un MLOps défaillant</h3>
+
+<p>BNP Paribas utilise un modèle de détection de fraude traité manuellement : un analyste l'exécute chaque matin, exporte les résultats, et les soumet au système de validation. Le modèle prend 2 minutes à tourner, l'export prend 5 minutes, la soumission prend 3 minutes. L'analyste travaille 220 jours par an. Calculez le temps annuel perdu et le pourcentage de son temps de travail (journée de 7h).</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Temps par tâche en minutes</span>
+<span class="n">temps_execution</span> <span class="o">=</span> <span class="n">___</span>
+<span class="n">temps_export</span> <span class="o">=</span> <span class="n">___</span>
+<span class="n">temps_soumission</span> <span class="o">=</span> <span class="n">___</span>
+
+<span class="c1"># Jours ouvrés par an</span>
+<span class="n">jours_par_an</span> <span class="o">=</span> <span class="n">___</span>
+
+<span class="c1"># Calculs</span>
+<span class="n">temps_total_par_jour_min</span> <span class="o">=</span> <span class="n">temps_execution</span> <span class="o">+</span> <span class="n">temps_export</span> <span class="o">+</span> <span class="n">temps_soumission</span>
+<span class="n">temps_annuel_min</span> <span class="o">=</span> <span class="n">temps_total_par_jour_min</span> <span class="o">*</span> <span class="n">jours_par_an</span>
+<span class="n">temps_annuel_heures</span> <span class="o">=</span> <span class="n">temps_annuel_min</span> <span class="o">/</span> <span class="mi">60</span>
+
+<span class="c1"># Journée de travail = 7h = 420 min</span>
+<span class="n">journee_travail_min</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">60</span>
+<span class="n">temps_annuel_journees</span> <span class="o">=</span> <span class="n">temps_annuel_min</span> <span class="o">/</span> <span class="n">journee_travail_min</span>
+
+<span class="n">pourcentage_temps</span> <span class="o">=</span> <span class="p">(</span><span class="n">temps_total_par_jour_min</span> <span class="o">/</span> <span class="n">journee_travail_min</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temps par jour : </span><span class="si">{</span><span class="n">temps_total_par_jour_min</span><span class="si">}</span><span class="s2"> min&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temps annuel : </span><span class="si">{</span><span class="n">temps_annuel_heures</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> heures (</span><span class="si">{</span><span class="n">temps_annuel_journees</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> journées de travail)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pourcentage du temps quotidien : </span><span class="si">{</span><span class="n">pourcentage_temps</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Résultat attendu :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Temps par jour : 10 min
+Temps annuel : 36.7 heures (5.2 journées de travail)
+Pourcentage du temps quotidien : 2.4%
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">temps_execution</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">temps_export</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">temps_soumission</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">jours_par_an</span> <span class="o">=</span> <span class="mi">220</span>
+
+<span class="n">temps_total_par_jour_min</span> <span class="o">=</span> <span class="n">temps_execution</span> <span class="o">+</span> <span class="n">temps_export</span> <span class="o">+</span> <span class="n">temps_soumission</span>
+<span class="n">temps_annuel_min</span> <span class="o">=</span> <span class="n">temps_total_par_jour_min</span> <span class="o">*</span> <span class="n">jours_par_an</span>
+<span class="n">temps_annuel_heures</span> <span class="o">=</span> <span class="n">temps_annuel_min</span> <span class="o">/</span> <span class="mi">60</span>
+
+<span class="n">journee_travail_min</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">60</span>
+<span class="n">temps_annuel_journees</span> <span class="o">=</span> <span class="n">temps_annuel_min</span> <span class="o">/</span> <span class="n">journee_travail_min</span>
+
+<span class="n">pourcentage_temps</span> <span class="o">=</span> <span class="p">(</span><span class="n">temps_total_par_jour_min</span> <span class="o">/</span> <span class="n">journee_travail_min</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temps par jour : </span><span class="si">{</span><span class="n">temps_total_par_jour_min</span><span class="si">}</span><span class="s2"> min&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temps annuel : </span><span class="si">{</span><span class="n">temps_annuel_heures</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> heures (</span><span class="si">{</span><span class="n">temps_annuel_journees</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> journées de travail)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pourcentage du temps quotidien : </span><span class="si">{</span><span class="n">pourcentage_temps</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-4-concevoir-un-pipeline-mlops-minimal">Exercice 4 — Concevoir un pipeline MLOps minimal</h3>
+
+<p>Cdiscount veut industrialiser un modèle de détection de faux avis clients. Le modèle existe (scikit-learn, <code>model.pkl</code>). Complétez le code pour construire la liste ordonnée des étapes MLOps manquantes et leur outil associé, depuis l'état actuel ("notebook fonctionnel") jusqu'à un pipeline production minimal.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># État actuel : notebook fonctionnel, model.pkl sauvegardé localement</span>
+<span class="c1"># Objectif : pipeline production minimal</span>
+
+<span class="n">etapes_manquantes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>  <span class="c1"># Versionner le modèle et ses métriques</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>  <span class="c1"># Exposer le modèle via une API REST</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>  <span class="c1"># Packager l&#39;API avec ses dépendances</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>  <span class="c1"># Surveiller les performances en production</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">etapes_manquantes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;ordre&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;etape&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">40s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;outil&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Résultat attendu :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">1. Tracking expériences et versioning modèle    → MLflow
+2. Création d'une API de prédiction             → FastAPI
+3. Containerisation de l'API                    → Docker
+4. Monitoring des prédictions et de la dérive   → Evidently
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">etapes_manquantes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="s2">&quot;Tracking expériences et versioning modèle&quot;</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="s2">&quot;MLflow&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="s2">&quot;Création d&#39;une API de prédiction&quot;</span><span class="p">,</span>          <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="s2">&quot;FastAPI&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="s2">&quot;Containerisation de l&#39;API&quot;</span><span class="p">,</span>                  <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="s2">&quot;Docker&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ordre&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;etape&quot;</span><span class="p">:</span> <span class="s2">&quot;Monitoring des prédictions et de la dérive&quot;</span><span class="p">,</span> <span class="s2">&quot;outil&quot;</span><span class="p">:</span> <span class="s2">&quot;Evidently&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">etapes_manquantes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;ordre&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;etape&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">40s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;outil&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

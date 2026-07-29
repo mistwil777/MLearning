@@ -380,5 +380,261 @@ La Société Générale traite 800 000 factures fournisseurs par an, dans 15 for
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle décision ne doit jamais être prise directement par un LLM dans un pipeline de production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les décisions à fort enjeu irréversibles (transactions financières, remboursements, rejets définitifs). Ces décisions passent par des règles explicites ou une validation humaine, même si le LLM a généré la recommandation.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Le ML filtre en amont pour que le LLM ne traite que 5-20% des cas : coût divisé par 5 à 20.
+- La décision finale appartient aux règles explicites, pas au LLM ni au ML seul.
+- LLM en extraction + ML en prédiction : pattern le plus rentable sur données texte + tabulaire.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-implémenter-le-routage-ml-llm">Exercice 1 — Implémenter le routage ML → LLM</h3>
+
+<p>Le service client de La Redoute reçoit 10 000 emails par jour. Un modèle de classification ML attribue un score de confiance à chaque email. Les emails avec un score élevé (simple) ou très bas (spam) sont traités automatiquement ; les cas intermédiaires sont envoyés au LLM pour analyse approfondie.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">router_email</span><span class="p">(</span><span class="n">score_ml</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne la décision de routage selon le score ML.</span>
+<span class="sd">    - score &gt; 0.85 → &quot;AUTO_TRAITE&quot;</span>
+<span class="sd">    - score &lt; 0.15 → &quot;SPAM_REJETE&quot;</span>
+<span class="sd">    - entre les deux → &quot;LLM_ANALYSE&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">score_ml</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;AUTO_TRAITE&quot;</span>
+    <span class="k">elif</span> <span class="n">score_ml</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;SPAM_REJETE&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">___</span>
+
+<span class="c1"># Test avec une liste de scores</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.47</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">router_email</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Score 0.92 → AUTO_TRAITE
+Score 0.10 → SPAM_REJETE
+Score 0.55 → LLM_ANALYSE
+Score 0.88 → AUTO_TRAITE
+Score 0.03 → SPAM_REJETE
+Score 0.47 → LLM_ANALYSE
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">router_email</span><span class="p">(</span><span class="n">score_ml</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">score_ml</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;AUTO_TRAITE&quot;</span>
+    <span class="k">elif</span> <span class="n">score_ml</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;SPAM_REJETE&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;LLM_ANALYSE&quot;</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.47</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">router_email</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-valider-la-cohérence-dune-extraction-llm">Exercice 2 — Valider la cohérence d'une extraction LLM</h3>
+
+<p>Décathlon reçoit des fiches produits fournisseurs en texte libre. Un LLM extrait les champs structurés (nom, prix, catégorie, poids). Avant d'insérer en base, un validateur ML/règles vérifie la cohérence : prix positif, poids dans une plage réaliste (0.1 kg à 50 kg), catégorie connue.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">CATEGORIES_VALIDES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vélo&quot;</span><span class="p">,</span> <span class="s2">&quot;running&quot;</span><span class="p">,</span> <span class="s2">&quot;natation&quot;</span><span class="p">,</span> <span class="s2">&quot;randonnée&quot;</span><span class="p">,</span> <span class="s2">&quot;fitness&quot;</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">valider_fiche_produit</span><span class="p">(</span><span class="n">fiche</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Valide une fiche produit extraite par LLM.</span>
+<span class="sd">    Retourne (valide: bool, erreurs: list[str]).</span>
+<span class="sd">    Une fiche est valide si la liste d&#39;erreurs est vide.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">erreurs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Vérifier que le prix est strictement positif</span>
+    <span class="k">if</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prix&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;prix invalide&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Vérifier que le poids est entre 0.1 et 50 kg inclus</span>
+    <span class="n">poids</span> <span class="o">=</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;poids_kg&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">___</span> <span class="o">&lt;=</span> <span class="n">poids</span> <span class="o">&lt;=</span> <span class="n">___</span><span class="p">):</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;poids hors plage&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Vérifier que la catégorie est dans CATEGORIES_VALIDES</span>
+    <span class="k">if</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;categorie&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;catégorie inconnue&quot;</span><span class="p">)</span>
+
+    <span class="n">valide</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">erreurs</span><span class="p">)</span> <span class="o">==</span> <span class="n">___</span>
+    <span class="k">return</span> <span class="n">valide</span><span class="p">,</span> <span class="n">erreurs</span>
+
+<span class="c1"># Tests</span>
+<span class="n">fiches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Vélo VTT Trail&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">349.99</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;vélo&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Chaussures trail&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Combinaison surf&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">89.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;surf&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Haltère fonte&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">75.0</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;fitness&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fiches</span><span class="p">:</span>
+    <span class="n">valide</span><span class="p">,</span> <span class="n">erreurs</span> <span class="o">=</span> <span class="n">valider_fiche_produit</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">statut</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span> <span class="k">if</span> <span class="n">valide</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;KO — </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">erreurs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;nom&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">statut</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Vélo VTT Trail: OK
+Chaussures trail: KO — prix invalide
+Combinaison surf: KO — catégorie inconnue
+Haltère fonte: KO — poids hors plage
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">CATEGORIES_VALIDES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vélo&quot;</span><span class="p">,</span> <span class="s2">&quot;running&quot;</span><span class="p">,</span> <span class="s2">&quot;natation&quot;</span><span class="p">,</span> <span class="s2">&quot;randonnée&quot;</span><span class="p">,</span> <span class="s2">&quot;fitness&quot;</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">valider_fiche_produit</span><span class="p">(</span><span class="n">fiche</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+    <span class="n">erreurs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prix&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;prix invalide&quot;</span><span class="p">)</span>
+
+    <span class="n">poids</span> <span class="o">=</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;poids_kg&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">poids</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="p">):</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;poids hors plage&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fiche</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;categorie&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CATEGORIES_VALIDES</span><span class="p">:</span>
+        <span class="n">erreurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;catégorie inconnue&quot;</span><span class="p">)</span>
+
+    <span class="n">valide</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">erreurs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">valide</span><span class="p">,</span> <span class="n">erreurs</span>
+
+<span class="n">fiches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Vélo VTT Trail&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">349.99</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;vélo&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Chaussures trail&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Combinaison surf&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">89.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;surf&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Haltère fonte&quot;</span><span class="p">,</span> <span class="s2">&quot;prix&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">,</span> <span class="s2">&quot;poids_kg&quot;</span><span class="p">:</span> <span class="mf">75.0</span><span class="p">,</span> <span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;fitness&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fiches</span><span class="p">:</span>
+    <span class="n">valide</span><span class="p">,</span> <span class="n">erreurs</span> <span class="o">=</span> <span class="n">valider_fiche_produit</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">statut</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span> <span class="k">if</span> <span class="n">valide</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;KO — </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">erreurs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;nom&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">statut</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-construire-un-pipeline-3-étapes-avec-comptage-des-routes">Exercice 3 — Construire un pipeline 3 étapes avec comptage des routes</h3>
+
+<p>BNP Paribas analyse des réclamations clients en texte libre. Le pipeline : (1) un score ML de criticité entre 0 et 1, (2) un routage vers LLM ou traitement automatique, (3) un comptage des décisions pour le reporting. Implémenter le pipeline complet et afficher les statistiques finales.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">score_criticite</span><span class="p">(</span><span class="n">texte</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simule un modèle ML qui attribue un score de criticité.</span>
+<span class="sd">    Règle de simulation : score = (nombre de mots urgents) / 5, plafonné à 1.0</span>
+<span class="sd">    Mots urgents : &quot;urgent&quot;, &quot;fraude&quot;, &quot;bloqué&quot;, &quot;erreur&quot;, &quot;remboursement&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mots_urgents</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;urgent&quot;</span><span class="p">,</span> <span class="s2">&quot;fraude&quot;</span><span class="p">,</span> <span class="s2">&quot;bloqué&quot;</span><span class="p">,</span> <span class="s2">&quot;erreur&quot;</span><span class="p">,</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">}</span>
+    <span class="n">mots</span> <span class="o">=</span> <span class="n">texte</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">compte</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mots</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">___</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">___</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">router</span><span class="p">(</span><span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Score &gt;= 0.4 → LLM_PRIORITAIRE, sinon → AUTO_REPONSE&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;LLM_PRIORITAIRE&quot;</span> <span class="k">if</span> <span class="n">score</span> <span class="n">___</span> <span class="mf">0.4</span> <span class="k">else</span> <span class="s2">&quot;AUTO_REPONSE&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pipeline_reclamations</span><span class="p">(</span><span class="n">reclamations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Traite toutes les réclamations et retourne le comptage des routes.&quot;&quot;&quot;</span>
+    <span class="n">compteur</span> <span class="o">=</span> <span class="n">___</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">texte</span> <span class="ow">in</span> <span class="n">reclamations</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">score_criticite</span><span class="p">(</span><span class="n">texte</span><span class="p">)</span>
+        <span class="n">decision</span> <span class="o">=</span> <span class="n">router</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">compteur</span><span class="p">[</span><span class="n">___</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">compteur</span>
+
+<span class="n">reclamations</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Mon virement n&#39;est pas arrivé&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Fraude détectée sur mon compte urgent remboursement&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Je voudrais changer mon adresse postale&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Compte bloqué erreur de connexion urgent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quand ouvre votre agence le samedi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Erreur sur mon relevé&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">stats</span> <span class="o">=</span> <span class="n">pipeline_reclamations</span><span class="p">(</span><span class="n">reclamations</span><span class="p">)</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">route</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">route</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="n">total</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">AUTO_REPONSE: 3/6 (50%)
+LLM_PRIORITAIRE: 3/6 (50%)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">score_criticite</span><span class="p">(</span><span class="n">texte</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">mots_urgents</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;urgent&quot;</span><span class="p">,</span> <span class="s2">&quot;fraude&quot;</span><span class="p">,</span> <span class="s2">&quot;bloqué&quot;</span><span class="p">,</span> <span class="s2">&quot;erreur&quot;</span><span class="p">,</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">}</span>
+    <span class="n">mots</span> <span class="o">=</span> <span class="n">texte</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">compte</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mots</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mots_urgents</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">compte</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">router</span><span class="p">(</span><span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;LLM_PRIORITAIRE&quot;</span> <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mf">0.4</span> <span class="k">else</span> <span class="s2">&quot;AUTO_REPONSE&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pipeline_reclamations</span><span class="p">(</span><span class="n">reclamations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
+    <span class="n">compteur</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">texte</span> <span class="ow">in</span> <span class="n">reclamations</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">score_criticite</span><span class="p">(</span><span class="n">texte</span><span class="p">)</span>
+        <span class="n">decision</span> <span class="o">=</span> <span class="n">router</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">compteur</span><span class="p">[</span><span class="n">decision</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">compteur</span>
+
+<span class="n">reclamations</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Mon virement n&#39;est pas arrivé&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Fraude détectée sur mon compte urgent remboursement&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Je voudrais changer mon adresse postale&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Compte bloqué erreur de connexion urgent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quand ouvre votre agence le samedi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Erreur sur mon relevé&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">stats</span> <span class="o">=</span> <span class="n">pipeline_reclamations</span><span class="p">(</span><span class="n">reclamations</span><span class="p">)</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">route</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">route</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="n">total</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

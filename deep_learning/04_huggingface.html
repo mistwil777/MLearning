@@ -318,5 +318,217 @@ details>*:not(summary){padding:0 20px 20px}
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'apporte le Trainer HuggingFace par rapport à une boucle d'entraînement manuelle ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Gestion automatique de : l'évaluation par epoch, la sauvegarde du meilleur modèle, la reprise après interruption, le mixed precision training, la distribution multi-GPU.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- HuggingFace : un modèle pré-entraîné en une ligne, des semaines de travail évitées.
+- Fine-tuning : 3 epochs avec lr=2e-5 suffisent — un lr plus grand détruit les poids existants.
+- Tokenisation : tout modèle reçoit des entiers, jamais du texte brut ; le tokenizer du modèle est obligatoire.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-analyse-de-sentiment-sur-des-avis-trustpilot">Exercice 1 — Analyse de sentiment sur des avis Trustpilot</h3>
+
+<p>La SNCF collecte des avis clients sur Trustpilot pour suivre la satisfaction en temps réel. L'équipe data veut classer automatiquement chaque avis en positif ou négatif à l'aide d'un pipeline HuggingFace sans aucun entraînement.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
+
+<span class="c1"># Initialiser un pipeline de classification de sentiment</span>
+<span class="c1"># Modèle à utiliser : &quot;nlptown/bert-base-multilingual-uncased-sentiment&quot;</span>
+<span class="n">classifieur</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+
+<span class="n">avis</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Le TGV était à l&#39;heure, personnel accueillant, très bonne expérience.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Retard de 2 heures, aucune information donnée aux voyageurs, inadmissible.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Confort correct pour le prix, rien d&#39;exceptionnel.&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># Classer les trois avis</span>
+<span class="n">resultats</span> <span class="o">=</span> <span class="n">classifieur</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">avis_texte</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">avis</span><span class="p">,</span> <span class="n">resultats</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avis_texte</span><span class="p">[:</span><span class="mi">40</span><span class="p">]</span><span class="si">}</span><span class="s2">... → </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> trois lignes affichant chaque avis tronqué, un label (1 à 5 étoiles) et un score de confiance supérieur à 0.50.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
+
+<span class="n">classifieur</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;text-classification&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;nlptown/bert-base-multilingual-uncased-sentiment&quot;</span><span class="p">)</span>
+
+<span class="n">avis</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Le TGV était à l&#39;heure, personnel accueillant, très bonne expérience.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Retard de 2 heures, aucune information donnée aux voyageurs, inadmissible.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Confort correct pour le prix, rien d&#39;exceptionnel.&quot;</span>
+<span class="p">]</span>
+
+<span class="n">resultats</span> <span class="o">=</span> <span class="n">classifieur</span><span class="p">(</span><span class="n">avis</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">avis_texte</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">avis</span><span class="p">,</span> <span class="n">resultats</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avis_texte</span><span class="p">[:</span><span class="mi">40</span><span class="p">]</span><span class="si">}</span><span class="s2">... → </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-inspecter-la-tokenisation-de-termes-métier">Exercice 2 — Inspecter la tokenisation de termes métier</h3>
+
+<p>L'équipe NLP de Société Générale veut comprendre comment CamemBERT découpe les termes financiers spécialisés avant de l'utiliser sur des contrats. Certains mots rares sont découpés en sous-unités ; connaître ce découpage permet d'anticiper la perte d'information.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># utiliser &quot;camembert-base&quot;</span>
+
+<span class="n">termes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;titrisation&quot;</span><span class="p">,</span> <span class="s2">&quot;décarbonation&quot;</span><span class="p">,</span> <span class="s2">&quot;créancier&quot;</span><span class="p">,</span> <span class="s2">&quot;refinancement&quot;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">terme</span> <span class="ow">in</span> <span class="n">termes</span><span class="p">:</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">terme</span><span class="p">)</span>  <span class="c1"># méthode qui retourne la liste des tokens sous forme de strings</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">terme</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">tokens</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> pour chaque terme, une liste de sous-tokens. Par exemple <code>"titrisation"</code> peut donner <code>['▁titris', 'ation']</code> ; les termes courants restent en un seul token.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+
+<span class="n">termes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;titrisation&quot;</span><span class="p">,</span> <span class="s2">&quot;décarbonation&quot;</span><span class="p">,</span> <span class="s2">&quot;créancier&quot;</span><span class="p">,</span> <span class="s2">&quot;refinancement&quot;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">terme</span> <span class="ow">in</span> <span class="n">termes</span><span class="p">:</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">terme</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">terme</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">tokens</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-adapter-le-fine-tuning-à-une-classification-multi-classes">Exercice 3 — Adapter le fine-tuning à une classification multi-classes</h3>
+
+<p>L'équipe NLP de Doctolib veut classer automatiquement les messages de patients en 4 catégories : <code>prise_rdv</code>, <code>annulation</code>, <code>question_medicale</code>, <code>facturation</code>. Le code de fine-tuning vu en cours gère 2 classes ; il faut l'adapter.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">TrainingArguments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Données simulées : 4 catégories</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;texte&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Je voudrais prendre rendez-vous avec le Dr Martin.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Je dois annuler ma consultation de demain.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Est-ce que ce médicament peut interagir avec l&#39;ibuprofène ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Je n&#39;ai pas reçu ma facture du mois dernier.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pouvez-vous me proposer un créneau lundi matin ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Comment se déroule une consultation de suivi ?&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># 4 classes</span>
+<span class="p">}</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+
+<span class="c1"># Adapter num_labels pour 4 classes au lieu de 2</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="s2">&quot;camembert-base&quot;</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="n">___</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tokeniser</span><span class="p">(</span><span class="n">exemples</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">exemples</span><span class="p">[</span><span class="s2">&quot;texte&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># longueur max : 64</span>
+
+<span class="n">dataset_tokenise</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tokeniser</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./modele_doctolib&quot;</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>          <span class="c1"># 3 epochs</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">2e-5</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">modele</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Entraînement terminé — modèle sauvegardé dans ./modele_doctolib&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> l'entraînement se termine sur 3 epochs sans erreur et affiche la ligne <code>Entraînement terminé — modèle sauvegardé dans ./modele_doctolib</code>.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">TrainingArguments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;texte&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Je voudrais prendre rendez-vous avec le Dr Martin.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Je dois annuler ma consultation de demain.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Est-ce que ce médicament peut interagir avec l&#39;ibuprofène ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Je n&#39;ai pas reçu ma facture du mois dernier.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pouvez-vous me proposer un créneau lundi matin ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Comment se déroule une consultation de suivi ?&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;camembert-base&quot;</span><span class="p">)</span>
+
+<span class="n">modele</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="s2">&quot;camembert-base&quot;</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tokeniser</span><span class="p">(</span><span class="n">exemples</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">exemples</span><span class="p">[</span><span class="s2">&quot;texte&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;max_length&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+
+<span class="n">dataset_tokenise</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tokeniser</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./modele_doctolib&quot;</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">2e-5</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">modele</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_tokenise</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Entraînement terminé — modèle sauvegardé dans ./modele_doctolib&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

@@ -378,5 +378,306 @@ La Fnac dispose d'un catalogue de 12 millions de références. La recherche text
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle est la différence entre FAISS et Pinecone ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">FAISS est une bibliothèque locale (Meta, open-source) — bonne pour le prototypage, en mémoire. Pinecone est un service cloud managé — conçu pour la production avec des millions de vecteurs, réplication, scalabilité.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Un embedding encode la similarité : la distance entre vecteurs = la proximité de sens ou de comportement.
+- FAISS pour prototyper localement, Pinecone pour la production à large échelle — ne pas confondre les deux.
+- La recherche sémantique complète la recherche par mots-clés ; elle ne la remplace pas pour les requêtes exactes.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-recherche-sémantique-dans-un-catalogue-doffres-demploi">Exercice 1 — Recherche sémantique dans un catalogue d'offres d'emploi</h3>
+
+<p>Le Bon Coin Emploi dispose d'un catalogue d'annonces. On veut retrouver les offres les plus pertinentes pour une candidature rédigée en langage naturel, sans matching exact sur les mots-clés.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">offres</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Développeur Python backend, maîtrise FastAPI et PostgreSQL, télétravail partiel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Data Scientist junior, régression, classification, scikit-learn, pandas&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ingénieur DevOps, Kubernetes, CI/CD GitLab, Docker, AWS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Chef de projet digital, coordination équipes techniques et métier, agile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Analyste données marketing, SQL, Power BI, segmentation client&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Développeur React frontend, TypeScript, tests unitaires, design system&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Encoder toutes les offres</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Créer l&#39;index FAISS avec Inner Product (cosine sim si vecteurs normalisés)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">___</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">___</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+
+<span class="c1"># Recherche</span>
+<span class="n">candidature</span> <span class="o">=</span> <span class="s2">&quot;Je cherche un poste en analyse de données avec des outils de visualisation&quot;</span>
+<span class="n">vec</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">___</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>  <span class="c1"># top 3</span>
+
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">offres</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> Les 3 résultats doivent inclure l'offre "Analyste données marketing" en première position, devant "Data Scientist junior". L'offre DevOps doit apparaître loin derrière (score &lt; 0.4).</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">offres</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Développeur Python backend, maîtrise FastAPI et PostgreSQL, télétravail partiel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Data Scientist junior, régression, classification, scikit-learn, pandas&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ingénieur DevOps, Kubernetes, CI/CD GitLab, Docker, AWS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Chef de projet digital, coordination équipes techniques et métier, agile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Analyste données marketing, SQL, Power BI, segmentation client&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Développeur React frontend, TypeScript, tests unitaires, design system&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">offres</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+
+<span class="n">candidature</span> <span class="o">=</span> <span class="s2">&quot;Je cherche un poste en analyse de données avec des outils de visualisation&quot;</span>
+<span class="n">vec</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">candidature</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">offres</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-mise-à-jour-dun-index-faiss-avec-de-nouveaux-produits">Exercice 2 — Mise à jour d'un index FAISS avec de nouveaux produits</h3>
+
+<p>ManoMano, marketplace de bricolage, ajoute régulièrement des produits à son catalogue. L'index FAISS existant doit être enrichi sans être reconstruit entièrement.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Catalogue initial</span>
+<span class="n">catalogue_initial</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Perceuse sans fil 18V, mandrin 13mm, livrée avec 2 batteries&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ponceuse orbitale 125mm, 300W, collecteur de poussière intégré&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Niveau laser croix, portée 20m, trépied inclus&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">embeddings_init</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">catalogue_initial</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_init</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index initial : </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">ntotal</span><span class="si">}</span><span class="s2"> produits&quot;</span><span class="p">)</span>  <span class="c1"># → 3</span>
+
+<span class="c1"># Nouveaux produits à ajouter</span>
+<span class="n">nouveaux_produits</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Visseuse à chocs 18V, couple 180 Nm, compact et léger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scie circulaire 190mm, 1400W, guide parallèle réglable&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">embeddings_nouveaux</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+<span class="c1"># Ajouter les nouveaux embeddings à l&#39;index existant</span>
+<span class="n">index</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">embeddings_nouveaux</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index mis à jour : </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">ntotal</span><span class="si">}</span><span class="s2"> produits&quot;</span><span class="p">)</span>  <span class="c1"># → 5</span>
+
+<span class="c1"># Vérifier que les nouveaux produits sont bien retrouvables</span>
+<span class="n">tous_produits</span> <span class="o">=</span> <span class="n">catalogue_initial</span> <span class="o">+</span> <span class="n">nouveaux_produits</span>
+<span class="n">requete</span> <span class="o">=</span> <span class="s2">&quot;outil pour visser des boulons avec puissance&quot;</span>
+<span class="n">vec</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>  <span class="c1"># top 2</span>
+
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">tous_produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Index initial : 3 produits
+Index mis à jour : 5 produits
+[0.7xx] Visseuse à chocs 18V, couple 180 Nm, compact et léger
+[0.6xx] Perceuse sans fil 18V, mandrin 13mm, livrée avec 2 batteries
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="n">catalogue_initial</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Perceuse sans fil 18V, mandrin 13mm, livrée avec 2 batteries&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ponceuse orbitale 125mm, 300W, collecteur de poussière intégré&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Niveau laser croix, portée 20m, trépied inclus&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">embeddings_init</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">catalogue_initial</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_init</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index initial : </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">ntotal</span><span class="si">}</span><span class="s2"> produits&quot;</span><span class="p">)</span>  <span class="c1"># → 3</span>
+
+<span class="n">nouveaux_produits</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Visseuse à chocs 18V, couple 180 Nm, compact et léger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scie circulaire 190mm, 1400W, guide parallèle réglable&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">embeddings_nouveaux</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">nouveaux_produits</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+<span class="c1"># La méthode est .add() — même méthode que pour l&#39;initialisation</span>
+<span class="n">index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_nouveaux</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index mis à jour : </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">ntotal</span><span class="si">}</span><span class="s2"> produits&quot;</span><span class="p">)</span>  <span class="c1"># → 5</span>
+
+<span class="n">tous_produits</span> <span class="o">=</span> <span class="n">catalogue_initial</span> <span class="o">+</span> <span class="n">nouveaux_produits</span>
+<span class="n">requete</span> <span class="o">=</span> <span class="s2">&quot;outil pour visser des boulons avec puissance&quot;</span>
+<span class="n">vec</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">tous_produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-choisir-entre-indexflatip-et-indexflatl2">Exercice 3 — Choisir entre IndexFlatIP et IndexFlatL2</h3>
+
+<p>Cdiscount veut comprendre la différence entre deux métriques de distance disponibles dans FAISS : le produit scalaire (Inner Product) et la distance euclidienne (L2). On veut vérifier que le classement des résultats peut différer selon la métrique choisie sur des vecteurs non normalisés.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="n">produits</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Télévision OLED 55 pouces 4K HDR, son Dolby Atmos&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Barre de son Bluetooth 2.1, caisson de basses sans fil, 300W&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Projecteur portable Full HD, autonomie 3h, HDMI et USB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Câble HDMI 2.1 8K, 2 mètres, compatible eARC&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">requete</span> <span class="o">=</span> <span class="s2">&quot;écran pour regarder des films en haute définition&quot;</span>
+
+<span class="c1"># Vecteurs NON normalisés intentionnellement</span>
+<span class="n">embeddings_bruts</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">produits</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">vec_brut</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+<span class="c1"># Index avec produit scalaire (Inner Product)</span>
+<span class="n">dim</span> <span class="o">=</span> <span class="n">embeddings_bruts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">index_ip</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+<span class="n">index_ip</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_bruts</span><span class="p">)</span>
+<span class="n">scores_ip</span><span class="p">,</span> <span class="n">indices_ip</span> <span class="o">=</span> <span class="n">index_ip</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec_brut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">produits</span><span class="p">))</span>
+
+<span class="c1"># Index avec distance euclidienne (L2)</span>
+<span class="n">index_l2</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatL2</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+<span class="n">index_l2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_bruts</span><span class="p">)</span>
+<span class="n">scores_l2</span><span class="p">,</span> <span class="n">indices_l2</span> <span class="o">=</span> <span class="n">___</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec_brut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">produits</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Classement avec Inner Product ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores_ip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Classement avec L2 (distance, plus bas = plus proche) ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores_l2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_l2</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Question de réflexion : les classements sont-ils identiques ?</span>
+<span class="c1"># Que faudrait-il faire pour garantir que IP et cosine similarity sont équivalents ?</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Pour garantir cosine similarity avec IndexFlatIP :&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Il faut normaliser les vecteurs avant de les ajouter à l&#39;index.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Avec normalize_embeddings=True, IP devient équivalent à la similarité cosinus.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> Les deux classements placent "Télévision OLED 55 pouces" en premier et "Câble HDMI" en dernier, mais les scores numériques diffèrent (IP donne des valeurs positives entre 0 et 1 environ pour des modèles Sentence Transformers ; L2 donne des distances positives, souvent entre 0.3 et 1.5 pour ce type de modèle). Le classement peut légèrement varier entre les deux métriques sur les positions intermédiaires.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="n">produits</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Télévision OLED 55 pouces 4K HDR, son Dolby Atmos&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Barre de son Bluetooth 2.1, caisson de basses sans fil, 300W&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Projecteur portable Full HD, autonomie 3h, HDMI et USB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Câble HDMI 2.1 8K, 2 mètres, compatible eARC&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">requete</span> <span class="o">=</span> <span class="s2">&quot;écran pour regarder des films en haute définition&quot;</span>
+
+<span class="n">embeddings_bruts</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">produits</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">vec_brut</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+<span class="n">dim</span> <span class="o">=</span> <span class="n">embeddings_bruts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">index_ip</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">index_ip</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_bruts</span><span class="p">)</span>
+<span class="n">scores_ip</span><span class="p">,</span> <span class="n">indices_ip</span> <span class="o">=</span> <span class="n">index_ip</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec_brut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">produits</span><span class="p">))</span>
+
+<span class="n">index_l2</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatL2</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">index_l2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_bruts</span><span class="p">)</span>
+<span class="n">scores_l2</span><span class="p">,</span> <span class="n">indices_l2</span> <span class="o">=</span> <span class="n">index_l2</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec_brut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">produits</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Classement avec Inner Product ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores_ip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Classement avec L2 (distance, plus bas = plus proche) ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores_l2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_l2</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Pour garantir cosine similarity avec IndexFlatIP :&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Il faut normaliser les vecteurs avant de les ajouter à l&#39;index.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Avec normalize_embeddings=True, IP devient équivalent à la similarité cosinus.&quot;</span><span class="p">)</span>
+
+<span class="c1"># Vérification : avec normalisation, IP = cosine similarity</span>
+<span class="n">embeddings_norm</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">produits</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">vec_norm</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">requete</span><span class="p">],</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">index_norm</span> <span class="o">=</span> <span class="n">faiss</span><span class="o">.</span><span class="n">IndexFlatIP</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">index_norm</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embeddings_norm</span><span class="p">)</span>
+<span class="n">scores_norm</span><span class="p">,</span> <span class="n">indices_norm</span> <span class="o">=</span> <span class="n">index_norm</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">vec_norm</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">produits</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Avec vecteurs normalisés (cosine similarity via IP) ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores_norm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_norm</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">produits</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

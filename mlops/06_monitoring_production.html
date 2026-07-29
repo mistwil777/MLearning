@@ -323,5 +323,345 @@ NIVEAU 3 — Métier (mensuel, délai incompressible)
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quels sont les 3 niveaux de monitoring à mettre en place pour un modèle en production ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>1. Technique</strong> (temps réel) : latence, taux d'erreur, disponibilité. <strong>2. Data</strong> (hebdomadaire) : drift des features d'entrée via Evidently/PSI. <strong>3. Métier</strong> (mensuel, avec délai) : performance réelle sur les décisions prises — nécessite d'attendre les résultats observables.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Le monitoring technique ne détecte jamais la dégradation des prédictions — il faut les trois niveaux.
+- Shadow mode : observer le nouveau modèle sur trafic réel sans aucun risque avant de basculer.
+- Le délai du monitoring métier est incompressible : il faut attendre que la réalité se produise.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-logger-les-prédictions-en-shadow-mode">Exercice 1 — Logger les prédictions en shadow mode</h3>
+
+<p><strong>Contexte</strong> : Cdiscount déploie un nouveau modèle de scoring de fraude en shadow mode à côté de son modèle actuel. L'équipe veut enregistrer les prédictions des deux modèles sur chaque transaction pour les comparer a posteriori.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">predict_prod</span><span class="p">(</span><span class="n">transaction</span><span class="p">):</span>
+    <span class="c1"># Simule le modèle de production (seuil fixe)</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;montant&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">500</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">predict_shadow</span><span class="p">(</span><span class="n">transaction</span><span class="p">):</span>
+    <span class="c1"># Simule le nouveau modèle (logique différente)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;montant&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;nb_articles&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.05</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="mf">0.6</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shadow_predict_and_log</span><span class="p">(</span><span class="n">transaction</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;shadow_log.jsonl&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Appelle les deux modèles, logue les deux prédictions,</span>
+<span class="sd">    et retourne uniquement la prédiction du modèle de production.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pred_prod</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+    <span class="n">pred_shadow</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>
+
+    <span class="n">log_entry</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="s2">&quot;transaction_id&quot;</span><span class="p">:</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;pred_prod&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+        <span class="s2">&quot;pred_shadow&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Seule la prédiction prod est retournée</span>
+    <span class="k">return</span> <span class="n">___</span>
+
+<span class="c1"># Test</span>
+<span class="n">transactions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T001&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">750</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T002&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T003&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">450</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transactions</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">shadow_predict_and_log</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → prod=</span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">T001 → prod=1
+T002 → prod=0
+T003 → prod=0
+</code></pre></div>
+
+<p>Et un fichier <code>shadow_log.jsonl</code> contenant 3 lignes JSON, chacune avec les champs <code>timestamp</code>, <code>transaction_id</code>, <code>pred_prod</code>, <code>pred_shadow</code>.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">predict_prod</span><span class="p">(</span><span class="n">transaction</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;montant&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">500</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">predict_shadow</span><span class="p">(</span><span class="n">transaction</span><span class="p">):</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;montant&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;nb_articles&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.05</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="mf">0.6</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shadow_predict_and_log</span><span class="p">(</span><span class="n">transaction</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;shadow_log.jsonl&quot;</span><span class="p">):</span>
+    <span class="n">pred_prod</span> <span class="o">=</span> <span class="n">predict_prod</span><span class="p">(</span><span class="n">transaction</span><span class="p">)</span>
+    <span class="n">pred_shadow</span> <span class="o">=</span> <span class="n">predict_shadow</span><span class="p">(</span><span class="n">transaction</span><span class="p">)</span>
+
+    <span class="n">log_entry</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="s2">&quot;transaction_id&quot;</span><span class="p">:</span> <span class="n">transaction</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;pred_prod&quot;</span><span class="p">:</span> <span class="n">pred_prod</span><span class="p">,</span>
+        <span class="s2">&quot;pred_shadow&quot;</span><span class="p">:</span> <span class="n">pred_shadow</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">log_entry</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pred_prod</span>
+
+<span class="n">transactions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T001&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">750</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T002&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;T003&quot;</span><span class="p">,</span> <span class="s2">&quot;montant&quot;</span><span class="p">:</span> <span class="mi">450</span><span class="p">,</span> <span class="s2">&quot;nb_articles&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transactions</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">shadow_predict_and_log</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> → prod=</span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-calculer-le-psi-pour-détecter-un-drift-de-feature">Exercice 2 — Calculer le PSI pour détecter un drift de feature</h3>
+
+<p><strong>Contexte</strong> : La SNCF utilise un modèle pour prédire les retards. L'équipe MLOps veut mesurer si la distribution de la feature <code>duree_trajet_min</code> a dérivé entre la période d'entraînement et la production récente. Elle utilise le PSI (Population Stability Index) : une valeur &gt; 0.2 indique un drift significatif.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">production</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calcule le PSI entre deux distributions numériques.</span>
+<span class="sd">    PSI = sum((prod_pct - ref_pct) * ln(prod_pct / ref_pct))</span>
+<span class="sd">    PSI &lt; 0.1  → stable</span>
+<span class="sd">    0.1-0.2    → surveillance</span>
+<span class="sd">    &gt; 0.2      → drift significatif</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Définir les bornes des intervalles sur la distribution de référence</span>
+    <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1e-6</span>  <span class="c1"># éviter l&#39;exclusion de la valeur min</span>
+
+    <span class="c1"># Calculer les proportions pour chaque intervalle</span>
+    <span class="n">ref_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+    <span class="n">prod_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">production</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">ref_counts</span> <span class="o">/</span> <span class="n">___</span>
+    <span class="n">prod_pct</span> <span class="o">=</span> <span class="n">prod_counts</span> <span class="o">/</span> <span class="n">___</span>
+
+    <span class="c1"># Eviter les divisions par zéro</span>
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ref_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="n">prod_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prod_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">prod_pct</span><span class="p">)</span>
+
+    <span class="n">psi_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">prod_pct</span> <span class="o">-</span> <span class="n">ref_pct</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">___</span> <span class="o">/</span> <span class="n">___</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_values</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Distribution de référence (données d&#39;entraînement)</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+
+<span class="c1"># Production stable (même distribution)</span>
+<span class="n">prod_stable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># Production avec drift (les trajets sont devenus plus longs)</span>
+<span class="n">prod_drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">psi_stable</span> <span class="o">=</span> <span class="n">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">prod_stable</span><span class="p">)</span>
+<span class="n">psi_drift</span> <span class="o">=</span> <span class="n">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">prod_drift</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI production stable : </span><span class="si">{</span><span class="n">psi_stable</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI production avec drift : </span><span class="si">{</span><span class="n">psi_drift</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alerte drift : </span><span class="si">{</span><span class="n">psi_drift</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">PSI production stable : 0.00xx  (valeur &lt; 0.05)
+PSI production avec drift : valeur &gt; 0.2
+Alerte drift : True
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">production</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">1e-6</span>
+
+    <span class="n">ref_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+    <span class="n">prod_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">production</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">ref_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="n">prod_pct</span> <span class="o">=</span> <span class="n">prod_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">production</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ref_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="n">prod_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prod_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">prod_pct</span><span class="p">)</span>
+
+    <span class="n">psi_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">prod_pct</span> <span class="o">-</span> <span class="n">ref_pct</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prod_pct</span> <span class="o">/</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_values</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+<span class="n">prod_stable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">prod_drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">psi_stable</span> <span class="o">=</span> <span class="n">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">prod_stable</span><span class="p">)</span>
+<span class="n">psi_drift</span> <span class="o">=</span> <span class="n">calculer_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">prod_drift</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI production stable : </span><span class="si">{</span><span class="n">psi_stable</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI production avec drift : </span><span class="si">{</span><span class="n">psi_drift</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alerte drift : </span><span class="si">{</span><span class="n">psi_drift</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-construire-un-rapport-de-monitoring-multi-niveaux">Exercice 3 — Construire un rapport de monitoring multi-niveaux</h3>
+
+<p><strong>Contexte</strong> : BNP Paribas opère un modèle de scoring crédit en production. L'équipe MLOps veut automatiser un rapport hebdomadaire qui agrège les trois niveaux de monitoring (technique, data, métier) et classe chaque niveau en statut <code>OK</code>, <code>WARNING</code> ou <code>CRITICAL</code>.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evaluer_monitoring</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    metrics est un dict avec les clés :</span>
+<span class="sd">      - latence_p95_ms : latence au 95e percentile en ms</span>
+<span class="sd">      - taux_erreur_pct : % de requêtes en erreur</span>
+<span class="sd">      - psi_max : PSI maximum parmi toutes les features</span>
+<span class="sd">      - taux_conversion_pct : % de crédits accordés qui sont remboursés</span>
+
+<span class="sd">    Règles de seuil :</span>
+<span class="sd">      Technique  → CRITICAL si latence_p95 &gt; 500 ou taux_erreur &gt; 1</span>
+<span class="sd">                 → WARNING  si latence_p95 &gt; 200 ou taux_erreur &gt; 0.1</span>
+<span class="sd">      Data       → CRITICAL si psi_max &gt; 0.25</span>
+<span class="sd">                 → WARNING  si psi_max &gt; 0.1</span>
+<span class="sd">      Métier     → CRITICAL si taux_conversion &lt; 85</span>
+<span class="sd">                 → WARNING  si taux_conversion &lt; 90</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rapport</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Niveau technique</span>
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="c1"># Niveau data</span>
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;psi_max&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">___</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;psi_max&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">___</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="c1"># Niveau métier</span>
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="n">statut_global</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;CRITICAL&quot;</span> <span class="ow">in</span> <span class="n">rapport</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">statut_global</span> <span class="o">=</span> <span class="n">___</span>
+    <span class="k">elif</span> <span class="s2">&quot;WARNING&quot;</span> <span class="ow">in</span> <span class="n">rapport</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">statut_global</span> <span class="o">=</span> <span class="n">___</span>
+
+    <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;global&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">statut_global</span>
+    <span class="k">return</span> <span class="n">rapport</span>
+
+<span class="c1"># Scénario 1 : tout est normal</span>
+<span class="n">m1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">93</span><span class="p">}</span>
+<span class="c1"># Scénario 2 : drift de données détecté</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.28</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">91</span><span class="p">}</span>
+<span class="c1"># Scénario 3 : dégradation métier critique</span>
+<span class="n">m3</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">nom</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="n">m1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Drift data&quot;</span><span class="p">,</span> <span class="n">m2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Dégradation métier&quot;</span><span class="p">,</span> <span class="n">m3</span><span class="p">)]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">evaluer_monitoring</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nom</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → technique=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;technique&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> data=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> métier=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;metier&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> | GLOBAL=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Normal               → technique=OK       data=OK       métier=OK       | GLOBAL=OK
+Drift data           → technique=OK       data=CRITICAL métier=OK       | GLOBAL=CRITICAL
+Dégradation métier   → technique=WARNING  data=WARNING  métier=CRITICAL | GLOBAL=CRITICAL
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evaluer_monitoring</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+    <span class="n">rapport</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">500</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">200</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;technique&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;psi_max&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.25</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;psi_max&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="k">if</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">85</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;metier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+
+    <span class="n">statut_global</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;CRITICAL&quot;</span> <span class="ow">in</span> <span class="n">rapport</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">statut_global</span> <span class="o">=</span> <span class="s2">&quot;CRITICAL&quot;</span>
+    <span class="k">elif</span> <span class="s2">&quot;WARNING&quot;</span> <span class="ow">in</span> <span class="n">rapport</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">statut_global</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+
+    <span class="n">rapport</span><span class="p">[</span><span class="s2">&quot;global&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">statut_global</span>
+    <span class="k">return</span> <span class="n">rapport</span>
+
+<span class="n">m1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">93</span><span class="p">}</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.28</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">91</span><span class="p">}</span>
+<span class="n">m3</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latence_p95_ms&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span> <span class="s2">&quot;taux_erreur_pct&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;psi_max&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;taux_conversion_pct&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">nom</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;Normal&quot;</span><span class="p">,</span> <span class="n">m1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Drift data&quot;</span><span class="p">,</span> <span class="n">m2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Dégradation métier&quot;</span><span class="p">,</span> <span class="n">m3</span><span class="p">)]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">evaluer_monitoring</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nom</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> → technique=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;technique&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> data=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> métier=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;metier&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2"> | GLOBAL=</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

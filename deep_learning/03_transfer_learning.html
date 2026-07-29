@@ -282,5 +282,264 @@ details>*:not(summary){padding:0 20px 20px}
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi le transfer learning permet-il d'obtenir de bons résultats avec peu de données ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les premières couches d'un CNN apprennent des représentations génériques (contours, textures) réutilisables sur n'importe quelle tâche vision. On ne repart pas de zéro — on spécialise une base solide.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- &lt; 5 000 images → feature extraction ; ≥ 5 000 et tâche différente → fine-tuning.
+- Ne jamais réentraîner les premières couches : elles encodent des représentations génériques irremplaçables.
+- En fine-tuning, toujours utiliser un learning rate 10× plus faible sur les couches pré-entraînées que sur la nouvelle tête.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-détection-de-défauts-sur-pneus-michelin">Exercice 1 — Détection de défauts sur pneus (Michelin)</h3>
+
+<p>Michelin souhaite automatiser le contrôle qualité visuel en sortie de chaîne de production. Le dataset disponible contient 3 200 images de pneus annotées (conforme / défaut). Le budget GPU est limité à un seul GPU pendant 1 heure.</p>
+
+<p>Complétez le code de feature extraction avec ResNet18.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># Charger ResNet18 pré-entraîné</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">(</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># paramètre pour charger les poids ImageNet</span>
+
+<span class="c1"># Geler tous les paramètres</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">___</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">___</span>
+
+<span class="c1"># Remplacer la couche finale pour 2 classes (conforme / défaut)</span>
+<span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="c1"># Vérifier le nombre de paramètres entraînables</span>
+<span class="n">params_entrainables</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paramètres entraînables : </span><span class="si">{</span><span class="n">params_entrainables</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Paramètres entraînables : 1026
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="c1"># Charger ResNet18 pré-entraîné</span>
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Geler tous les paramètres</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Remplacer la couche finale pour 2 classes (conforme / défaut)</span>
+<span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>  <span class="c1"># 512 pour ResNet18</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Vérifier le nombre de paramètres entraînables</span>
+<span class="n">params_entrainables</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paramètres entraînables : </span><span class="si">{</span><span class="n">params_entrainables</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># ResNet18 : fc a 512 * 2 + 2 (biais) = 1026 paramètres entraînables</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-classification-danomalies-sur-voies-ferrées-sncf">Exercice 2 — Classification d'anomalies sur voies ferrées (SNCF)</h3>
+
+<p>La SNCF constitue un dataset de 12 000 images de voies ferrées (normal / fissure / déformation) capturées par des drones d'inspection. La tâche est visuellement différente d'ImageNet (vues aériennes de rails, pas d'objets du quotidien). Un GPU V100 est disponible.</p>
+
+<p>Complétez le code de fine-tuning avec learning rates différenciés.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Geler d&#39;abord tous les poids</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Débloquer uniquement les deux derniers blocs de ResNet50</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">___</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>   <span class="c1"># avant-dernier bloc</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">___</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>   <span class="c1"># dernier bloc</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Nouvelle tête de classification (3 classes)</span>
+<span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="c1"># Optimiseur avec learning rates différenciés</span>
+<span class="n">optimiseur</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer3</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>   <span class="c1"># petite LR (couches pré-entraînées)</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>   <span class="c1"># LR intermédiaire</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>     <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">___</span><span class="p">},</span>   <span class="c1"># grande LR (nouvelle tête)</span>
+<span class="p">])</span>
+
+<span class="c1"># Afficher les groupes de paramètres</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">groupe</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">optimiseur</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Groupe </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> — LR : </span><span class="si">{</span><span class="n">groupe</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Groupe 0 — LR : 1e-05
+Groupe 1 — LR : 0.0001
+Groupe 2 — LR : 0.001
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Geler d&#39;abord tous les poids</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Débloquer uniquement les deux derniers blocs de ResNet50</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer3</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>   <span class="c1"># avant-dernier bloc</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>   <span class="c1"># dernier bloc</span>
+    <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Nouvelle tête de classification (3 classes)</span>
+<span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>
+<span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Optimiseur avec learning rates différenciés</span>
+<span class="c1"># Règle : chaque groupe plus proche de la tête reçoit un LR 10× plus grand</span>
+<span class="n">optimiseur</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer3</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">},</span>   <span class="c1"># petite LR</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">},</span>   <span class="c1"># LR intermédiaire</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>     <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span>   <span class="c1"># grande LR (nouvelle tête)</span>
+<span class="p">])</span>
+
+<span class="c1"># Afficher les groupes de paramètres</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">groupe</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">optimiseur</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Groupe </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> — LR : </span><span class="si">{</span><span class="n">groupe</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-choisir-la-bonne-stratégie-decathlon">Exercice 3 — Choisir la bonne stratégie (Decathlon)</h3>
+
+<p>Decathlon veut classifier automatiquement les photos produits envoyées par ses fournisseurs en 10 catégories (vélo, natation, randonnée, etc.). Deux scénarios sont envisagés selon le budget de labellisation :</p>
+
+<ul>
+<li><strong>Scénario A</strong> : 2 500 images annotées disponibles, tâche visuellement proche d'ImageNet (articles de sport sur fond blanc).</li>
+<li><strong>Scénario B</strong> : 30 000 images annotées, tâche avec des angles et textures atypiques (gros plans de matières techniques).</li>
+</ul>
+
+<p>Complétez le code qui sélectionne automatiquement la bonne stratégie et configure le modèle en conséquence.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tache_similaire</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne un modèle ResNet50 configuré selon la stratégie adaptée.</span>
+<span class="sd">    - Feature extraction si peu de données ET tâche similaire</span>
+<span class="sd">    - Fine-tuning sinon</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>
+
+    <span class="k">if</span> <span class="n">___</span> <span class="ow">and</span> <span class="n">___</span><span class="p">:</span>
+        <span class="c1"># Feature extraction : geler tout</span>
+        <span class="n">strategie</span> <span class="o">=</span> <span class="s2">&quot;feature_extraction&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fine-tuning : débloquer le dernier bloc</span>
+        <span class="n">strategie</span> <span class="o">=</span> <span class="s2">&quot;fine_tuning&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">___</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Dans les deux cas, remplacer la tête</span>
+    <span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stratégie : </span><span class="si">{</span><span class="n">strategie</span><span class="si">}</span><span class="s2"> | Paramètres entraînables : </span><span class="si">{</span><span class="n">params</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modele</span>
+
+<span class="c1"># Scénario A</span>
+<span class="n">modele_a</span> <span class="o">=</span> <span class="n">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span>  <span class="n">tache_similaire</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">nb_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Scénario B</span>
+<span class="n">modele_b</span> <span class="o">=</span> <span class="n">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span> <span class="n">tache_similaire</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nb_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Stratégie : feature_extraction | Paramètres entraînables : 20,490
+Stratégie : fine_tuning | Paramètres entraînables : 6,573,066
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tache_similaire</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">modele</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet50</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">nb_features</span> <span class="o">=</span> <span class="n">modele</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">in_features</span>  <span class="c1"># 2048 pour ResNet50</span>
+
+    <span class="k">if</span> <span class="n">nb_images</span> <span class="o">&lt;</span> <span class="mi">5000</span> <span class="ow">and</span> <span class="n">tache_similaire</span><span class="p">:</span>
+        <span class="c1"># Feature extraction : geler tout</span>
+        <span class="n">strategie</span> <span class="o">=</span> <span class="s2">&quot;feature_extraction&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fine-tuning : débloquer le dernier bloc</span>
+        <span class="n">strategie</span> <span class="o">=</span> <span class="s2">&quot;fine_tuning&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">layer4</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Dans les deux cas, remplacer la tête</span>
+    <span class="n">modele</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nb_features</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">modele</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stratégie : </span><span class="si">{</span><span class="n">strategie</span><span class="si">}</span><span class="s2"> | Paramètres entraînables : </span><span class="si">{</span><span class="n">params</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modele</span>
+
+<span class="c1"># Scénario A : 2500 images, tâche similaire → feature extraction</span>
+<span class="n">modele_a</span> <span class="o">=</span> <span class="n">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span>  <span class="n">tache_similaire</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">nb_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="c1"># fc seule : 2048 * 10 + 10 (biais) = 20 490</span>
+
+<span class="c1"># Scénario B : 30 000 images, tâche différente → fine-tuning</span>
+<span class="n">modele_b</span> <span class="o">=</span> <span class="n">configurer_modele</span><span class="p">(</span><span class="n">nb_images</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span> <span class="n">tache_similaire</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nb_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="c1"># layer4 + fc : ~6 553 600 + 20 490 = 6 573 066 (valeur exacte dépend des sous-blocs)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

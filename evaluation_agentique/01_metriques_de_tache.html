@@ -210,12 +210,24 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p>La distinction est fondamentale : une réponse peut paraître fluide, polie, bien formulée, et être complètement fausse sur le fond. Sans métrique de tâche, on mesure la forme, pas le résultat.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Une métrique de tâche mesure le résultat, pas la fluidité de la réponse.
+- Sans critère objectif préalable, toute évaluation reste une opinion.
+:::</p>
+
 <hr />
 
 <p>:::situation
 <strong>Capgemini, 2024 — Agent de traitement de contrats</strong></p>
 
 <p>L'équipe déploie un agent qui extrait les clauses de résiliation de contrats clients et les classe (résiliation unilatérale, résiliation pour faute, résiliation amiable). En démo, l'agent répond avec assurance. En production, les juristes remontent des erreurs de classification tous les jours. Le problème : l'évaluation avait été faite "à l'œil" — un ingénieur lisait 20 sorties et les trouvait cohérentes. Il n'y avait pas de métrique de tâche définie.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Une évaluation "à l'œil" sur 20 exemples ne détecte pas les erreurs systématiques en production.
+- La confiance perçue en démo n'est pas un proxy de la fiabilité réelle.
 :::</p>
 
 <hr />
@@ -240,6 +252,13 @@ details>*:not(summary){padding:0 20px 20px}
 - Comparer deux versions de l'agent
 - Détecter une régression après une modification du prompt
 - Savoir si le modèle sous-jacent a changé de comportement
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- L'absence de ground truth rend impossible la comparaison entre deux versions.
+- On ne peut détecter une régression que si on a une baseline mesurée au préalable.
+- "Ça semble bien" = 0 % de confiance pour prendre une décision de déploiement.
 :::</p>
 
 <hr />
@@ -326,6 +345,13 @@ details>*:not(summary){padding:0 20px 20px}
   <text x="900" y="393" text-anchor="middle" fill="#8f8a9e" font-size="10">"p95 latence = 4,1 s,</text>
   <text x="900" y="408" text-anchor="middle" fill="#8f8a9e" font-size="10">coût moyen = 0,02 €/requête"</text>
 </svg></div>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Trois familles complémentaires : résultat final, processus/actions, contraintes opérationnelles.
+- Résultat final seul ne suffit pas : un agent peut être juste mais trop lent ou trop coûteux.
+- Chaque famille répond à une question différente : "quoi", "comment", "à quel coût".
+:::</p>
 
 <hr />
 
@@ -482,6 +508,13 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Dataset ≥ 50 cas : seuil minimal pour que les métriques aient une variance acceptable.
+- La fonction de succès doit formaliser ce qui compte métier, pas ce qui est pratique à coder.
+- Sauvegarder les métriques à chaque version est la condition pour détecter une régression.
+:::</p>
+
 <hr />
 
 <h2 id="cas-réel-complet-agent-de-qualification-de-leads-bnp-paribas-leasing">Cas réel complet — Agent de qualification de leads (BNP Paribas Leasing)</h2>
@@ -525,6 +558,12 @@ details>*:not(summary){padding:0 20px 20px}
 <p>Pour un agent de qualification leads où 5 % sont "chauds" : un agent qui répond "froid" à tout le monde a 95 % d'accuracy. C'est le <strong>problème des classes déséquilibrées</strong>. La métrique juste ici est le recall sur les "chauds" (combien de prospects chauds on capture) ou le coût pondéré comme ci-dessus.
 :::</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Quand les erreurs ont des coûts asymétriques, une matrice de coût remplace l'accuracy.
+- Optimiser l'accuracy sur classes déséquilibrées peut produire un agent inutile mais bien noté.
+:::</p>
+
 <hr />
 
 <h2 id="quand-utiliser-des-métriques-de-tâche">Quand utiliser des métriques de tâche</h2>
@@ -544,6 +583,13 @@ details>*:not(summary){padding:0 20px 20px}
 <li>Quand la ground truth a été annotée par une seule personne — l'accord inter-annotateurs doit être vérifié (kappa de Cohen &gt; 0.7 est le seuil usuel)</li>
 </ul>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Définir les métriques avant la mise en production, pas après les premières erreurs de prod.
+- Sur des tâches ouvertes ou créatives, les métriques binaires sont insuffisantes : utiliser LLM-as-judge.
+- Une ground truth annotée par une seule personne est une source de biais non quantifiable.
+:::</p>
+
 <hr />
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une métrique de tâche ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une mesure quantitative qui indique si un agent a <strong>accompli sa tâche</strong> selon un critère objectif — pas si sa réponse semble bien, mais si elle est <strong>correcte sur le fond</strong>.</p></div></div></div>
@@ -555,4 +601,252 @@ details>*:not(summary){padding:0 20px 20px}
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi l'accuracy n'est-elle presque jamais la bonne métrique ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Sur des classes déséquilibrées, un agent qui répond toujours "non" peut avoir <strong>95 % d'accuracy</strong> si 95 % des cas sont négatifs. Il faut des métriques adaptées à l'enjeu métier : recall, F1, ou coût pondéré.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que la régression dans le contexte de l'évaluation d'agent ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Une <strong>dégradation de performance</strong> entre deux versions — détectée en comparant les métriques avant/après modification. Exemple : l'accuracy passe de 87 % à 83 % après un changement de prompt.</p></div></div></div></div></div>
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-calculer-laccuracy-dun-agent-de-tri-de-tickets">Exercice 1 — Calculer l'accuracy d'un agent de tri de tickets</h3>
+
+<p>La MAIF utilise un agent pour trier automatiquement les demandes entrantes en trois catégories : <code>sinistre</code>, <code>résiliation</code>, <code>information</code>. Un lot de 6 tickets a été traité. Compléter le calcul de l'accuracy.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">]</span>
+<span class="n">predictions</span>  <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">,</span>  <span class="s2">&quot;résiliation&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">accuracy</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">g</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">correct</span> <span class="o">/</span> <span class="n">___</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy : </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Accuracy : 50.0%
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">]</span>
+<span class="n">predictions</span>  <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;information&quot;</span><span class="p">,</span> <span class="s2">&quot;sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;résiliation&quot;</span><span class="p">,</span>  <span class="s2">&quot;résiliation&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">accuracy</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">g</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy : </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-détecter-une-régression-entre-deux-versions">Exercice 2 — Détecter une régression entre deux versions</h3>
+
+<p>L'équipe data de Société Générale maintient un agent de résumé de comptes-rendus de réunion. Après un changement de prompt, ils veulent vérifier automatiquement s'il y a eu régression. Compléter la fonction et appliquer le seuil de 3 points.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">baseline_accuracy</span> <span class="o">=</span> <span class="mf">0.84</span>
+
+<span class="n">results_v2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1-prompt-refacto&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span>
+    <span class="s2">&quot;n_total&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_regression</span><span class="p">(</span><span class="n">current_accuracy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">baseline</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.03</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">degradation</span> <span class="o">=</span> <span class="n">___</span> <span class="o">-</span> <span class="n">___</span>
+    <span class="k">return</span> <span class="n">degradation</span> <span class="o">&gt;</span> <span class="n">___</span>
+
+<span class="n">has_regression</span> <span class="o">=</span> <span class="n">check_regression</span><span class="p">(</span><span class="n">results_v2</span><span class="p">[</span><span class="s2">&quot;___&quot;</span><span class="p">],</span> <span class="n">baseline_accuracy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Régression détectée : </span><span class="si">{</span><span class="n">has_regression</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dégradation : </span><span class="si">{</span><span class="n">baseline_accuracy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">results_v2</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Régression détectée : True
+Dégradation : 5.0%
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">baseline_accuracy</span> <span class="o">=</span> <span class="mf">0.84</span>
+
+<span class="n">results_v2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1-prompt-refacto&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span>
+    <span class="s2">&quot;n_total&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_regression</span><span class="p">(</span><span class="n">current_accuracy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">baseline</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.03</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">degradation</span> <span class="o">=</span> <span class="n">baseline</span> <span class="o">-</span> <span class="n">current_accuracy</span>
+    <span class="k">return</span> <span class="n">degradation</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+
+<span class="n">has_regression</span> <span class="o">=</span> <span class="n">check_regression</span><span class="p">(</span><span class="n">results_v2</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">],</span> <span class="n">baseline_accuracy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Régression détectée : </span><span class="si">{</span><span class="n">has_regression</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dégradation : </span><span class="si">{</span><span class="n">baseline_accuracy</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">results_v2</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-calculer-un-coût-pondéré-sur-des-erreurs-asymétriques">Exercice 3 — Calculer un coût pondéré sur des erreurs asymétriques</h3>
+
+<p>La DSI de La Poste déploie un agent de détection de colis prioritaires parmi les livraisons du lendemain. Rater un colis prioritaire coûte 10 fois plus que d'en traiter un normal par erreur. Compléter la matrice de coût et calculer le coût moyen.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">COST_MATRIX</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">):</span>   <span class="n">___</span><span class="p">,</span>   <span class="c1"># faux négatif : très coûteux</span>
+    <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">):</span>   <span class="n">___</span><span class="p">,</span>   <span class="c1"># faux positif : surcoût modéré</span>
+    <span class="p">(</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">):</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">):</span>           <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">]</span>
+<span class="n">predictions</span>  <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>      <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_cost</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">COST_MATRIX</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">pred</span><span class="p">,</span> <span class="n">true</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="n">cost</span> <span class="o">=</span> <span class="n">weighted_cost</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût moyen pondéré : </span><span class="si">{</span><span class="n">cost</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Coût moyen pondéré : 2.0
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">COST_MATRIX</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">):</span>      <span class="mf">10.0</span><span class="p">,</span>  <span class="c1"># faux négatif : très coûteux</span>
+    <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">):</span>       <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># faux positif : surcoût modéré</span>
+    <span class="p">(</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">):</span>  <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">):</span>            <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">]</span>
+<span class="n">predictions</span>  <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prioritaire&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>      <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;prioritaire&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_cost</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">COST_MATRIX</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">pred</span><span class="p">,</span> <span class="n">true</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+<span class="n">cost</span> <span class="o">=</span> <span class="n">weighted_cost</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût moyen pondéré : </span><span class="si">{</span><span class="n">cost</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Détail : seul le cas <code>("prioritaire", "normal")</code> au 3e élément déclenche un coût de 10.0. Total = 10.0, divisé par 5 cas = 2.0.
+</details></p>
+
+<hr />
+
+<h3 id="exercice-4-construire-une-boucle-dévaluation-complète-avec-suivi-de-latence">Exercice 4 — Construire une boucle d'évaluation complète avec suivi de latence</h3>
+
+<p>L'équipe de Crédit Agricole Assurances veut mesurer la performance de leur agent de réponse aux réclamations. Compléter la boucle d'évaluation pour calculer accuracy et latence p95.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Simulateur d&#39;agent (à ne pas modifier)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeAgent</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># simule 50ms de traitement</span>
+        <span class="k">if</span> <span class="s2">&quot;remboursement&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">}</span>
+
+<span class="n">TEST_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;demande de remboursement suite sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;question sur mon contrat habitation&quot;</span><span class="p">,</span>    <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement frais médicaux&quot;</span><span class="p">,</span>           <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;changement d&#39;adresse&quot;</span><span class="p">,</span>                  <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">FakeAgent</span><span class="p">()</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">latencies</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">TEST_CASES</span><span class="p">:</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;___&quot;</span><span class="p">])</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">___</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latencies</span><span class="o">.</span><span class="n">___</span><span class="p">(</span> <span class="n">latency_ms</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;expected_category&quot;</span><span class="p">]:</span>
+        <span class="n">correct</span> <span class="o">+=</span> <span class="n">___</span>
+
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEST_CASES</span><span class="p">)</span>
+<span class="n">latencies_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">latencies</span><span class="p">)</span>
+<span class="n">p95</span> <span class="o">=</span> <span class="n">latencies_sorted</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.95</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy : </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latence p95 : </span><span class="si">{</span><span class="n">p95</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Accuracy : 100%
+Latence p95 : 50 ms  (valeur approchée, dépend de la machine)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeAgent</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;remboursement&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">}</span>
+
+<span class="n">TEST_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;demande de remboursement suite sinistre&quot;</span><span class="p">,</span> <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;question sur mon contrat habitation&quot;</span><span class="p">,</span>    <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement frais médicaux&quot;</span><span class="p">,</span>           <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;remboursement&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;changement d&#39;adresse&quot;</span><span class="p">,</span>                  <span class="s2">&quot;expected_category&quot;</span><span class="p">:</span> <span class="s2">&quot;information&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">FakeAgent</span><span class="p">()</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">latencies</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">TEST_CASES</span><span class="p">:</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latency_ms</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;expected_category&quot;</span><span class="p">]:</span>
+        <span class="n">correct</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">TEST_CASES</span><span class="p">)</span>
+<span class="n">latencies_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">latencies</span><span class="p">)</span>
+<span class="n">p95</span> <span class="o">=</span> <span class="n">latencies_sorted</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.95</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy : </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latence p95 : </span><span class="si">{</span><span class="n">p95</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

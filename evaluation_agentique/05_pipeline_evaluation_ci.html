@@ -208,12 +208,24 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p>Un <strong>pipeline d'évaluation en CI/CD</strong> est une suite de tests automatisés qui s'exécutent à chaque modification du système (prompt, modèle, code de l'agent) et bloquent le déploiement si les métriques chutent en dessous d'un seuil défini. C'est l'équivalent des tests unitaires pour les systèmes ML classiques, appliqué aux agents LLM.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Un pipeline CI/CD bloque le déploiement si les métriques d'évaluation chutent.
+- Équivalent des tests unitaires, appliqué aux agents LLM — même logique, nouveau domaine.
+:::</p>
+
 <hr />
 
 <p>:::situation
 <strong>Capgemini, mission assurance — Agent d'analyse de sinistres</strong></p>
 
 <p>L'équipe modifie le prompt système pour améliorer la concision des réponses. En développement, les réponses semblent meilleures. En production, les juristes constatent que l'agent omet maintenant certaines clauses importantes dans ses analyses. Problème : il n'y avait pas de test automatisé sur "présence des clauses critiques". Une modification de prompt est passée en prod sans garde-fou. Avec un pipeline d'évaluation en CI, ce cas aurait été bloqué avant le merge.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Une modification de prompt sans garde-fou peut dégrader silencieusement un agent en production.
+- Tout changement de prompt doit déclencher une évaluation automatisée avant le merge.
 :::</p>
 
 <hr />
@@ -242,6 +254,13 @@ details>*:not(summary){padding:0 20px 20px}
 [Merge autorisé / Déploiement]
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Architecture en 3 étapes ordonnées : smoke tests, évaluation complète, comparaison baseline.
+- Chaque étape bloque la suivante — on échoue tôt pour économiser du temps et des tokens.
+- Le merge n'est autorisé qu'après validation de toutes les étapes.
+:::</p>
+
 <hr />
 
 <h2 id="implémentation-structure-de-projet">Implémentation — Structure de projet</h2>
@@ -258,6 +277,12 @@ details>*:not(summary){padding:0 20px 20px}
 └── .github/workflows/
     └── eval.yml                ← CI GitHub Actions
 </div>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Le dataset de test et la baseline vivent dans le dépôt au même titre que le code.
+- Le workflow CI est déclenché uniquement sur les fichiers qui peuvent dégrader l'agent.
+:::</p>
 
 <hr />
 
@@ -305,6 +330,12 @@ details>*:not(summary){padding:0 20px 20px}
             <span class="sa">f</span><span class="s2">&quot;Terme critique absent de la réponse : &#39;</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
 </code></pre>
 </div>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Les smoke tests couvrent les cas critiques métier, pas l'exhaustivité — 5 à 10 cas suffisent.
+- Combiner une métrique LLM (hallucination) et une vérification textuelle (must_contain) est plus robuste qu'une seule approche.
+:::</p>
 
 <hr />
 
@@ -389,6 +420,12 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Deux niveaux de seuil : minimums absolus (plancher) ET tolérance de régression (delta vs baseline).
+- La baseline n'est mise à jour automatiquement que sur la branche main — jamais sur une PR.
+:::</p>
+
 <hr />
 
 <h2 id="configuration-github-actions">Configuration GitHub Actions</h2>
@@ -444,6 +481,13 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- <code>needs: smoke-tests</code> garantit l'ordre et évite de lancer la full eval si les cas critiques échouent.
+- <code>paths:</code> limite le déclenchement aux fichiers qui peuvent réellement dégrader l'agent.
+- Les artefacts d'évaluation uploadés permettent de retracer l'historique des métriques par PR.
+:::</p>
+
 <hr />
 
 <h2 id="versionner-le-dataset-de-test-et-la-baseline">Versionner le dataset de test et la baseline</h2>
@@ -474,6 +518,12 @@ details>*:not(summary){padding:0 20px 20px}
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">N&#39;oubliez pas de commiter baseline.json et de documenter les changements.&quot;</span><span class="p">)</span>
 </code></pre>
 </div>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Traiter le dataset comme du code : revue de PR obligatoire, pas de modification sans justification.
+- Une amélioration de métriques peut être artificielle si le dataset a changé — toujours vérifier les deux.
+:::</p>
 
 <hr />
 
@@ -520,6 +570,12 @@ Recommandation :
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Claude Haiku pour les métriques CI, Claude Opus uniquement pour le LLM-as-judge final.
+- Full eval sur 100 cas ≈ 0,40 € — coût marginal face au coût d'un bug en production.
+:::</p>
+
 <hr />
 
 <h2 id="quand-utiliser-un-pipeline-dévaluation-en-ci">Quand utiliser un pipeline d'évaluation en CI</h2>
@@ -538,6 +594,12 @@ Recommandation :
 <li>Quand les cas de test représentatifs ne sont pas encore définis — évaluer avant d'avoir des cas clairs produit des métriques sans sens</li>
 </ul>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Mettre en place le pipeline dès qu'un agent est en production, pas avant — les cas doivent être stabilisés.
+- En phase POC, les cas de test ne sont pas représentatifs — des métriques élevées sur un mauvais dataset ne valent rien.
+:::</p>
+
 <hr />
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'un pipeline d'évaluation en CI/CD pour un agent LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Des tests automatisés qui s'exécutent à chaque modification (prompt, modèle, code) et <strong>bloquent le déploiement si les métriques chutent</strong> en dessous d'un seuil. Équivalent des tests unitaires pour les agents.</p></div></div></div>
@@ -549,4 +611,257 @@ Recommandation :
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment réduire le coût en tokens d'un pipeline d'évaluation en CI ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Utiliser <strong>Claude Haiku</strong> pour les métriques de CI (smoke tests et full eval). Réserver Claude Opus uniquement pour les LLM-as-judge finaux où la corrélation avec les jugements humains doit être maximale.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une baseline dans un pipeline d'évaluation ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Les <strong>métriques de la version précédente</strong>, stockées dans un fichier. Elles servent à détecter une régression : si la version actuelle est plus de X points en dessous, le déploiement est bloqué.</p></div></div></div></div></div>
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-smoke-test-avec-vérification-de-termes-critiques">Exercice 1 — Smoke test avec vérification de termes critiques</h3>
+
+<p>SNCF Connect exploite un agent de support billetterie. L'équipe veut s'assurer que les réponses sur les conditions de remboursement mentionnent toujours les délais légaux.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">HallucinationMetric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+
+<span class="c1"># Simuler la réponse de l&#39;agent</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_agent</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;Vous pouvez demander un remboursement dans un délai de 60 jours. Présentez votre billet et une pièce d&#39;identité.&quot;</span>
+
+<span class="n">CRITICAL_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Quel est le délai pour demander un remboursement ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Le remboursement d&#39;un billet SNCF peut être demandé jusqu&#39;à 60 jours après la date de voyage.&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;must_contain&quot;</span><span class="p">:</span> <span class="n">___</span>  <span class="c1"># liste des termes critiques à vérifier</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_smoke_sncf</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">CRITICAL_CASES</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">fake_agent</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">])</span>
+
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Vérifier les termes critiques</span>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;must_contain&quot;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">___</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Terme critique absent : &#39;</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Smoke test passé. Termes trouvés :&quot;</span><span class="p">,</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;must_contain&quot;</span><span class="p">])</span>
+
+<span class="n">test_smoke_sncf</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Smoke test passé. Termes trouvés : ['60 jours', 'billet']
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">HallucinationMetric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_agent</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;Vous pouvez demander un remboursement dans un délai de 60 jours. Présentez votre billet et une pièce d&#39;identité.&quot;</span>
+
+<span class="n">CRITICAL_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;Quel est le délai pour demander un remboursement ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Le remboursement d&#39;un billet SNCF peut être demandé jusqu&#39;à 60 jours après la date de voyage.&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;must_contain&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;60 jours&quot;</span><span class="p">,</span> <span class="s2">&quot;billet&quot;</span><span class="p">]</span>  <span class="c1"># termes critiques à vérifier</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_smoke_sncf</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">CRITICAL_CASES</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">fake_agent</span><span class="p">(</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">])</span>
+
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">case</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;must_contain&quot;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">term</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Terme critique absent : &#39;</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Smoke test passé. Termes trouvés :&quot;</span><span class="p">,</span> <span class="n">case</span><span class="p">[</span><span class="s2">&quot;must_contain&quot;</span><span class="p">])</span>
+
+<span class="n">test_smoke_sncf</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-détection-de-régression-vs-baseline">Exercice 2 — Détection de régression vs baseline</h3>
+
+<p>LegalStart (plateforme juridique en ligne) a un agent qui répond aux questions sur la création de SAS. L'équipe mesure trois métriques et veut bloquer tout déploiement qui dégrade la faithfulness de plus de 5 points.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Baseline enregistrée lors du dernier déploiement validé</span>
+<span class="n">baseline</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.78</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.71</span>
+<span class="p">}</span>
+
+<span class="c1"># Résultats de la version en cours de review (PR #47)</span>
+<span class="n">current</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.76</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.69</span>
+<span class="p">}</span>
+
+<span class="n">REGRESSION_THRESHOLDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>        <span class="c1"># tolérance 5 points</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_regression</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">):</span>
+    <span class="n">regressions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">current</span> <span class="ow">and</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">baseline</span><span class="p">:</span>
+            <span class="n">drop</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># calcul de la chute</span>
+            <span class="k">if</span> <span class="n">drop</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">regressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;REGRESSION </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">baseline</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (chute </span><span class="si">{</span><span class="n">drop</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &gt; seuil </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">regressions</span>
+
+<span class="n">problemes</span> <span class="o">=</span> <span class="n">check_regression</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">REGRESSION_THRESHOLDS</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">problemes</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">problemes</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Aucune régression détectée — merge autorisé.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">REGRESSION faithfulness: 0.82 → 0.76 (chute 0.06 &gt; seuil 0.05)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">baseline</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.78</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.71</span>
+<span class="p">}</span>
+
+<span class="n">current</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.76</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.69</span>
+<span class="p">}</span>
+
+<span class="n">REGRESSION_THRESHOLDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>       <span class="c1"># tolérance 5 points</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_regression</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">):</span>
+    <span class="n">regressions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">current</span> <span class="ow">and</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">baseline</span><span class="p">:</span>
+            <span class="n">drop</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">-</span> <span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>  <span class="c1"># calcul de la chute</span>
+            <span class="k">if</span> <span class="n">drop</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">regressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;REGRESSION </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">baseline</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">current</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (chute </span><span class="si">{</span><span class="n">drop</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &gt; seuil </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">regressions</span>
+
+<span class="n">problemes</span> <span class="o">=</span> <span class="n">check_regression</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">REGRESSION_THRESHOLDS</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">problemes</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">problemes</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Aucune régression détectée — merge autorisé.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-mise-à-jour-conditionnelle-de-la-baseline">Exercice 3 — Mise à jour conditionnelle de la baseline</h3>
+
+<p>Alan (mutuelle santé digitale) déploie un agent de conseil en remboursements. La baseline ne doit être mise à jour qu'après validation complète sur la branche principale, jamais sur une PR.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">maybe_update_baseline</span><span class="p">(</span><span class="n">current_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">baseline_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Met à jour la baseline uniquement si :</span>
+<span class="sd">    - On est en environnement CI (variable CI=true)</span>
+<span class="sd">    - On est sur la branche main (variable GITHUB_REF=refs/heads/main)</span>
+<span class="sd">    Sinon, affiche un message informatif sans rien écrire.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_ci</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;___&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>           <span class="c1"># variable d&#39;environnement CI</span>
+    <span class="n">is_main</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GITHUB_REF&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;___&quot;</span>   <span class="c1"># référence branche main</span>
+
+    <span class="k">if</span> <span class="n">is_ci</span> <span class="ow">and</span> <span class="n">is_main</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">baseline_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">current_metrics</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline mise à jour sur main : </span><span class="si">{</span><span class="n">current_metrics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Baseline NON mise à jour (hors CI ou hors branche main).&quot;</span><span class="p">)</span>
+
+<span class="c1"># Simuler un environnement PR (pas main)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GITHUB_REF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;refs/heads/feature/improve-prompt&quot;</span>
+
+<span class="n">current</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.81</span><span class="p">}</span>
+<span class="n">maybe_update_baseline</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="s2">&quot;/tmp/baseline_test.json&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Baseline NON mise à jour (hors CI ou hors branche main).
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">maybe_update_baseline</span><span class="p">(</span><span class="n">current_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">baseline_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">is_ci</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>                              <span class="c1"># variable d&#39;environnement CI</span>
+    <span class="n">is_main</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GITHUB_REF&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;refs/heads/main&quot;</span>        <span class="c1"># référence branche main</span>
+
+    <span class="k">if</span> <span class="n">is_ci</span> <span class="ow">and</span> <span class="n">is_main</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">baseline_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">current_metrics</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline mise à jour sur main : </span><span class="si">{</span><span class="n">current_metrics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Baseline NON mise à jour (hors CI ou hors branche main).&quot;</span><span class="p">)</span>
+
+<span class="c1"># Simuler un environnement PR (pas main)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GITHUB_REF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;refs/heads/feature/improve-prompt&quot;</span>
+
+<span class="n">current</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.81</span><span class="p">}</span>
+<span class="n">maybe_update_baseline</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="s2">&quot;/tmp/baseline_test.json&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

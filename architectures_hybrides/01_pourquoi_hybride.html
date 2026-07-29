@@ -281,7 +281,7 @@ AXA reçoit 40 000 déclarations de sinistre automobile par jour. Chaque déclar
 :::</p>
 
 <p>:::callout-insight
-Ce découpage n'est pas arbitraire. Il suit une règle simple : <strong>chaque composant fait ce qu'il fait objectivement mieux que les autres.</strong> Le LLM lit le texte parce qu'il n'existe pas de meilleure façon. XGBoost score la fraude parce qu'il est 1000× moins cher et parfaitement auditrable. Les règles décident parce que les seuils de décision sont du ressort du métier, pas d'un modèle.
+Ce découpage n'est pas arbitraire. Il suit une règle simple : <strong>chaque composant fait ce qu'il fait objectivement mieux que les autres.</strong> Le LLM lit le texte parce qu'il n'existe pas de meilleure façon. XGBoost score la fraude parce qu'il est 1000× moins cher et parfaitement auditable. Les règles décident parce que les seuils de décision sont du ressort du métier, pas d'un modèle.
 :::</p>
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce qu'une architecture hybride ML + LLM ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un système qui combine des modèles ML classiques (déterministes, rapides, explicables) avec des LLM (flexibles, capables de lire du texte libre, coûteux) — chaque composant traitant ce qu'il fait mieux que l'autre.</p></div></div></div>
@@ -292,5 +292,199 @@ Ce découpage n'est pas arbitraire. Il suit une règle simple : <strong>chaque c
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Citez deux avantages du ML classique par rapport aux LLM.</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">(1) Vitesse : < 1 ms vs 500 ms – 5 s. (2) Coût : ~0,000001€ vs ~0,01 – 0,10€ par inférence. Aussi : déterminisme, explicabilité, pas de dérive silencieuse.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Le ML classique est jusqu'à 100 000× moins cher par inférence — décisif à fort volume.
+- La couche de décision finale (règles, seuil, humain) ne doit jamais être un LLM ni un modèle ML seul.
+- Hybride ne signifie pas complexe : trois composants avec des responsabilités distinctes suffisent.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-comparer-le-coût-ml-vs-llm-à-fort-volume">Exercice 1 — Comparer le coût ML vs LLM à fort volume</h3>
+
+<p>Cdiscount reçoit 500 000 avis produits par jour et veut les classifier en positif / négatif / neutre. L'équipe data évalue deux options : un modèle ML classique entraîné en interne, ou une API LLM externe.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Cdiscount reçoit 500 000 avis produits par jour</span>
+<span class="n">volume_journalier</span> <span class="o">=</span> <span class="mi">500_000</span>
+
+<span class="c1"># Coût ML classique (modèle entraîné en interne)</span>
+<span class="n">cout_ml_par_inference</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># en euros — valeur du tableau de cours</span>
+<span class="n">cout_ml_total</span> <span class="o">=</span> <span class="n">volume_journalier</span> <span class="o">*</span> <span class="n">cout_ml_par_inference</span>
+
+<span class="c1"># Coût LLM (API externe) — utiliser 0.05 € comme valeur médiane</span>
+<span class="n">cout_llm_par_inference</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># en euros</span>
+<span class="n">cout_llm_total</span> <span class="o">=</span> <span class="n">volume_journalier</span> <span class="o">*</span> <span class="n">cout_llm_par_inference</span>
+
+<span class="n">ratio</span> <span class="o">=</span> <span class="n">cout_llm_total</span> <span class="o">/</span> <span class="n">cout_ml_total</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût ML/jour : </span><span class="si">{</span><span class="n">cout_ml_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût LLM/jour : </span><span class="si">{</span><span class="n">cout_llm_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Le LLM est </span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">× plus cher&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Coût ML/jour : 0.50 €
+Coût LLM/jour : 25000.00 €
+Le LLM est 50000× plus cher
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">volume_journalier</span> <span class="o">=</span> <span class="mi">500_000</span>
+
+<span class="n">cout_ml_par_inference</span> <span class="o">=</span> <span class="mf">0.000001</span>
+<span class="n">cout_ml_total</span> <span class="o">=</span> <span class="n">volume_journalier</span> <span class="o">*</span> <span class="n">cout_ml_par_inference</span>
+
+<span class="n">cout_llm_par_inference</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">cout_llm_total</span> <span class="o">=</span> <span class="n">volume_journalier</span> <span class="o">*</span> <span class="n">cout_llm_par_inference</span>
+
+<span class="n">ratio</span> <span class="o">=</span> <span class="n">cout_llm_total</span> <span class="o">/</span> <span class="n">cout_ml_total</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût ML/jour : </span><span class="si">{</span><span class="n">cout_ml_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coût LLM/jour : </span><span class="si">{</span><span class="n">cout_llm_total</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Le LLM est </span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">× plus cher&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-implémenter-un-routeur-de-demandes">Exercice 2 — Implémenter un routeur de demandes</h3>
+
+<p>La Poste traite les demandes de service client via un pipeline hybride. Les demandes simples (suivi de colis, information tarifaire) sont traitées par un modèle ML classique ; les demandes complexes ou ambiguës passent par un LLM ; les litiges financiers importants sont escaladés à un humain.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">router_demande</span><span class="p">(</span><span class="n">demande</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne &#39;ml&#39;, &#39;llm&#39; ou &#39;human&#39; selon la nature de la demande.</span>
+
+<span class="sd">    demande contient :</span>
+<span class="sd">    - &#39;type&#39; : str — &#39;suivi&#39;, &#39;information&#39;, &#39;reclamation&#39; ou &#39;litige&#39;</span>
+<span class="sd">    - &#39;score_complexite&#39; : float entre 0 et 1</span>
+<span class="sd">    - &#39;montant_litige&#39; : float (0 si pas de litige financier)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Litiges financiers importants → humain obligatoire</span>
+    <span class="k">if</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;montant_litige&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">:</span>  <span class="c1"># seuil : 100 €</span>
+        <span class="k">return</span> <span class="s1">&#39;human&#39;</span>
+
+    <span class="c1"># Demandes simples à faible complexité → ML classique suffit</span>
+    <span class="k">if</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">___</span> <span class="ow">and</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;score_complexite&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;ml&#39;</span>  <span class="c1"># types simples : [&#39;suivi&#39;, &#39;information&#39;]</span>
+
+    <span class="c1"># Tout le reste → LLM</span>
+    <span class="k">return</span> <span class="n">___</span>
+
+
+<span class="c1"># Tests</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;suivi&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;reclamation&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;litige&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">}))</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">ml
+llm
+human
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">router_demande</span><span class="p">(</span><span class="n">demande</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;montant_litige&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;human&#39;</span>
+
+    <span class="k">if</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;suivi&#39;</span><span class="p">,</span> <span class="s1">&#39;information&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">demande</span><span class="p">[</span><span class="s1">&#39;score_complexite&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;ml&#39;</span>
+
+    <span class="k">return</span> <span class="s1">&#39;llm&#39;</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;suivi&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;reclamation&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">router_demande</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;litige&#39;</span><span class="p">,</span> <span class="s1">&#39;score_complexite&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;montant_litige&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">}))</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-mesurer-le-gain-de-latence-dun-pipeline-hybride">Exercice 3 — Mesurer le gain de latence d'un pipeline hybride</h3>
+
+<p>Leclerc e-commerce veut recommander des produits en temps réel. L'équipe envisage deux architectures : (A) pipeline séquentiel où chaque produit passe par le ML puis par le LLM, (B) pipeline hybride où le ML score tous les produits et le LLM n'enrichit que les 5 meilleurs.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">simuler_pipeline_sequentiel</span><span class="p">(</span><span class="n">n_produits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">latence_ml_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">latence_llm_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retourne le temps total en ms pour traiter n_produits de façon séquentielle.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">n_produits</span> <span class="o">*</span> <span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>  <span class="c1"># somme des deux latences par produit</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">simuler_pipeline_hybride</span><span class="p">(</span><span class="n">n_produits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">latence_ml_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">latence_llm_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Le ML score tous les produits, le LLM n&#39;enrichit que les top_k.</span>
+<span class="sd">    Retourne le temps total en ms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temps_ml</span> <span class="o">=</span> <span class="n">n_produits</span> <span class="o">*</span> <span class="n">___</span>   <span class="c1"># latence_ml_ms</span>
+    <span class="n">temps_llm</span> <span class="o">=</span> <span class="n">top_k</span> <span class="o">*</span> <span class="n">___</span>       <span class="c1"># latence_llm_ms</span>
+    <span class="k">return</span> <span class="n">temps_ml</span> <span class="o">+</span> <span class="n">temps_llm</span>
+
+
+<span class="n">n_produits</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">latence_ml</span> <span class="o">=</span> <span class="mf">0.5</span>    <span class="c1"># ms par produit</span>
+<span class="n">latence_llm</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># ms par produit</span>
+<span class="n">top_k</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">seq</span> <span class="o">=</span> <span class="n">simuler_pipeline_sequentiel</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml</span><span class="p">,</span> <span class="n">latence_llm</span><span class="p">)</span>
+<span class="n">hybride</span> <span class="o">=</span> <span class="n">simuler_pipeline_hybride</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml</span><span class="p">,</span> <span class="n">latence_llm</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline séquentiel : </span><span class="si">{</span><span class="n">seq</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> secondes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline hybride    : </span><span class="si">{</span><span class="n">hybride</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> secondes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain de latence     : </span><span class="si">{</span><span class="n">seq</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hybride</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">×&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Pipeline séquentiel : 2000.5 secondes
+Pipeline hybride    : 10.50 secondes
+Gain de latence     : 190×
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">simuler_pipeline_sequentiel</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml_ms</span><span class="p">,</span> <span class="n">latence_llm_ms</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">n_produits</span> <span class="o">*</span> <span class="p">(</span><span class="n">latence_ml_ms</span> <span class="o">+</span> <span class="n">latence_llm_ms</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">simuler_pipeline_hybride</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml_ms</span><span class="p">,</span> <span class="n">latence_llm_ms</span><span class="p">,</span> <span class="n">top_k</span><span class="p">):</span>
+    <span class="n">temps_ml</span> <span class="o">=</span> <span class="n">n_produits</span> <span class="o">*</span> <span class="n">latence_ml_ms</span>
+    <span class="n">temps_llm</span> <span class="o">=</span> <span class="n">top_k</span> <span class="o">*</span> <span class="n">latence_llm_ms</span>
+    <span class="k">return</span> <span class="n">temps_ml</span> <span class="o">+</span> <span class="n">temps_llm</span>
+
+
+<span class="n">n_produits</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">latence_ml</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">latence_llm</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">top_k</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">seq</span> <span class="o">=</span> <span class="n">simuler_pipeline_sequentiel</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml</span><span class="p">,</span> <span class="n">latence_llm</span><span class="p">)</span>
+<span class="n">hybride</span> <span class="o">=</span> <span class="n">simuler_pipeline_hybride</span><span class="p">(</span><span class="n">n_produits</span><span class="p">,</span> <span class="n">latence_ml</span><span class="p">,</span> <span class="n">latence_llm</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline séquentiel : </span><span class="si">{</span><span class="n">seq</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> secondes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline hybride    : </span><span class="si">{</span><span class="n">hybride</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> secondes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain de latence     : </span><span class="si">{</span><span class="n">seq</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">hybride</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">×&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

@@ -311,5 +311,229 @@ details>*:not(summary){padding:0 20px 20px}
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelle architecture pour chacun : image / texte / série temporelle longue / données tabulaires ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Image → CNN (ResNet). Texte → Transformer (BERT). Série temporelle longue → LSTM ou TFT. Données tabulaires → XGBoost.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Sur données tabulaires, XGBoost est le défaut — le deep learning doit se justifier explicitement.
+- Deep learning justifié si ET SEULEMENT SI : données non-structurées + volume &gt;100K + GPU disponible + opacité acceptable.
+- Le coût réel inclut annotation, calcul ET débogage — souvent sous-estimé en amont.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-benchmark-xgboost-vs-mlp-sur-données-tabulaires">Exercice 1 — Benchmark XGBoost vs MLP sur données tabulaires</h3>
+
+<p>Société Générale compare deux approches pour détecter des transactions frauduleuses. Les données sont tabulaires (montant, heure, pays, type d'opération). Complétez le benchmark pour mesurer la différence de performance et de vitesse.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBClassifier</span>
+
+<span class="c1"># Simulation : 10 000 transactions, 20 features</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># XGBoost — paramètres standards pour données tabulaires</span>
+<span class="n">xgb</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="n">___</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;logloss&#39;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">t_xgb</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="c1"># MLP — architecture à 2 couches cachées</span>
+<span class="n">mlp</span> <span class="o">=</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">___</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">t_mlp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="n">acc_xgb</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="n">acc_mlp</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">mlp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XGBoost : </span><span class="si">{</span><span class="n">acc_xgb</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> accuracy en </span><span class="si">{</span><span class="n">t_xgb</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MLP     : </span><span class="si">{</span><span class="n">acc_mlp</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> accuracy en </span><span class="si">{</span><span class="n">t_mlp</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XGBoost plus rapide par facteur : </span><span class="si">{</span><span class="n">t_mlp</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">t_xgb</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> XGBoost affiche une accuracy &gt;= celle du MLP, avec un temps d'entraînement au moins 10x inférieur.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xgboost</span><span class="w"> </span><span class="kn">import</span> <span class="n">XGBClassifier</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">xgb</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;logloss&#39;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">t_xgb</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="n">mlp</span> <span class="o">=</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">t_mlp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="n">acc_xgb</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="n">acc_mlp</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">mlp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XGBoost : </span><span class="si">{</span><span class="n">acc_xgb</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> accuracy en </span><span class="si">{</span><span class="n">t_xgb</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MLP     : </span><span class="si">{</span><span class="n">acc_mlp</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> accuracy en </span><span class="si">{</span><span class="n">t_mlp</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XGBoost plus rapide par facteur : </span><span class="si">{</span><span class="n">t_mlp</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">t_xgb</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+<span class="c1"># n_estimators=300 : valeur standard pour XGBoost sur tableaux</span>
+<span class="c1"># max_iter=200 : suffisant pour convergence du MLP sur ce volume</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-estimation-du-budget-dun-projet-image">Exercice 2 — Estimation du budget d'un projet image</h3>
+
+<p>Décathlon veut automatiser la détection de produits mal rangés en rayon via des caméras en magasin. Avant de lancer le projet, l'équipe doit estimer le budget total (annotation + calcul GPU). Complétez le calcul en appliquant le seuil de volume recommandé.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Paramètres du projet Décathlon</span>
+<span class="n">nb_categories</span> <span class="o">=</span> <span class="mi">50</span>          <span class="c1"># catégories de produits à reconnaître</span>
+<span class="n">images_par_categorie</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># minimum recommandé par classe pour un CNN robuste</span>
+<span class="n">cout_annotation_par_image</span> <span class="o">=</span> <span class="mf">2.0</span>   <span class="c1"># euros (prestataire d&#39;annotation externe)</span>
+<span class="n">nb_gpu_heures_entrainement</span> <span class="o">=</span> <span class="mi">8</span>    <span class="c1"># heures sur GPU V100</span>
+<span class="n">cout_gpu_par_heure</span> <span class="o">=</span> <span class="mf">3.5</span>          <span class="c1"># euros (cloud)</span>
+
+<span class="n">budget_annotation</span> <span class="o">=</span> <span class="n">nb_categories</span> <span class="o">*</span> <span class="n">images_par_categorie</span> <span class="o">*</span> <span class="n">cout_annotation_par_image</span>
+<span class="n">budget_calcul</span> <span class="o">=</span> <span class="n">nb_gpu_heures_entrainement</span> <span class="o">*</span> <span class="n">cout_gpu_par_heure</span>
+<span class="n">budget_total</span> <span class="o">=</span> <span class="n">budget_annotation</span> <span class="o">+</span> <span class="n">budget_calcul</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Images nécessaires : </span><span class="si">{</span><span class="n">nb_categories</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">images_par_categorie</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget annotation  : </span><span class="si">{</span><span class="n">budget_annotation</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget calcul GPU  : </span><span class="si">{</span><span class="n">budget_calcul</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget total       : </span><span class="si">{</span><span class="n">budget_total</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Images nécessaires : 100,000
+Budget annotation  : 200,000 €
+Budget calcul GPU  : 28.0 €
+Budget total       : 200,028 €
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">nb_categories</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">images_par_categorie</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># 2000 images/classe → 100 000 total, seuil robuste pour CNN</span>
+<span class="n">cout_annotation_par_image</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">nb_gpu_heures_entrainement</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">cout_gpu_par_heure</span> <span class="o">=</span> <span class="mf">3.5</span>
+
+<span class="n">budget_annotation</span> <span class="o">=</span> <span class="n">nb_categories</span> <span class="o">*</span> <span class="n">images_par_categorie</span> <span class="o">*</span> <span class="n">cout_annotation_par_image</span>
+<span class="n">budget_calcul</span> <span class="o">=</span> <span class="n">nb_gpu_heures_entrainement</span> <span class="o">*</span> <span class="n">cout_gpu_par_heure</span>
+<span class="n">budget_total</span> <span class="o">=</span> <span class="n">budget_annotation</span> <span class="o">+</span> <span class="n">budget_calcul</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Images nécessaires : </span><span class="si">{</span><span class="n">nb_categories</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">images_par_categorie</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget annotation  : </span><span class="si">{</span><span class="n">budget_annotation</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget calcul GPU  : </span><span class="si">{</span><span class="n">budget_calcul</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Budget total       : </span><span class="si">{</span><span class="n">budget_total</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+<span class="c1"># 2000 images/classe × 50 classes = 100 000 images — seuil &quot;&gt;100K pour résultats robustes&quot;</span>
+<span class="c1"># Le coût dominant est l&#39;annotation (200K€), pas le calcul (28€).</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-sélecteur-darchitecture-automatique">Exercice 3 — Sélecteur d'architecture automatique</h3>
+
+<p>AXA doit choisir l'architecture adaptée pour quatre projets internes différents. Complétez la fonction de sélection en appliquant les règles du cours : données tabulaires avec explicabilité obligatoire, seuil de volume pour le deep learning, et mapping type → architecture.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">recommander_architecture</span><span class="p">(</span><span class="n">type_donnee</span><span class="p">,</span> <span class="n">nb_exemples</span><span class="p">,</span> <span class="n">explicabilite_requise</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne l&#39;architecture recommandée selon les règles du cours.</span>
+
+<span class="sd">    type_donnee          : &quot;image&quot;, &quot;texte&quot;, &quot;tabulaire&quot;, &quot;serie_temporelle&quot;, &quot;audio&quot;</span>
+<span class="sd">    nb_exemples          : nombre d&#39;exemples étiquetés disponibles</span>
+<span class="sd">    explicabilite_requise: True si le secteur exige l&#39;explicabilité du modèle</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Règle 1 : données tabulaires avec contrainte d&#39;explicabilité (crédit, assurance)</span>
+    <span class="k">if</span> <span class="n">type_donnee</span> <span class="o">==</span> <span class="n">___</span> <span class="ow">and</span> <span class="n">explicabilite_requise</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;XGBoost + SHAP (explicabilité obligatoire)&quot;</span>
+
+    <span class="c1"># Règle 2 : volume insuffisant pour entraîner un modèle DL from scratch</span>
+    <span class="n">seuil_volume_dl</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># seuil &quot;résultats raisonnables&quot; selon le cours</span>
+    <span class="k">if</span> <span class="n">type_donnee</span> <span class="o">!=</span> <span class="s2">&quot;tabulaire&quot;</span> <span class="ow">and</span> <span class="n">nb_exemples</span> <span class="o">&lt;</span> <span class="n">seuil_volume_dl</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Volume insuffisant (</span><span class="si">{</span><span class="n">nb_exemples</span><span class="si">}</span><span class="s2"> ex.) — envisager le transfer learning&quot;</span>
+
+    <span class="c1"># Règle 3 : architecture par défaut selon le type de donnée</span>
+    <span class="n">architectures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;CNN (EfficientNet / ResNet)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;texte&quot;</span><span class="p">:</span> <span class="s2">&quot;Transformer (CamemBERT)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tabulaire&quot;</span><span class="p">:</span> <span class="s2">&quot;XGBoost / LightGBM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;serie_temporelle&quot;</span><span class="p">:</span> <span class="s2">&quot;LSTM ou TFT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;audio&quot;</span><span class="p">:</span> <span class="s2">&quot;CNN sur spectrogramme&quot;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">architectures</span><span class="p">[</span><span class="n">type_donnee</span><span class="p">]</span>
+
+<span class="c1"># Tests — 4 projets AXA</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;tabulaire&quot;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>    <span class="c1"># scoring sinistres</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>         <span class="c1"># photos de véhicules accidentés</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;texte&quot;</span><span class="p">,</span> <span class="mi">200000</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>      <span class="c1"># courriers clients</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;tabulaire&quot;</span><span class="p">,</span> <span class="mi">80000</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>   <span class="c1"># scoring sans contrainte réglementaire</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">XGBoost + SHAP (explicabilité obligatoire)
+Volume insuffisant (800 ex.) — envisager le transfer learning
+Transformer (CamemBERT)
+XGBoost / LightGBM
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">recommander_architecture</span><span class="p">(</span><span class="n">type_donnee</span><span class="p">,</span> <span class="n">nb_exemples</span><span class="p">,</span> <span class="n">explicabilite_requise</span><span class="p">):</span>
+    <span class="c1"># Règle 1 : tabulaire + explicabilité → XGBoost obligatoire</span>
+    <span class="k">if</span> <span class="n">type_donnee</span> <span class="o">==</span> <span class="s2">&quot;tabulaire&quot;</span> <span class="ow">and</span> <span class="n">explicabilite_requise</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;XGBoost + SHAP (explicabilité obligatoire)&quot;</span>
+
+    <span class="c1"># Règle 2 : seuil de 10 000 exemples pour &quot;résultats raisonnables&quot; (cours : &quot;minimum 10 000&quot;)</span>
+    <span class="n">seuil_volume_dl</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="k">if</span> <span class="n">type_donnee</span> <span class="o">!=</span> <span class="s2">&quot;tabulaire&quot;</span> <span class="ow">and</span> <span class="n">nb_exemples</span> <span class="o">&lt;</span> <span class="n">seuil_volume_dl</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Volume insuffisant (</span><span class="si">{</span><span class="n">nb_exemples</span><span class="si">}</span><span class="s2"> ex.) — envisager le transfer learning&quot;</span>
+
+    <span class="n">architectures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;CNN (EfficientNet / ResNet)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;texte&quot;</span><span class="p">:</span> <span class="s2">&quot;Transformer (CamemBERT)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tabulaire&quot;</span><span class="p">:</span> <span class="s2">&quot;XGBoost / LightGBM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;serie_temporelle&quot;</span><span class="p">:</span> <span class="s2">&quot;LSTM ou TFT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;audio&quot;</span><span class="p">:</span> <span class="s2">&quot;CNN sur spectrogramme&quot;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">architectures</span><span class="p">[</span><span class="n">type_donnee</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;tabulaire&quot;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;texte&quot;</span><span class="p">,</span> <span class="mi">200000</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recommander_architecture</span><span class="p">(</span><span class="s2">&quot;tabulaire&quot;</span><span class="p">,</span> <span class="mi">80000</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+<span class="c1"># Note : le 4e cas retourne XGBoost même sans contrainte d&#39;explicabilité —</span>
+<span class="c1"># les données tabulaires vont toujours vers XGBoost, quelle que soit la taille.</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

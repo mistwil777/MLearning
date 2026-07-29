@@ -208,12 +208,24 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p>Les <strong>frameworks d'évaluation agentique</strong> sont des bibliothèques et plateformes qui implémentent les métriques, les patterns de test, les tableaux de bord et le traçage d'exécution pour les systèmes LLM et agents. Ils remplacent une infrastructure que la plupart des équipes construisent manuellement — et mal — à chaque projet.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Les frameworks d'évaluation agentique remplacent du code maison fragile par des outils standardisés.
+- Ragas, DeepEval et Phoenix couvrent l'essentiel des besoins sans réécrire les métriques.
+:::</p>
+
 <hr />
 
 <p>:::situation
 <strong>Startup française (anonymisée), 2024 — Pipeline RAG pour support client</strong></p>
 
 <p>L'équipe a passé 6 semaines à construire un système d'évaluation maison : boucle de test, calcul des métriques, stockage des résultats, dashboard Streamlit. Résultat : fragile, non maintenu, personne ne comprend comment l'interprêter à part la personne qui l'a construit. Découverte tardive de Ragas et DeepEval : ces outils auraient couvert 80 % du besoin en une journée d'intégration.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Construire un système d'évaluation maison coûte des semaines pour un résultat fragile et non partageable.
+- L'intégration d'un outil existant (Ragas, DeepEval) prend une journée et couvre 80 % du besoin.
 :::</p>
 
 <hr />
@@ -317,6 +329,13 @@ details>*:not(summary){padding:0 20px 20px}
   <text x="550" y="450" text-anchor="middle" fill="#8f8a9e" font-size="10" font-style="italic">Helicone ou Weave s'ajoutent si on veut tracker les coûts et la latence sans écrire de code de monitoring.</text>
 </svg></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- 3 familles d'outils : métriques offline (Ragas, DeepEval), observabilité prod (LangSmith, Phoenix), CI/CD (Promptfoo, Helicone).
+- Ragas + Phoenix est la combinaison standard : évaluation hors prod + observation en prod.
+- Ces outils sont complémentaires, pas concurrents — on les combine selon le moment du cycle.
+:::</p>
+
 <hr />
 
 <h2 id="ragas-évaluation-rag-sans-annotation-humaine">Ragas — Évaluation RAG sans annotation humaine</h2>
@@ -409,6 +428,13 @@ context_precision faible       → votre retriever ramène trop de bruit
 context_recall faible          → votre retriever rate des chunks importants
 </code></pre></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Faithfulness &lt; 0.8 pointe un problème de LLM (hallucination) ; Context Recall faible pointe le retriever.
+- Ragas nécessite d'avoir accès aux chunks retournés — impossible si le retriever est une boîte noire.
+- Les métriques <code>context_*</code> diagnostiquent le retriever ; faithfulness et answer_relevancy diagnostiquent le LLM.
+:::</p>
+
 <hr />
 
 <h2 id="deepeval-tests-unitaires-pour-llm">DeepEval — Tests unitaires pour LLM</h2>
@@ -480,6 +506,13 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- DeepEval = pytest pour LLM : les tests échouent et bloquent la CI si le seuil n'est pas atteint.
+- GEval permet de définir des critères métier en langage naturel sans métrique prédéfinie.
+- DeepEval ne convient pas aux tâches créatives où le critère de succès est subjectif.
+:::</p>
+
 <hr />
 
 <h2 id="arize-phoenix-observabilité-locale-et-gratuite">Arize Phoenix — Observabilité locale et gratuite</h2>
@@ -519,6 +552,12 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 <strong>Pourquoi Phoenix plutôt que LangSmith si on débute ?</strong></p>
 
 <p>LangSmith est excellent mais SaaS — vos données de prod passent chez LangChain. Phoenix tourne localement, zéro configuration de compte, idéal pour du développement ou des contextes où les données sont sensibles. Pour un projet client Capgemini, Phoenix est souvent le choix par défaut.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Phoenix tourne localement via OpenTelemetry — aucune donnée ne quitte le poste de travail.
+- L'instrumentation est automatique : un seul appel <code>AnthropicInstrumentor().instrument()</code> suffit.
 :::</p>
 
 <hr />
@@ -563,6 +602,12 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Promptfoo compare plusieurs prompts et modèles sur les mêmes cas de test en une seule commande.
+- <code>llm-rubric</code> permet d'écrire des assertions en langage naturel sans code supplémentaire.
+:::</p>
+
 <hr />
 
 <h2 id="helicone-proxy-transparent-pour-logger-tous-les-appels">Helicone — Proxy transparent pour logger tous les appels</h2>
@@ -586,6 +631,12 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 </div>
 
 <p>Plan gratuit : 10 000 requêtes/mois — suffisant pour le développement et les projets académiques.</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Helicone s'active via un changement d'URL unique — aucune modification du code applicatif.
+- Ne pas l'utiliser si les données LLM sont confidentielles (données médicales, contrats) — préférer Phoenix local.
+:::</p>
 
 <hr />
 
@@ -657,6 +708,13 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 <li>Helicone si les données de vos appels LLM sont confidentielles (contrats, données médicales) — envisager Phoenix local à la place</li>
 </ul>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Établir une baseline Ragas ou DeepEval avant de modifier un prompt — pour mesurer l'impact réel.
+- La combinaison offline (Ragas/DeepEval) + observabilité (Phoenix/LangSmith) couvre tous les stades du cycle.
+- Sans accès aux chunks du retriever, les métriques <code>context_*</code> de Ragas ne peuvent pas être calculées.
+:::</p>
+
 <hr />
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quelles sont les 4 métriques principales de Ragas ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a"><strong>Faithfulness</strong> (pas d'hallucination), <strong>Answer Relevancy</strong> (réponse pertinente à la question), <strong>Context Precision</strong> (chunks récupérés pertinents), <strong>Context Recall</strong> (chunks nécessaires récupérés).</p></div></div></div>
@@ -668,4 +726,254 @@ deepeval<span class="w"> </span><span class="nb">test</span><span class="w"> </s
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que Promptfoo et dans quel contexte l'utiliser ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un outil CLI pour <strong>tester et comparer des prompts</strong> en CI/CD. Permet de détecter automatiquement une régression de prompt avant un déploiement, et de comparer plusieurs modèles sur les mêmes cas de test.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Si faithfulness est faible dans Ragas, quel est le problème ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le LLM <strong>hallucine</strong> — il affirme des choses absentes ou contredites par les documents récupérés. Le problème est dans le LLM ou son prompt, pas dans le retriever.</p></div></div></div></div></div>
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-évaluer-un-pipeline-rag-avec-ragas">Exercice 1 — Évaluer un pipeline RAG avec Ragas</h3>
+
+<p>Doctolib a construit un assistant RAG qui répond aux questions des patients sur les tarifs et remboursements. Complétez le code pour lancer une évaluation Ragas sur deux questions de test.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">,</span> <span class="n">context_recall</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Quel est le tarif d&#39;une consultation chez un généraliste ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;La téléconsultation est-elle remboursée par la sécurité sociale ?&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Le tarif d&#39;une consultation chez un généraliste est de 26,50 euros.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Oui, la téléconsultation est remboursée à 70 % par la sécurité sociale.&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;Tarif secteur 1 généraliste : 26,50 euros. Remboursement SS : 70 %.&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;La téléconsultation est prise en charge à 70 % par l&#39;Assurance Maladie depuis 2018.&quot;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ground_truth&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;26,50 euros.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Oui, remboursée à 70 %.&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> Un dictionnaire avec 4 clés — <code>faithfulness</code>, <code>answer_relevancy</code>, <code>context_precision</code>, <code>context_recall</code> — chacune avec un score entre 0 et 1 (valeurs proches de 1.0 sur ces données simples).</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ragas</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">,</span> <span class="n">context_recall</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Quel est le tarif d&#39;une consultation chez un généraliste ?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;La téléconsultation est-elle remboursée par la sécurité sociale ?&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Le tarif d&#39;une consultation chez un généraliste est de 26,50 euros.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Oui, la téléconsultation est remboursée à 70 % par la sécurité sociale.&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;Tarif secteur 1 généraliste : 26,50 euros. Remboursement SS : 70 %.&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;La téléconsultation est prise en charge à 70 % par l&#39;Assurance Maladie depuis 2018.&quot;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ground_truth&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;26,50 euros.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Oui, remboursée à 70 %.&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">faithfulness</span><span class="p">,</span> <span class="n">answer_relevancy</span><span class="p">,</span> <span class="n">context_precision</span><span class="p">,</span> <span class="n">context_recall</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-écrire-un-test-deepeval-avec-hallucinationmetric">Exercice 2 — Écrire un test DeepEval avec HallucinationMetric</h3>
+
+<p>La SNCF dispose d'un agent conversationnel qui répond aux questions sur les horaires à partir de documents officiels. Complétez le test DeepEval pour vérifier que l'agent n'invente pas d'informations absentes du contexte.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">___</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_sncf_no_hallucination</span><span class="p">():</span>
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;À quelle heure part le TGV Paris-Lyon le lundi matin ?&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;Le TGV Paris-Lyon part à 6h07 le lundi matin depuis la gare de Lyon.&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TGV Paris-Lyon départ lundi : 6h07 gare de Lyon, 7h22 gare de Lyon, 8h00 gare de Lyon.&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">___</span><span class="p">)</span>  <span class="c1"># tolérer au maximum 15% de contenu non ancré</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> Le test passe (<code>PASSED</code>) car la réponse est ancrée dans le contexte fourni.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">deepeval</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.test_case</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">HallucinationMetric</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_sncf_no_hallucination</span><span class="p">():</span>
+    <span class="n">test_case</span> <span class="o">=</span> <span class="n">LLMTestCase</span><span class="p">(</span>
+        <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;À quelle heure part le TGV Paris-Lyon le lundi matin ?&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;Le TGV Paris-Lyon part à 6h07 le lundi matin depuis la gare de Lyon.&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TGV Paris-Lyon départ lundi : 6h07 gare de Lyon, 7h22 gare de Lyon, 8h00 gare de Lyon.&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">HallucinationMetric</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># tolérer au maximum 15% de contenu non ancré</span>
+    <span class="n">assert_test</span><span class="p">(</span><span class="n">test_case</span><span class="p">,</span> <span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-configurer-helicone-comme-proxy-anthropic">Exercice 3 — Configurer Helicone comme proxy Anthropic</h3>
+
+<p>BNP Paribas veut tracker les coûts de ses appels LLM en production sans modifier son code applicatif. Complétez le code pour rediriger les appels Anthropic via Helicone.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+
+<span class="c1"># Configuration actuelle (appel direct — rien n&#39;est loggé)</span>
+<span class="c1"># client = anthropic.Anthropic(api_key=&quot;sk-ant-...&quot;)</span>
+
+<span class="c1"># Nouvelle configuration via Helicone</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;sk-ant-api-key-bnp&quot;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>
+    <span class="n">default_headers</span><span class="o">=</span><span class="p">{</span><span class="n">___</span><span class="p">:</span> <span class="s2">&quot;Bearer sk-helicone-bnp-key&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-haiku-4-5-20251001&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Résume les risques de ce contrat en 3 points.&quot;</span><span class="p">}]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> La requête s'exécute normalement ET apparaît dans le dashboard Helicone avec le modèle, le nombre de tokens et le coût estimé.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;sk-ant-api-key-bnp&quot;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://anthropic.helicone.ai&quot;</span><span class="p">,</span>
+    <span class="n">default_headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Helicone-Auth&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer sk-helicone-bnp-key&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-haiku-4-5-20251001&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Résume les risques de ce contrat en 3 points.&quot;</span><span class="p">}]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-4-diagnostiquer-un-pipeline-rag-à-partir-des-scores-ragas">Exercice 4 — Diagnostiquer un pipeline RAG à partir des scores Ragas</h3>
+
+<p>Orange a déployé un assistant RAG pour son service client. Voici les scores Ragas obtenus après évaluation sur 50 questions. Complétez la fonction <code>diagnostiquer</code> qui retourne le composant défaillant et la correction à apporter.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">scores</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.43</span><span class="p">,</span>
+    <span class="s2">&quot;context_recall&quot;</span><span class="p">:</span> <span class="mf">0.88</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">diagnostiquer</span><span class="p">(</span><span class="n">scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retourne un diagnostic en une phrase.</span>
+<span class="sd">    Règles :</span>
+<span class="sd">    - faithfulness &lt; 0.8 → problème LLM (hallucination)</span>
+<span class="sd">    - context_precision &lt; 0.6 ET context_recall &gt;= 0.7 → retriever ramène trop de bruit</span>
+<span class="sd">    - context_recall &lt; 0.6 ET context_precision &gt;= 0.6 → retriever rate des chunks importants</span>
+<span class="sd">    - answer_relevancy &lt; 0.7 → LLM dévie du sujet</span>
+<span class="sd">    - Tous &gt;= seuils → pipeline sain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème LLM : hallucination détectée — revoir le prompt système.&quot;</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_precision&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span> <span class="ow">and</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_recall&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">___</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_recall&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span> <span class="ow">and</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_precision&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème retriever : chunks manquants — augmenter k ou affiner l&#39;indexation.&quot;</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;answer_relevancy&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">___</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème LLM : réponse hors sujet — ajouter une instruction de focalisation.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Pipeline sain — aucune action requise.&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">diagnostiquer</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> <code>"Problème retriever : trop de bruit — réduire k ou augmenter le seuil de similarité."</code></p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="n">scores</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span>
+    <span class="s2">&quot;answer_relevancy&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span>
+    <span class="s2">&quot;context_precision&quot;</span><span class="p">:</span> <span class="mf">0.43</span><span class="p">,</span>
+    <span class="s2">&quot;context_recall&quot;</span><span class="p">:</span> <span class="mf">0.88</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">diagnostiquer</span><span class="p">(</span><span class="n">scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème LLM : hallucination détectée — revoir le prompt système.&quot;</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_precision&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span> <span class="ow">and</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_recall&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.7</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème retriever : trop de bruit — réduire k ou augmenter le seuil de similarité.&quot;</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_recall&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span> <span class="ow">and</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;context_precision&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.6</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème retriever : chunks manquants — augmenter k ou affiner l&#39;indexation.&quot;</span>
+    <span class="k">elif</span> <span class="n">scores</span><span class="p">[</span><span class="s2">&quot;answer_relevancy&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.7</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Problème LLM : réponse hors sujet — ajouter une instruction de focalisation.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Pipeline sain — aucune action requise.&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">diagnostiquer</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+<span class="c1"># &quot;Problème retriever : trop de bruit — réduire k ou augmenter le seuil de similarité.&quot;</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

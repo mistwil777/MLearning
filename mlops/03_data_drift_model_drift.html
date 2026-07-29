@@ -262,5 +262,251 @@ Model drift  → la RELATION entrées/cible change
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le PSI et à partir de quelle valeur agit-on ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">PSI = Population Stability Index, mesure l'ampleur du déplacement d'une distribution. <strong>PSI < 0.1</strong> = stable (rien à faire). <strong>0.1-0.2</strong> = surveillance accrue. <strong>> 0.2</strong> = action requise (re-entraîner ou investiguer la cause).</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Data drift = entrées qui changent ; model drift = relation entrées/cible qui change — ce sont deux problèmes distincts.
+- Un PSI &gt; 0.2 sur une feature clé impose une action immédiate, pas une surveillance.
+- Les métriques métier détectent toujours le drift en retard — surveiller les données d'entrée en amont.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-calculer-le-psi-dune-feature-de-consommation-électrique">Exercice 1 — Calculer le PSI d'une feature de consommation électrique</h3>
+
+<p>EDF déploie en janvier un modèle de prévision de consommation résidentielle. En juillet, l'équipe data veut vérifier si la feature <code>consommation_kwh_mensuelle</code> a dérivé entre l'hiver (référence) et l'été (production).</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calcule le PSI entre deux distributions numériques.</span>
+<span class="sd">    PSI = sum((current_pct - ref_pct) * ln(current_pct / ref_pct))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Créer les bins sur la distribution de référence</span>
+    <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">breakpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">breakpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="c1"># Calculer les proportions dans chaque bin</span>
+    <span class="n">ref_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">breakpoints</span><span class="p">)</span>
+    <span class="n">cur_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">breakpoints</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">ref_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="n">cur_pct</span> <span class="o">=</span> <span class="n">cur_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+
+    <span class="c1"># Éviter la division par zéro</span>
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ref_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="n">cur_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cur_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">cur_pct</span><span class="p">)</span>
+
+    <span class="n">psi_values</span> <span class="o">=</span> <span class="n">___</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">___</span> <span class="o">/</span> <span class="n">___</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_values</span><span class="p">)</span>
+
+<span class="c1"># Données simulées : hiver vs été (consommation en kWh)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># hiver : forte consommation</span>
+<span class="n">current</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># été : faible consommation</span>
+
+<span class="n">psi</span> <span class="o">=</span> <span class="n">calculate_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI consommation_kwh_mensuelle : </span><span class="si">{</span><span class="n">psi</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">seuil</span> <span class="o">=</span> <span class="s2">&quot;stable&quot;</span> <span class="k">if</span> <span class="n">psi</span> <span class="o">&lt;</span> <span class="mf">0.1</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;surveillance&quot;</span> <span class="k">if</span> <span class="n">psi</span> <span class="o">&lt;</span> <span class="mf">0.2</span> <span class="k">else</span> <span class="s2">&quot;action requise&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Verdict : </span><span class="si">{</span><span class="n">seuil</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">PSI consommation_kwh_mensuelle : [valeur &gt; 0.20]
+Verdict : action requise
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">breakpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">breakpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="n">ref_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">breakpoints</span><span class="p">)</span>
+    <span class="n">cur_counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">breakpoints</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">ref_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="n">cur_pct</span> <span class="o">=</span> <span class="n">cur_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+
+    <span class="n">ref_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ref_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="n">cur_pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cur_pct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">cur_pct</span><span class="p">)</span>
+
+    <span class="n">psi_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">cur_pct</span> <span class="o">-</span> <span class="n">ref_pct</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cur_pct</span> <span class="o">/</span> <span class="n">ref_pct</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_values</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">current</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">psi</span> <span class="o">=</span> <span class="n">calculate_psi</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSI consommation_kwh_mensuelle : </span><span class="si">{</span><span class="n">psi</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">seuil</span> <span class="o">=</span> <span class="s2">&quot;stable&quot;</span> <span class="k">if</span> <span class="n">psi</span> <span class="o">&lt;</span> <span class="mf">0.1</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;surveillance&quot;</span> <span class="k">if</span> <span class="n">psi</span> <span class="o">&lt;</span> <span class="mf">0.2</span> <span class="k">else</span> <span class="s2">&quot;action requise&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Verdict : </span><span class="si">{</span><span class="n">seuil</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Les <code>___</code> à compléter sont : <code>(cur_pct - ref_pct)</code>, <code>cur_pct</code>, <code>ref_pct</code>.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-détecter-le-drift-avec-evidently-sur-des-données-e-commerce">Exercice 2 — Détecter le drift avec Evidently sur des données e-commerce</h3>
+
+<p>Cdiscount utilise un modèle de recommandation produit entraîné sur les comportements d'achat du second semestre 2023. En mars 2024, après les soldes d'hiver, l'équipe suspecte un drift du panier moyen et du nombre de pages vues.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">evidently.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">evidently.metric_preset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataDriftPreset</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="c1"># Données de référence (comportements d&#39;achat S2 2023)</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;panier_moyen_eur&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+    <span class="s2">&quot;nb_pages_vues&quot;</span><span class="p">:</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+    <span class="s2">&quot;categorie&quot;</span><span class="p">:</span>        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;electronique&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;maison&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]),</span>
+<span class="p">})</span>
+
+<span class="c1"># Données actuelles (après soldes, mars 2024) : paniers plus petits, moins de pages vues</span>
+<span class="n">current</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;panier_moyen_eur&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>   <span class="c1"># panier moyen réduit à 55 €</span>
+    <span class="s2">&quot;nb_pages_vues&quot;</span><span class="p">:</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>      <span class="c1"># moins de navigation : moyenne 7</span>
+    <span class="s2">&quot;categorie&quot;</span><span class="p">:</span>        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;electronique&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;maison&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]),</span>
+<span class="p">})</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">Report</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">___</span><span class="p">])</span>
+<span class="n">report</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">reference_data</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">current_data</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+
+<span class="c1"># Extraire le résultat JSON pour chaque feature</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+<span class="n">drift_detected</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="s2">&quot;dataset_drift&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Drift détecté sur le dataset : </span><span class="si">{</span><span class="n">drift_detected</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Drift détecté sur le dataset : True
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">evidently.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">evidently.metric_preset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataDriftPreset</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">reference</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;panier_moyen_eur&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+    <span class="s2">&quot;nb_pages_vues&quot;</span><span class="p">:</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+    <span class="s2">&quot;categorie&quot;</span><span class="p">:</span>        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;electronique&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;maison&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]),</span>
+<span class="p">})</span>
+
+<span class="n">current</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;panier_moyen_eur&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>   <span class="c1"># ___ → 55</span>
+    <span class="s2">&quot;nb_pages_vues&quot;</span><span class="p">:</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>       <span class="c1"># ___ → 7</span>
+    <span class="s2">&quot;categorie&quot;</span><span class="p">:</span>        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;electronique&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;maison&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]),</span>
+<span class="p">})</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">Report</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">DataDriftPreset</span><span class="p">()])</span>           <span class="c1"># ___ → DataDriftPreset()</span>
+<span class="n">report</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">reference_data</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">current_data</span><span class="o">=</span><span class="n">current</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+<span class="n">drift_detected</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="s2">&quot;dataset_drift&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Drift détecté sur le dataset : </span><span class="si">{</span><span class="n">drift_detected</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-diagnostiquer-un-concept-drift-sur-un-modèle-de-churn-télécom">Exercice 3 — Diagnostiquer un concept drift sur un modèle de churn télécom</h3>
+
+<p>Orange déploie un modèle de prédiction du churn en janvier. L'équipe enregistre chaque mois l'AUC réelle (calculée sur les churns effectivement observés). Trois mois après, la performance chute. La question : s'agit-il d'un concept drift ou d'un simple bruit ?</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># AUC mensuelle observée en production (janvier → octobre)</span>
+<span class="n">auc_mensuelle</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.83</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.81</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">,</span> <span class="mf">0.61</span><span class="p">]</span>
+<span class="n">mois</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">auc_mensuelle</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># 1. Calculer la pente de la régression linéaire (tendance)</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">std_err</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pente mensuelle : </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> AUC/mois&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R² : </span><span class="si">{</span><span class="n">r_value</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value : </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. Conclure sur le concept drift</span>
+<span class="k">if</span> <span class="n">___</span> <span class="o">&lt;</span> <span class="mf">0.05</span> <span class="ow">and</span> <span class="n">___</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Concept drift confirmé : dégradation statistiquement significative.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dégradation non significative : surveiller un mois de plus.&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Estimer à quel mois l&#39;AUC tombera sous 0.70 (seuil d&#39;alerte métier)</span>
+<span class="n">mois_alerte</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.70</span> <span class="o">-</span> <span class="n">___</span><span class="p">)</span> <span class="o">/</span> <span class="n">___</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Projection : AUC &lt; 0.70 atteint au mois </span><span class="si">{</span><span class="n">mois_alerte</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Pente mensuelle : -0.0248 AUC/mois
+R² : 0.9832
+p-value : 0.0000
+Concept drift confirmé : dégradation statistiquement significative.
+Projection : AUC &lt; 0.70 atteint au mois 5.3
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="n">auc_mensuelle</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.83</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.81</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">,</span> <span class="mf">0.61</span><span class="p">]</span>
+<span class="n">mois</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">auc_mensuelle</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">std_err</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="n">mois</span><span class="p">,</span> <span class="n">auc_mensuelle</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pente mensuelle : </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> AUC/mois&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R² : </span><span class="si">{</span><span class="n">r_value</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value : </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.05</span> <span class="ow">and</span> <span class="n">slope</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Concept drift confirmé : dégradation statistiquement significative.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dégradation non significative : surveiller un mois de plus.&quot;</span><span class="p">)</span>
+
+<span class="n">mois_alerte</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.70</span> <span class="o">-</span> <span class="n">intercept</span><span class="p">)</span> <span class="o">/</span> <span class="n">slope</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Projection : AUC &lt; 0.70 atteint au mois </span><span class="si">{</span><span class="n">mois_alerte</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Les <code>___</code> à compléter sont : <code>mois</code> (1er argument de linregress), <code>auc_mensuelle</code> (2e argument), <code>p_value</code>, <code>slope</code>, <code>intercept</code>, <code>slope</code>.</p>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

@@ -208,6 +208,12 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p>Le <strong>LLM-as-judge</strong> est un patron d'évaluation dans lequel un LLM (le juge) note la sortie d'un autre LLM (l'agent évalué) selon des critères définis. Il remplace l'annotation humaine quand la tâche est ouverte — génération de texte, résumé, conversation, raisonnement — là où une comparaison exacte avec une ground truth est impossible.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- LLM-as-judge remplace l'annotation humaine quand la sortie ne peut pas être comparée mot à mot à une référence.
+- Le juge doit être le modèle le plus capable disponible — un juge médiocre produit des scores arbitraires.
+:::</p>
+
 <hr />
 
 <p>:::situation
@@ -238,6 +244,12 @@ details>*:not(summary){padding:0 20px 20px}
 </div>
 
 <p>BLEU, ROUGE et METEOR comparent les mots, pas le sens. Pour une tâche où la formulation peut varier librement, ils sont quasi inutiles.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- ROUGE et BLEU mesurent la similarité lexicale, pas sémantique — paraphraser juste est pénalisé.
+- Quand la formulation peut varier librement, les métriques NLP classiques mesurent la mauvaise chose.
 :::</p>
 
 <hr />
@@ -360,6 +372,13 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Trois formes : score absolu (simple), pairwise (fiable), G-Eval (structuré, moins de variance).
+- Toujours inclure une justification dans le prompt du juge — un score sans raison est non actionnable.
+- G-Eval décompose en sous-questions binaires : chaque réponse est vérifiable indépendamment.
+:::</p>
+
 <hr />
 
 <h2 id="les-biais-du-juge-ce-que-tout-le-monde-oublie">Les biais du juge — ce que tout le monde oublie</h2>
@@ -397,6 +416,13 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Trois biais systématiques : position, verbosité, auto-favoritisme — tous corrigeables par le prompt ou l'agrégation.
+- Inverser l'ordre A/B sur la moitié des évaluations neutralise le biais de position sans surcoût majeur.
+- Ne pas utiliser le même modèle comme agent évalué et comme juge — l'auto-favoritisme biaiserait tous les résultats.
+:::</p>
+
 <hr />
 
 <h2 id="calibration-du-juge-valider-avant-de-faire-confiance">Calibration du juge — valider avant de faire confiance</h2>
@@ -420,6 +446,13 @@ details>*:not(summary){padding:0 20px 20px}
 </code></pre>
 </div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Annoter ~50 cas manuellement avant de déployer un juge LLM en production — c'est le minimum viable.
+- Corrélation de Spearman ρ &gt; 0.7 est le seuil de confiance ; en dessous, le critère ou le prompt est à retravailler.
+- La calibration est à refaire si on change de modèle juge ou de critère d'évaluation.
+:::</p>
+
 <hr />
 
 <h2 id="quand-utiliser-le-llm-as-judge">Quand utiliser le LLM-as-judge</h2>
@@ -439,6 +472,13 @@ details>*:not(summary){padding:0 20px 20px}
 <li>Sans calibration préalable sur des annotations humaines — les scores sont arbitraires sans validation</li>
 </ul>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- LLM-as-judge est complémentaire des métriques exactes, jamais un remplacement quand la tâche est vérifiable.
+- Sans calibration humaine préalable, les scores produits sont arbitraires et non comparables entre projets.
+- La fenêtre de contexte du juge doit couvrir la totalité du document source — sinon les jugements sont partiels.
+:::</p>
+
 <hr />
 
 <div class="flashcards"><div class="flashcards-title">Flashcards</div><div class="flashcards-grid"><div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que le LLM-as-judge ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un patron où un <strong>LLM note la sortie d'un autre LLM</strong> selon des critères définis. Utilisé quand la tâche est ouverte et qu'une comparaison exacte avec une ground truth est impossible.</p></div></div></div>
@@ -450,4 +490,301 @@ details>*:not(summary){padding:0 20px 20px}
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Comment valider qu'un LLM-as-judge est fiable ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Annoter ~50 cas manuellement, faire noter les mêmes cas par le juge, mesurer la <strong>corrélation de Spearman</strong>. Seuil acceptable : ρ > 0.7.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Qu'est-ce que G-Eval ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un pattern qui <strong>décompose un critère d'évaluation en sous-questions binaires</strong>, puis agrège. Réduit la variance et donne une justification structurée plutôt qu'un score opaque.</p></div></div></div></div></div>
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-score-absolu-sur-un-critère-de-clarté">Exercice 1 — Score absolu sur un critère de clarté</h3>
+
+<p>La MAIF développe un agent conversationnel qui répond aux questions des sociétaires sur leurs contrats d'assurance. L'équipe veut évaluer automatiquement si les réponses de l'agent sont claires pour un non-expert.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="n">CLARITY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Tu es un évaluateur expert. Évalue la réponse suivante selon le critère CLARTÉ.</span>
+
+<span class="s2">CRITÈRE — Clarté pour un non-expert :</span>
+<span class="s2">Score 5 : aucun jargon, tout est compréhensible sans connaissance préalable</span>
+<span class="s2">Score 4 : un terme technique utilisé mais contextualisé</span>
+<span class="s2">Score 3 : deux termes non expliqués, compréhension partielle</span>
+<span class="s2">Score 2 : jargon dominant, effort de compréhension nécessaire</span>
+<span class="s2">Score 1 : incompréhensible sans expertise métier</span>
+
+<span class="s2">RÉPONSE À ÉVALUER :</span>
+<span class="si">{response}</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;score&quot;: &lt;entier 1-5&gt;, &quot;justification&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">judge_clarity</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>  <span class="c1"># modèle le plus capable disponible</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>  <span class="c1"># suffisant pour un JSON court</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">CLARITY_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Test</span>
+<span class="n">response_agent</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Votre franchise s&#39;élève à 300 euros. &quot;</span>
+    <span class="s2">&quot;Cela signifie que si un sinistre survient, &quot;</span>
+    <span class="s2">&quot;vous payez les 300 premiers euros de réparation, &quot;</span>
+    <span class="s2">&quot;et votre assurance prend en charge le reste.&quot;</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">judge_clarity</span><span class="p">(</span><span class="n">response_agent</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/5&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Justification : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;justification&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> Score 5, justification mentionnant que la franchise est expliquée en termes simples.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="n">CLARITY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Tu es un évaluateur expert. Évalue la réponse suivante selon le critère CLARTÉ.</span>
+
+<span class="s2">CRITÈRE — Clarté pour un non-expert :</span>
+<span class="s2">Score 5 : aucun jargon, tout est compréhensible sans connaissance préalable</span>
+<span class="s2">Score 4 : un terme technique utilisé mais contextualisé</span>
+<span class="s2">Score 3 : deux termes non expliqués, compréhension partielle</span>
+<span class="s2">Score 2 : jargon dominant, effort de compréhension nécessaire</span>
+<span class="s2">Score 1 : incompréhensible sans expertise métier</span>
+
+<span class="s2">RÉPONSE À ÉVALUER :</span>
+<span class="si">{response}</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;score&quot;: &lt;entier 1-5&gt;, &quot;justification&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">judge_clarity</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">CLARITY_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="p">}]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">response_agent</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Votre franchise s&#39;élève à 300 euros. &quot;</span>
+    <span class="s2">&quot;Cela signifie que si un sinistre survient, &quot;</span>
+    <span class="s2">&quot;vous payez les 300 premiers euros de réparation, &quot;</span>
+    <span class="s2">&quot;et votre assurance prend en charge le reste.&quot;</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">judge_clarity</span><span class="p">(</span><span class="n">response_agent</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/5&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Justification : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;justification&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-comparaison-pairwise-avec-correction-du-biais-de-position">Exercice 2 — Comparaison pairwise avec correction du biais de position</h3>
+
+<p>Cdiscount teste deux versions d'un agent de recommandation produit. La version A est le prompt actuel, la version B est une réécriture plus concise. L'équipe veut comparer les deux sans biais de position.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="n">PAIRWISE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Compare ces deux descriptions produit générées par un agent. Désigne laquelle est meilleure pour un client qui cherche à faire un achat rapide.</span>
+
+<span class="s2">DESCRIPTION A : </span><span class="si">{response_a}</span>
+
+<span class="s2">DESCRIPTION B : </span><span class="si">{response_b}</span>
+
+<span class="s2">CRITÈRES :</span>
+<span class="s2">1. Informations essentielles présentes (prix, caractéristiques clés)</span>
+<span class="s2">2. Clarté et lisibilité</span>
+<span class="s2">3. Concision (ne pas favoriser la longueur)</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;winner&quot;: &quot;A&quot; ou &quot;B&quot; ou &quot;tie&quot;, &quot;reason&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_once</span><span class="p">(</span><span class="n">response_a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_b</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">PAIRWISE_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">response_a</span><span class="o">=</span><span class="n">response_a</span><span class="p">,</span> <span class="n">response_b</span><span class="o">=</span><span class="n">response_b</span>
+        <span class="p">)}]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">robust_compare</span><span class="p">(</span><span class="n">response_a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_b</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="n">votes</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="c1"># Ordre normal : A en premier</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">compare_once</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">r1</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Ordre inversé : B en premier</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">compare_once</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+        <span class="c1"># Ré-inverser le résultat pour corriger le biais de position</span>
+        <span class="n">inverted</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;tie&quot;</span><span class="p">:</span> <span class="s2">&quot;tie&quot;</span><span class="p">}[</span><span class="n">r2</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">___</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">winner</span> <span class="o">=</span> <span class="n">votes</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">winner</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
+
+<span class="c1"># Test</span>
+<span class="n">desc_a</span> <span class="o">=</span> <span class="s2">&quot;Aspirateur robot Roomba i7 — navigation intelligente, cartographie des pièces, compatible app, 75 min d&#39;autonomie. Prix : 499€.&quot;</span>
+<span class="n">desc_b</span> <span class="o">=</span> <span class="s2">&quot;Le Roomba i7 est un aspirateur robot haut de gamme équipé d&#39;une technologie de navigation avancée par cartographie laser qui lui permet d&#39;apprendre la disposition de votre intérieur. Il offre 75 minutes d&#39;autonomie et se contrôle via une application mobile. Disponible au prix de 499 euros.&quot;</span>
+
+<span class="n">winner</span><span class="p">,</span> <span class="n">votes</span> <span class="o">=</span> <span class="n">robust_compare</span><span class="p">(</span><span class="n">desc_a</span><span class="p">,</span> <span class="n">desc_b</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gagnant : </span><span class="si">{</span><span class="n">winner</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Votes : </span><span class="si">{</span><span class="n">votes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> <code>winner</code> vaut <code>"A"</code> ou <code>"B"</code> (pas forcément déterministe), <code>votes</code> est un dictionnaire avec des clés <code>"A"</code>, <code>"B"</code>, <code>"tie"</code> dont les valeurs somment à 4.</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">anthropic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">anthropic</span><span class="o">.</span><span class="n">Anthropic</span><span class="p">()</span>
+
+<span class="n">PAIRWISE_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Compare ces deux descriptions produit générées par un agent. Désigne laquelle est meilleure pour un client qui cherche à faire un achat rapide.</span>
+
+<span class="s2">DESCRIPTION A : </span><span class="si">{response_a}</span>
+
+<span class="s2">DESCRIPTION B : </span><span class="si">{response_b}</span>
+
+<span class="s2">CRITÈRES :</span>
+<span class="s2">1. Informations essentielles présentes (prix, caractéristiques clés)</span>
+<span class="s2">2. Clarté et lisibilité</span>
+<span class="s2">3. Concision (ne pas favoriser la longueur)</span>
+
+<span class="s2">Réponds uniquement avec ce JSON :</span>
+<span class="s2">{{&quot;winner&quot;: &quot;A&quot; ou &quot;B&quot; ou &quot;tie&quot;, &quot;reason&quot;: &quot;&lt;une phrase&gt;&quot;}}&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_once</span><span class="p">(</span><span class="n">response_a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_b</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-opus-5&quot;</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">PAIRWISE_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">response_a</span><span class="o">=</span><span class="n">response_a</span><span class="p">,</span> <span class="n">response_b</span><span class="o">=</span><span class="n">response_b</span>
+        <span class="p">)}]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">robust_compare</span><span class="p">(</span><span class="n">response_a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response_b</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="n">votes</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="c1"># Ordre normal : A en premier</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">compare_once</span><span class="p">(</span><span class="n">response_a</span><span class="p">,</span> <span class="n">response_b</span><span class="p">)</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">r1</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Ordre inversé : B en premier</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">compare_once</span><span class="p">(</span><span class="n">response_b</span><span class="p">,</span> <span class="n">response_a</span><span class="p">)</span>
+        <span class="c1"># Ré-inverser le résultat pour corriger le biais de position</span>
+        <span class="n">inverted</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;tie&quot;</span><span class="p">:</span> <span class="s2">&quot;tie&quot;</span><span class="p">}[</span><span class="n">r2</span><span class="p">[</span><span class="s2">&quot;winner&quot;</span><span class="p">]]</span>
+        <span class="n">votes</span><span class="p">[</span><span class="n">inverted</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">winner</span> <span class="o">=</span> <span class="n">votes</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">winner</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
+
+<span class="n">desc_a</span> <span class="o">=</span> <span class="s2">&quot;Aspirateur robot Roomba i7 — navigation intelligente, cartographie des pièces, compatible app, 75 min d&#39;autonomie. Prix : 499€.&quot;</span>
+<span class="n">desc_b</span> <span class="o">=</span> <span class="s2">&quot;Le Roomba i7 est un aspirateur robot haut de gamme équipé d&#39;une technologie de navigation avancée par cartographie laser qui lui permet d&#39;apprendre la disposition de votre intérieur. Il offre 75 minutes d&#39;autonomie et se contrôle via une application mobile. Disponible au prix de 499 euros.&quot;</span>
+
+<span class="n">winner</span><span class="p">,</span> <span class="n">votes</span> <span class="o">=</span> <span class="n">robust_compare</span><span class="p">(</span><span class="n">desc_a</span><span class="p">,</span> <span class="n">desc_b</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gagnant : </span><span class="si">{</span><span class="n">winner</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Votes : </span><span class="si">{</span><span class="n">votes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-calibration-du-juge-par-corrélation-de-spearman">Exercice 3 — Calibration du juge par corrélation de Spearman</h3>
+
+<p>L'équipe data de Doctolib a annoté manuellement 8 réponses d'un agent de prise de rendez-vous selon le critère d'exactitude des informations médicales. Vous devez vérifier si le juge LLM est fiable en mesurant sa corrélation avec ces annotations humaines.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">spearmanr</span>
+
+<span class="c1"># Annotations humaines (ground truth — 8 cas annotés par des médecins)</span>
+<span class="n">human_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="c1"># Scores produits par le juge LLM sur les mêmes cas</span>
+<span class="n">llm_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Calculer la corrélation de Spearman</span>
+<span class="n">correlation</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Corrélation de Spearman : </span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value : </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Interprétation automatique</span>
+<span class="n">SEUIL</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># seuil minimal de confiance selon le cours</span>
+
+<span class="k">if</span> <span class="n">correlation</span> <span class="o">&gt;=</span> <span class="n">SEUIL</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Juge fiable (ρ=</span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="n">SEUIL</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Juge non fiable (ρ=</span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &lt; </span><span class="si">{</span><span class="n">SEUIL</span><span class="si">}</span><span class="s2">) — retravailler le prompt ou le critère&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Corrélation de Spearman : 0.88
+p-value : 0.004
+Juge fiable (ρ=0.88 &gt;= 0.7)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">spearmanr</span>
+
+<span class="c1"># Annotations humaines (ground truth — 8 cas annotés par des médecins)</span>
+<span class="n">human_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="c1"># Scores produits par le juge LLM sur les mêmes cas</span>
+<span class="n">llm_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Calculer la corrélation de Spearman</span>
+<span class="n">correlation</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">human_scores</span><span class="p">,</span> <span class="n">llm_scores</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Corrélation de Spearman : </span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-value : </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Interprétation automatique</span>
+<span class="n">SEUIL</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># seuil minimal de confiance selon le cours</span>
+
+<span class="k">if</span> <span class="n">correlation</span> <span class="o">&gt;=</span> <span class="n">SEUIL</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Juge fiable (ρ=</span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="n">SEUIL</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Juge non fiable (ρ=</span><span class="si">{</span><span class="n">correlation</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &lt; </span><span class="si">{</span><span class="n">SEUIL</span><span class="si">}</span><span class="s2">) — retravailler le prompt ou le critère&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

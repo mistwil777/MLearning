@@ -292,6 +292,13 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p><strong>Lire un coefficient</strong> : le coefficient de <code>surface_m2</code> (+5 200 €) signifie "toutes autres choses égales, un m² supplémentaire est associé à un prix plus élevé de 5 200 €". Ce n'est pas une causalité, c'est une corrélation apprise sur les données.</p>
 
+<p>:::callout-insight
+<strong>Récap — ce qu'il faut retenir :</strong>
+- La régression minimise les résidus au carré, pas leur somme simple.
+- Un coefficient exprime une corrélation, jamais une causalité.
+- Un coefficient négatif signifie relation inverse avec la cible.
+:::</p>
+
 <hr />
 
 <blockquote>
@@ -311,4 +318,212 @@ details>*:not(summary){padding:0 20px 20px}
 </blockquote>
 
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-prédire-la-consommation-de-carburant-renault">Exercice 1 — Prédire la consommation de carburant (Renault)</h3>
+
+<p>Renault collecte des données d'essai pour estimer la consommation en L/100 km de ses modèles selon la cylindrée du moteur et la masse du véhicule. Entraîne un modèle et prédit la consommation d'un véhicule de 1 400 cm³ et 1 200 kg.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1400</span><span class="p">,</span> <span class="mi">1600</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2200</span><span class="p">],</span>
+    <span class="s2">&quot;masse_kg&quot;</span><span class="p">:</span>      <span class="p">[</span> <span class="mi">950</span><span class="p">,</span> <span class="mi">1050</span><span class="p">,</span> <span class="mi">1150</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1350</span><span class="p">,</span> <span class="mi">1450</span><span class="p">,</span> <span class="mi">1550</span><span class="p">],</span>
+    <span class="s2">&quot;conso_l100km&quot;</span><span class="p">:</span>  <span class="p">[</span> <span class="mf">5.2</span><span class="p">,</span>  <span class="mf">5.8</span><span class="p">,</span>  <span class="mf">6.3</span><span class="p">,</span>  <span class="mf">6.9</span><span class="p">,</span>  <span class="mf">7.4</span><span class="p">,</span>  <span class="mf">8.1</span><span class="p">,</span>  <span class="mf">8.6</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">,</span> <span class="s2">&quot;masse_kg&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;conso_l100km&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">___</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">nouveau_vehicule</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1400</span><span class="p">],</span>
+    <span class="s2">&quot;masse_kg&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">1200</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">nouveau_vehicule</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Consommation prédite : </span><span class="si">{</span><span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> L/100 km&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong> <code>Consommation prédite : 6.30 L/100 km</code> (valeur approchée, tolérance ±0.2)</p>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1400</span><span class="p">,</span> <span class="mi">1600</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2200</span><span class="p">],</span>
+    <span class="s2">&quot;masse_kg&quot;</span><span class="p">:</span>      <span class="p">[</span> <span class="mi">950</span><span class="p">,</span> <span class="mi">1050</span><span class="p">,</span> <span class="mi">1150</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1350</span><span class="p">,</span> <span class="mi">1450</span><span class="p">,</span> <span class="mi">1550</span><span class="p">],</span>
+    <span class="s2">&quot;conso_l100km&quot;</span><span class="p">:</span>  <span class="p">[</span> <span class="mf">5.2</span><span class="p">,</span>  <span class="mf">5.8</span><span class="p">,</span>  <span class="mf">6.3</span><span class="p">,</span>  <span class="mf">6.9</span><span class="p">,</span>  <span class="mf">7.4</span><span class="p">,</span>  <span class="mf">8.1</span><span class="p">,</span>  <span class="mf">8.6</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">,</span> <span class="s2">&quot;masse_kg&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;conso_l100km&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">nouveau_vehicule</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;cylindree_cm3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1400</span><span class="p">],</span>
+    <span class="s2">&quot;masse_kg&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">1200</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">nouveau_vehicule</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Consommation prédite : </span><span class="si">{</span><span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> L/100 km&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-lire-et-interpréter-les-coefficients-bnp-paribas">Exercice 2 — Lire et interpréter les coefficients (BNP Paribas)</h3>
+
+<p>BNP Paribas entraîne un modèle pour estimer le montant de crédit accordé (en €) selon le revenu mensuel net et l'ancienneté professionnelle du demandeur. Entraîne le modèle, affiche les coefficients, et réponds : quelle variable a le plus d'impact par unité ?</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;revenu_mensuel_eur&quot;</span><span class="p">:</span>  <span class="p">[</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">4500</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span>
+    <span class="s2">&quot;anciennete_annees&quot;</span><span class="p">:</span>   <span class="p">[</span>   <span class="mi">1</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span>   <span class="mi">12</span><span class="p">],</span>
+    <span class="s2">&quot;credit_max_eur&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">11000</span><span class="p">,</span> <span class="mi">14500</span><span class="p">,</span> <span class="mi">18000</span><span class="p">,</span> <span class="mi">22000</span><span class="p">,</span> <span class="mi">25000</span><span class="p">,</span> <span class="mi">29000</span><span class="p">,</span> <span class="mi">33000</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;revenu_mensuel_eur&quot;</span><span class="p">,</span> <span class="s2">&quot;anciennete_annees&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;credit_max_eur&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">___</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">___</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">25s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+
+<span class="c1"># Quelle variable a le plus grand coefficient ?</span>
+<span class="n">variable_dominante</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">___</span><span class="p">]</span>  <span class="c1"># indice du coefficient le plus élevé</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variable dominante : </span><span class="si">{</span><span class="n">variable_dominante</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">revenu_mensuel_eur        → +6.40 € (environ)
+anciennete_annees         → +140.00 € (environ)
+Variable dominante : anciennete_annees
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;revenu_mensuel_eur&quot;</span><span class="p">:</span>  <span class="p">[</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">4500</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span>
+    <span class="s2">&quot;anciennete_annees&quot;</span><span class="p">:</span>   <span class="p">[</span>   <span class="mi">1</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span>   <span class="mi">12</span><span class="p">],</span>
+    <span class="s2">&quot;credit_max_eur&quot;</span><span class="p">:</span>      <span class="p">[</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">11000</span><span class="p">,</span> <span class="mi">14500</span><span class="p">,</span> <span class="mi">18000</span><span class="p">,</span> <span class="mi">22000</span><span class="p">,</span> <span class="mi">25000</span><span class="p">,</span> <span class="mi">29000</span><span class="p">,</span> <span class="mi">33000</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;revenu_mensuel_eur&quot;</span><span class="p">,</span> <span class="s2">&quot;anciennete_annees&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;credit_max_eur&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature</span><span class="si">:</span><span class="s2">25s</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">coef</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+
+<span class="c1"># Quelle variable a le plus grand coefficient ?</span>
+<span class="n">variable_dominante</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variable dominante : </span><span class="si">{</span><span class="n">variable_dominante</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Note : <code>anciennete_annees</code> a un coefficient absolu plus élevé par unité (+140 € par année supplémentaire contre +6 € par euro de revenu), mais comparer des coefficients entre des variables d'échelles différentes peut être trompeur — c'est l'objet de la standardisation (voir Ridge/Lasso).
+</details></p>
+
+<hr />
+
+<h3 id="exercice-3-calculer-manuellement-un-résidu-sncf">Exercice 3 — Calculer manuellement un résidu (SNCF)</h3>
+
+<p>La SNCF modélise le temps de retard moyen (en minutes) d'un train selon le nombre d'arrêts intermédiaires et la distance totale du trajet. Après entraînement, calcule le résidu pour le trajet Paris–Marseille : 3 arrêts, 775 km, retard réel observé de 8 minutes.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;nb_arrets&quot;</span><span class="p">:</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+    <span class="s2">&quot;distance_km&quot;</span><span class="p">:</span>   <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">950</span><span class="p">],</span>
+    <span class="s2">&quot;retard_min&quot;</span><span class="p">:</span>    <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.8</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">11.2</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;nb_arrets&quot;</span><span class="p">,</span> <span class="s2">&quot;distance_km&quot;</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;retard_min&quot;</span><span class="p">]</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">trajet_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;nb_arrets&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">___</span><span class="p">],</span> <span class="s2">&quot;distance_km&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">___</span><span class="p">]})</span>
+<span class="n">retard_reel</span> <span class="o">=</span> <span class="n">___</span>
+
+<span class="n">retard_predit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">trajet_test</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">residu</span> <span class="o">=</span> <span class="n">___</span> <span class="o">-</span> <span class="n">___</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retard prédit     : </span><span class="si">{</span><span class="n">retard_predit</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> min&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retard réel       : </span><span class="si">{</span><span class="n">retard_reel</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> min&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Résidu            : </span><span class="si">{</span><span class="n">residu</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> min&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Retard prédit     : 7.XX min  (valeur approchée selon le modèle)
+Retard réel       : 8.00 min
+Résidu            : +X.XX min  (positif : le modèle a sous-estimé le retard)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<p>```python
+import pandas as pd
+from sklearn.linear_model import LinearRegression</p>
+
+<p>df = pd.DataFrame({
+    "nb<em>arrets":     [0, 1, 2, 3, 4, 5, 6],
+    "distance</em>km":   [200, 300, 450, 600, 700, 800, 950],
+    "retard_min":    [1.2, 2.5, 4.1, 6.0, 7.8, 9.5, 11.2]
+})</p>
+
+<p>X = df[["nb<em>arrets", "distance</em>km"]]
+y = df["retard_min"]</p>
+
+<p>model = LinearRegression()
+model.fit(X, y)</p>
+
+<p>trajet<em>test = pd.DataFrame({"nb</em>arrets": [3], "distance<em>km": [775]})
+retard</em>reel = 8.0</p>
+
+<p>retard<em>predit = model.predict(trajet</em>test)[0]
+residu = retard<em>reel - retard</em>predit</p>
+
+<p>print(f"Retard prédit     : {retard<em>predit:.2f} min")
+print(f"Retard réel       : {retard</em>reel:.2f} min")
+print(f"Résidu            : {residu:+.2f} min")</p>
+
+<h1>Un résidu positif signifie que le modèle a sous-estimé le retard réel.</h1>
+
+<h1>Un résidu négatif signifierait qu'il a surestimé.</h1>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

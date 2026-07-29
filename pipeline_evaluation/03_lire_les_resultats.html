@@ -208,12 +208,24 @@ details>*:not(summary){padding:0 20px 20px}
 
 <p>Calculer des métriques ne suffit pas — il faut savoir ce qu'elles signifient dans ton contexte précis, où le modèle se trompe, et pourquoi. Cette lecture est ce qui distingue un ingénieur ML d'un script qui tourne.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Les métriques sans contexte métier sont des chiffres sans sens.
+- Une accuracy élevée ne prouve rien sur les cas rares qui t'intéressent.
+:::</p>
+
 <hr />
 
 <p>:::situation
 <strong>La Banque Postale — Modèle de scoring crédit</strong></p>
 
 <p>L'équipe livre un modèle avec accuracy=0.94 et F1=0.81. Le chef de projet valide. Trois mois plus tard, les analystes crédit remontent que le modèle refuse systématiquement les demandes de clients de moins de 30 ans avec peu d'historique — un profil qui était sous-représenté dans les données d'entraînement. L'accuracy globale était bonne, mais le modèle avait un angle mort entier. Une lecture sérieuse de la matrice de confusion par segment aurait détecté ça en 10 minutes.
+:::</p>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Un angle mort sur un sous-groupe ne se voit jamais dans les métriques globales.
+- La matrice de confusion par segment remplace dix réunions de post-mortem.
 :::</p>
 
 <hr />
@@ -348,6 +360,13 @@ type_carte            ██                0.07   ← impact mineur
 <li><p><strong>La feature la plus importante est-elle légitime ?</strong> Une importance très dominante (&gt;60%) sur une seule feature mérite investigation — le modèle est peut-être trop dépendant d'une variable fragile.</p></li>
 </ol>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Toute feature avec importance &gt; 40% sans justification métier doit être investiguée.
+- Un data leakage se cache presque toujours dans la feature la plus importante.
+- Une feature absente en production invalide le modèle entier.
+:::</p>
+
 <hr />
 
 <h2 id="analyser-où-le-modèle-se-trompe-par-segment">Analyser où le modèle se trompe — par segment</h2>
@@ -388,6 +407,12 @@ age_groupe
 
 <p>Les clients de moins de 25 ans : le modèle ne détecte que 6 fraudes sur 18 (33% de rappel). C'est l'angle mort. Sans cette analyse par segment, on ne l'aurait pas vu.</p>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- La performance globale masque toujours les sous-groupes sous-représentés à l'entraînement.
+- Découper par âge, région ou période suffit à révéler un angle mort invisible globalement.
+:::</p>
+
 <hr />
 
 <h2 id="le-diagnostic-complet-en-5-questions">Le diagnostic complet en 5 questions</h2>
@@ -410,6 +435,12 @@ age_groupe
 5. Erreurs concrètes → regarder les exemples mal classés
    → Lire 10-20 faux négatifs pour comprendre ce que le modèle rate
 </code></pre></div>
+
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Ces 5 questions se parcourent dans l'ordre — chacune peut invalider les conclusions des précédentes.
+- FN coûteux → maximiser rappel ; FP coûteux → maximiser précision.
+:::</p>
 
 <hr />
 
@@ -439,4 +470,283 @@ age_groupe
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi analyser les performances par segment (âge, région...) et pas seulement globalement ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un modèle peut être excellent en moyenne et avoir un angle mort complet sur un sous-groupe sous-représenté dans les données d'entraînement. La métrique globale cache ces inégalités — seule l'analyse par segment les révèle.</p></div></div></div>
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Tu regardes les faux négatifs d'un modèle de fraude et tu constates qu'ils ont tous un montant < 50€. Qu'est-ce que ça t'apprend ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Le modèle <strong>ne détecte pas les petites fraudes</strong>. Probablement parce que les données d'entraînement contenaient peu de fraudes à faible montant, ou parce qu'une feature "montant" est trop dominante. Action : rééquilibrer le dataset ou ajuster le seuil de décision.</p></div></div></div></div></div>
+
+<hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-calculer-rappel-et-précision-depuis-une-matrice-de-confusion">Exercice 1 — Calculer rappel et précision depuis une matrice de confusion</h3>
+
+<p>La SNCF déploie un modèle de détection de fraudes aux billets sur 5 000 contrôles. L'équipe dispose des prédictions brutes et doit calculer les métriques manuellement avant de valider le modèle.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="c1"># 5000 contrôles SNCF (simulé) — 0=billet valide, 1=fraude</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4820</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4792</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">28</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">54</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">126</span>
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="c1"># Calculer le rappel et la précision sur la classe fraude</span>
+<span class="n">rappel</span>    <span class="o">=</span> <span class="n">___</span> <span class="o">/</span> <span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">___</span> <span class="o">/</span> <span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    (fraudes détectées) : </span><span class="si">{</span><span class="n">rappel</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision (alertes correctes) : </span><span class="si">{</span><span class="n">precision</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Rappel    (fraudes détectées) : 70.0%
+Précision (alertes correctes) : 81.8%
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4820</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4792</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">28</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">54</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">126</span>
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="n">rappel</span>    <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    (fraudes détectées) : </span><span class="si">{</span><span class="n">rappel</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision (alertes correctes) : </span><span class="si">{</span><span class="n">precision</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><code>tp=126</code>, <code>fn=54</code>, <code>fp=28</code>. Rappel = 126/180 = 70,0 %. Précision = 126/154 = 81,8 %.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-détecter-un-data-leakage-dans-les-importances-de-features">Exercice 2 — Détecter un data leakage dans les importances de features</h3>
+
+<p>Un modèle de scoring crédit développé pour la Banque de France (simulé) affiche un AUC de 0,98 sur le jeu de test — un score suspicieusement élevé. L'équipe veut identifier si une feature introduit un leakage.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Importances features du modèle de scoring (simulé)</span>
+<span class="n">feature_importances</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+    <span class="s2">&quot;revenu_mensuel&quot;</span><span class="p">:</span> <span class="mf">0.19</span><span class="p">,</span>
+    <span class="s2">&quot;historique_credit_score&quot;</span><span class="p">:</span> <span class="mf">0.61</span><span class="p">,</span>
+    <span class="s2">&quot;nb_credits_actifs&quot;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span>
+    <span class="s2">&quot;type_contrat_travail&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">feature_importances</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+                      <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;importance&quot;</span><span class="p">])</span>
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">df_imp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;importance&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Identifier la feature suspecte (importance &gt; 0.5)</span>
+<span class="n">feature_suspecte</span> <span class="o">=</span> <span class="n">df_imp</span><span class="p">[</span><span class="n">df_imp</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">___</span><span class="p">][</span><span class="s2">&quot;feature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">importance_max</span> <span class="o">=</span> <span class="n">df_imp</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">___</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature suspecte : </span><span class="si">{</span><span class="n">feature_suspecte</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Importance : </span><span class="si">{</span><span class="n">importance_max</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cette feature est calculée APRÈS attribution du crédit dans certains systèmes</span>
+<span class="n">est_leakage_probable</span> <span class="o">=</span> <span class="n">importance_max</span> <span class="n">___</span> <span class="mf">0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Leakage probable : </span><span class="si">{</span><span class="n">est_leakage_probable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Feature suspecte : historique_credit_score
+Importance : 61%
+Leakage probable : True
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">feature_importances</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+    <span class="s2">&quot;revenu_mensuel&quot;</span><span class="p">:</span> <span class="mf">0.19</span><span class="p">,</span>
+    <span class="s2">&quot;historique_credit_score&quot;</span><span class="p">:</span> <span class="mf">0.61</span><span class="p">,</span>
+    <span class="s2">&quot;nb_credits_actifs&quot;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span>
+    <span class="s2">&quot;type_contrat_travail&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">feature_importances</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+                      <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;importance&quot;</span><span class="p">])</span>
+<span class="n">df_imp</span> <span class="o">=</span> <span class="n">df_imp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;importance&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">feature_suspecte</span> <span class="o">=</span> <span class="n">df_imp</span><span class="p">[</span><span class="n">df_imp</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">][</span><span class="s2">&quot;feature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">importance_max</span> <span class="o">=</span> <span class="n">df_imp</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature suspecte : </span><span class="si">{</span><span class="n">feature_suspecte</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Importance : </span><span class="si">{</span><span class="n">importance_max</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">est_leakage_probable</span> <span class="o">=</span> <span class="n">importance_max</span> <span class="o">&gt;</span> <span class="mf">0.5</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Leakage probable : </span><span class="si">{</span><span class="n">est_leakage_probable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><code>historique_credit_score</code> représente 61 % de l'importance. Si ce score est recalculé après l'attribution du crédit, il s'agit d'un leakage : l'information n'est pas disponible au moment de la décision.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-identifier-un-angle-mort-par-analyse-par-segment">Exercice 3 — Identifier un angle mort par analyse par segment</h3>
+
+<p>Pôle Emploi développe un modèle qui prédit si un demandeur d'emploi retrouvera un poste en moins de 6 mois. L'équipe constate que les performances globales semblent correctes, mais veut vérifier si un groupe est mal couvert.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Résultats sur 600 dossiers (Pôle Emploi, simulé)</span>
+<span class="c1"># 1 = retrouve un emploi en &lt; 6 mois, 0 = ne retrouve pas</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;categorie_age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;25&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">150</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;25-45&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">300</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&gt;45&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">150</span><span class="p">,</span>
+    <span class="s2">&quot;y_true&quot;</span><span class="p">:</span>        <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">90</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">60</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">210</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">90</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">75</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">75</span><span class="p">,</span>
+    <span class="s2">&quot;y_pred&quot;</span><span class="p">:</span>        <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">45</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">105</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">199</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">101</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">71</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">79</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;correct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span>
+
+<span class="c1"># Taux de bonne prédiction par catégorie d&#39;âge</span>
+<span class="n">perf</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">___</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">n_total</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">),</span>
+    <span class="n">taux_correct</span><span class="o">=</span><span class="p">(</span><span class="n">___</span><span class="p">,</span>  <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">perf</span><span class="p">)</span>
+
+<span class="c1"># Rappel sur la classe 1 (retrouve emploi) pour les &lt;25 ans</span>
+<span class="n">sous_25</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;categorie_age&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;25&quot;</span><span class="p">]</span>
+<span class="n">vp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sous_25</span><span class="p">[(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">___</span><span class="p">)])</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sous_25</span><span class="p">[(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">___</span><span class="p">)])</span>
+<span class="n">rappel_25</span> <span class="o">=</span> <span class="n">___</span> <span class="o">/</span> <span class="p">(</span><span class="n">___</span> <span class="o">+</span> <span class="n">___</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Rappel emploi pour &lt;25 ans : </span><span class="si">{</span><span class="n">rappel_25</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">             n_total  taux_correct
+categorie_age
+&lt;25              150         0.700
+25-45            300         0.963
+&gt;45              150         0.973
+
+Rappel emploi pour &lt;25 ans : 50.0%
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;categorie_age&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;25&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">150</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;25-45&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">300</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&gt;45&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">150</span><span class="p">,</span>
+    <span class="s2">&quot;y_true&quot;</span><span class="p">:</span>        <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">90</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">60</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">210</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">90</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">75</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">75</span><span class="p">,</span>
+    <span class="s2">&quot;y_pred&quot;</span><span class="p">:</span>        <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">45</span>  <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">105</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">199</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">101</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">71</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">79</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">results</span><span class="p">[</span><span class="s2">&quot;correct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span>
+
+<span class="n">perf</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;categorie_age&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">n_total</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">),</span>
+    <span class="n">taux_correct</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">perf</span><span class="p">)</span>
+
+<span class="n">sous_25</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;categorie_age&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;25&quot;</span><span class="p">]</span>
+<span class="n">vp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sous_25</span><span class="p">[(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sous_25</span><span class="p">[(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sous_25</span><span class="p">[</span><span class="s2">&quot;y_pred&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)])</span>
+<span class="n">rappel_25</span> <span class="o">=</span> <span class="n">vp</span> <span class="o">/</span> <span class="p">(</span><span class="n">vp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Rappel emploi pour &lt;25 ans : </span><span class="si">{</span><span class="n">rappel_25</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Le groupe <code>&lt;25 ans</code> a un taux de bonne prédiction de 70 % contre 96-97 % pour les autres — et un rappel de 50 % sur la classe positive. C'est l'angle mort : le modèle sous-prédit systématiquement le retour à l'emploi pour les jeunes demandeurs.</p>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-4-choisir-la-bonne-métrique-selon-la-contrainte-métier">Exercice 4 — Choisir la bonne métrique selon la contrainte métier</h3>
+
+<p>La Poste déploie un modèle de détection de colis endommagés sur sa chaîne logistique. Deux contraintes s'affrontent : éviter de rembourser des clients dont le colis est intact (FP coûteux), tout en ne ratant pas trop de colis vraiment endommagés (FN coûteux). L'équipe doit lire le rapport et identifier la métrique à prioriser selon la décision de la direction.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span>
+
+<span class="c1"># 2000 colis contrôlés (La Poste, simulé) — 1=endommagé, 0=intact</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1900</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1880</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">20</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">70</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">classification_report</span><span class="p">(</span>
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span>
+    <span class="n">target_names</span><span class="o">=</span><span class="n">___</span><span class="p">,</span>      <span class="c1"># [&quot;intact&quot;, &quot;endommagé&quot;]</span>
+    <span class="n">output_dict</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">precision_endommage</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="n">___</span><span class="p">][</span><span class="s2">&quot;precision&quot;</span><span class="p">]</span>
+<span class="n">recall_endommage</span>    <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="n">___</span><span class="p">][</span><span class="s2">&quot;recall&quot;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision — endommagé : </span><span class="si">{</span><span class="n">precision_endommage</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    — endommagé : </span><span class="si">{</span><span class="n">recall_endommage</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># La direction veut minimiser les remboursements injustifiés (FP).</span>
+<span class="c1"># Quelle métrique faut-il maximiser ?</span>
+<span class="n">metrique_prioritaire</span> <span class="o">=</span> <span class="n">___</span>   <span class="c1"># &quot;precision&quot; ou &quot;recall&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Métrique prioritaire : </span><span class="si">{</span><span class="n">metrique_prioritaire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Précision — endommagé : 77.8%
+Rappel    — endommagé : 70.0%
+Métrique prioritaire : precision
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span>
+
+<span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1900</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1880</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">20</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">30</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">70</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">classification_report</span><span class="p">(</span>
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span>
+    <span class="n">target_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;intact&quot;</span><span class="p">,</span> <span class="s2">&quot;endommagé&quot;</span><span class="p">],</span>
+    <span class="n">output_dict</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">precision_endommage</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;endommagé&quot;</span><span class="p">][</span><span class="s2">&quot;precision&quot;</span><span class="p">]</span>
+<span class="n">recall_endommage</span>    <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;endommagé&quot;</span><span class="p">][</span><span class="s2">&quot;recall&quot;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Précision — endommagé : </span><span class="si">{</span><span class="n">precision_endommage</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rappel    — endommagé : </span><span class="si">{</span><span class="n">recall_endommage</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">metrique_prioritaire</span> <span class="o">=</span> <span class="s2">&quot;precision&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Métrique prioritaire : </span><span class="si">{</span><span class="n">metrique_prioritaire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>70 TP, 30 FN, 20 FP. Précision = 70/(70+20) = 77,8 %. Rappel = 70/(70+30) = 70,0 %. Minimiser les FP (remboursements injustifiés) revient à maximiser la précision — le modèle ne doit alerter que quand il est sûr. Si la direction voulait au contraire ne rater aucun colis endommagé, elle prioriserait le rappel.</p>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

@@ -370,5 +370,444 @@ La SNCF reçoit des millions de messages de support : remboursements de billets,
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Quand un agent est-il de l'over-engineering ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Quand le workflow est fixe et prévisible — si on peut le remplacer par un script séquentiel couvrant 95% des cas. Un agent coûte plus cher, est plus lent, et moins déterministe qu'un simple script.</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Le LLM génère l'appel (nom + arguments JSON) ; le code applicatif l'exécute réellement.
+- La boucle ReAct s'arrête sur <code>end_turn</code> ; tant que <code>stop_reason == "tool_use"</code>, on relance.
+- Un agent sans condition d'arrêt explicite peut boucler indéfiniment : toujours prévoir un <code>max_iterations</code>.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-simuler-la-boucle-react-sans-llm">Exercice 1 — Simuler la boucle ReAct sans LLM</h3>
+
+<p>EDF propose un chatbot interne pour que les techniciens consultent l'état des compteurs à distance. Pour tester la logique d'orchestration sans appel API coûteux, l'équipe simule manuellement la boucle ReAct.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Base de données simulée des compteurs</span>
+<span class="n">compteurs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;CPT-001&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Lyon-Sud&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">1820</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="s2">&quot;CPT-002&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Grenoble-Nord&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">4200</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s2">&quot;CPT-003&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Marseille-Est&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">950</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_compteur</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">compteurs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;erreur&quot;</span><span class="p">:</span> <span class="s2">&quot;compteur inconnu&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculer_cout</span><span class="p">(</span><span class="n">consommation_kwh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tarif_eur_kwh</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">consommation_kwh</span> <span class="o">*</span> <span class="n">tarif_eur_kwh</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># Simuler la décision de l&#39;agent (en production, ce serait le LLM)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">agent_decide</span><span class="p">(</span><span class="n">observation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retourne l&#39;outil suivant à appeler selon l&#39;observation.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;consommation_kwh&quot;</span> <span class="ow">in</span> <span class="n">observation</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;calculer_cout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;consommation_kwh&quot;</span><span class="p">],</span> <span class="s2">&quot;tarif_eur_kwh&quot;</span><span class="p">:</span> <span class="mf">0.206</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;fin&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+
+<span class="c1"># Compléter la boucle ReAct</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_react_loop</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Thought] Je dois récupérer les données du compteur </span><span class="si">{</span><span class="n">compteur_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Étape 1 : Action → appeler get_compteur</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Action] get_compteur(&#39;</span><span class="si">{</span><span class="n">compteur_id</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span>
+    <span class="n">observation_str</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># appeler get_compteur avec compteur_id</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">observation_str</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Observation] </span><span class="si">{</span><span class="n">observation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;erreur&quot;</span> <span class="ow">in</span> <span class="n">observation</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Answer] Compteur introuvable.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Étape 2 : Thought → décider de la suite</span>
+    <span class="n">decision</span> <span class="o">=</span> <span class="n">agent_decide</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Thought] Je dois calculer le coût.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Étape 3 : Action → appeler calculer_cout</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Action] calculer_cout(...)&quot;</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">___</span>  <span class="c1"># appeler calculer_cout avec les args de la décision</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Observation] </span><span class="si">{</span><span class="n">cout</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Étape 4 : Answer</span>
+    <span class="n">site</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;site&quot;</span><span class="p">]</span>
+    <span class="n">alerte</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;alerte&quot;</span><span class="p">]</span>
+    <span class="n">statut</span> <span class="o">=</span> <span class="s2">&quot;ALERTE ACTIVE&quot;</span> <span class="k">if</span> <span class="n">alerte</span> <span class="k">else</span> <span class="s2">&quot;Normal&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Answer] Site </span><span class="si">{</span><span class="n">site</span><span class="si">}</span><span class="s2"> — Coût estimé : </span><span class="si">{</span><span class="n">cout</span><span class="si">}</span><span class="s2"> € — Statut : </span><span class="si">{</span><span class="n">statut</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">run_react_loop</span><span class="p">(</span><span class="s2">&quot;CPT-002&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">[Thought] Je dois récupérer les données du compteur CPT-002
+[Action] get_compteur('CPT-002')
+[Observation] {'site': 'Grenoble-Nord', 'consommation_kwh': 4200, 'alerte': True}
+[Thought] Je dois calculer le coût.
+[Action] calculer_cout(...)
+[Observation] 865.2 €
+[Answer] Site Grenoble-Nord — Coût estimé : 865.2 € — Statut : ALERTE ACTIVE
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">compteurs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;CPT-001&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Lyon-Sud&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">1820</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="s2">&quot;CPT-002&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Grenoble-Nord&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">4200</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s2">&quot;CPT-003&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;site&quot;</span><span class="p">:</span> <span class="s2">&quot;Marseille-Est&quot;</span><span class="p">,</span> <span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="mi">950</span><span class="p">,</span> <span class="s2">&quot;alerte&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_compteur</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">compteurs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;erreur&quot;</span><span class="p">:</span> <span class="s2">&quot;compteur inconnu&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculer_cout</span><span class="p">(</span><span class="n">consommation_kwh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tarif_eur_kwh</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">consommation_kwh</span> <span class="o">*</span> <span class="n">tarif_eur_kwh</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">agent_decide</span><span class="p">(</span><span class="n">observation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;consommation_kwh&quot;</span> <span class="ow">in</span> <span class="n">observation</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;calculer_cout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;consommation_kwh&quot;</span><span class="p">:</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;consommation_kwh&quot;</span><span class="p">],</span> <span class="s2">&quot;tarif_eur_kwh&quot;</span><span class="p">:</span> <span class="mf">0.206</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;fin&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_react_loop</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Thought] Je dois récupérer les données du compteur </span><span class="si">{</span><span class="n">compteur_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Action] get_compteur(&#39;</span><span class="si">{</span><span class="n">compteur_id</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span>
+    <span class="n">observation_str</span> <span class="o">=</span> <span class="n">get_compteur</span><span class="p">(</span><span class="n">compteur_id</span><span class="p">)</span>  <span class="c1"># &lt;-- solution</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">observation_str</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Observation] </span><span class="si">{</span><span class="n">observation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;erreur&quot;</span> <span class="ow">in</span> <span class="n">observation</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Answer] Compteur introuvable.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">decision</span> <span class="o">=</span> <span class="n">agent_decide</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Thought] Je dois calculer le coût.&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Action] calculer_cout(...)&quot;</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">calculer_cout</span><span class="p">(</span><span class="o">**</span><span class="n">decision</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>  <span class="c1"># &lt;-- solution</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Observation] </span><span class="si">{</span><span class="n">cout</span><span class="si">}</span><span class="s2"> €&quot;</span><span class="p">)</span>
+
+    <span class="n">site</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;site&quot;</span><span class="p">]</span>
+    <span class="n">alerte</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s2">&quot;alerte&quot;</span><span class="p">]</span>
+    <span class="n">statut</span> <span class="o">=</span> <span class="s2">&quot;ALERTE ACTIVE&quot;</span> <span class="k">if</span> <span class="n">alerte</span> <span class="k">else</span> <span class="s2">&quot;Normal&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Answer] Site </span><span class="si">{</span><span class="n">site</span><span class="si">}</span><span class="s2"> — Coût estimé : </span><span class="si">{</span><span class="n">cout</span><span class="si">}</span><span class="s2"> € — Statut : </span><span class="si">{</span><span class="n">statut</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">run_react_loop</span><span class="p">(</span><span class="s2">&quot;CPT-002&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-définir-un-outil-pour-un-agent-de-gestion-rh">Exercice 2 — Définir un outil pour un agent de gestion RH</h3>
+
+<p>Decathlon centralise la gestion des demandes de congés via un agent conversationnel. L'agent doit pouvoir interroger le solde de congés d'un employé avant de valider une demande. Votre tâche : écrire la définition d'outil conforme au format Anthropic, puis implémenter la fonction associée.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Base de données simulée des congés</span>
+<span class="n">employes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;E101&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Leroy Thomas&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Chef de rayon&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;E102&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Nguyen Linh&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Vendeur&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;E103&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Bernard Claire&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Responsable RH&quot;</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># Compléter la définition de l&#39;outil</span>
+<span class="n">outil_conges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;get_solde_conges&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>  <span class="c1"># description claire en une phrase : quand appeler cet outil</span>
+    <span class="s2">&quot;input_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;employe_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">___</span><span class="p">,</span>  <span class="c1"># type JSON correct pour un identifiant texte</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Identifiant unique de l&#39;employé, ex: &#39;E101&#39;&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="n">___</span>  <span class="c1"># liste des champs obligatoires</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Implémenter la fonction associée</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_solde_conges</span><span class="p">(</span><span class="n">employe_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retourne le solde de congés d&#39;un employé au format JSON.&quot;&quot;&quot;</span>
+    <span class="n">employe</span> <span class="o">=</span> <span class="n">employes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">employe_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">employe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">___</span>  <span class="c1"># retourner un JSON {&quot;erreur&quot;: &quot;employé non trouvé&quot;}</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+        <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;nom&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;solde_jours&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;poste&quot;</span><span class="p">]</span>
+    <span class="p">})</span>
+
+<span class="c1"># Tests de validation</span>
+<span class="k">assert</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;get_solde_conges&quot;</span>
+<span class="k">assert</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;input_schema&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;employe_id&quot;</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span>
+<span class="k">assert</span> <span class="s2">&quot;employe_id&quot;</span> <span class="ow">in</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;input_schema&quot;</span><span class="p">][</span><span class="s2">&quot;required&quot;</span><span class="p">]</span>
+
+<span class="n">result_e101</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_solde_conges</span><span class="p">(</span><span class="s2">&quot;E101&quot;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">result_e101</span><span class="p">[</span><span class="s2">&quot;solde_jours&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">12</span>
+<span class="k">assert</span> <span class="n">result_e101</span><span class="p">[</span><span class="s2">&quot;nom&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Leroy Thomas&quot;</span>
+
+<span class="n">result_inconnu</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_solde_conges</span><span class="p">(</span><span class="s2">&quot;E999&quot;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s2">&quot;erreur&quot;</span> <span class="ow">in</span> <span class="n">result_inconnu</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outil défini :&quot;</span><span class="p">,</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test E101 :&quot;</span><span class="p">,</span> <span class="n">result_e101</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test E999 :&quot;</span><span class="p">,</span> <span class="n">result_inconnu</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tous les tests passent.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Outil défini : get_solde_conges
+Test E101 : {'nom': 'Leroy Thomas', 'solde_jours': 12, 'poste': 'Chef de rayon'}
+Test E999 : {'erreur': 'employé non trouvé'}
+Tous les tests passent.
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">employes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;E101&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Leroy Thomas&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Chef de rayon&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;E102&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Nguyen Linh&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Vendeur&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;E103&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Bernard Claire&quot;</span><span class="p">,</span> <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="s2">&quot;Responsable RH&quot;</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">outil_conges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;get_solde_conges&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Retourne le solde de congés restants d&#39;un employé à partir de son identifiant. Utiliser avant toute validation de demande de congé.&quot;</span><span class="p">,</span>  <span class="c1"># &lt;-- solution</span>
+    <span class="s2">&quot;input_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;employe_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>  <span class="c1"># &lt;-- solution</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Identifiant unique de l&#39;employé, ex: &#39;E101&#39;&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;employe_id&quot;</span><span class="p">]</span>  <span class="c1"># &lt;-- solution</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_solde_conges</span><span class="p">(</span><span class="n">employe_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">employe</span> <span class="o">=</span> <span class="n">employes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">employe_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">employe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;erreur&quot;</span><span class="p">:</span> <span class="s2">&quot;employé non trouvé&quot;</span><span class="p">})</span>  <span class="c1"># &lt;-- solution</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+        <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;nom&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;solde_jours&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;solde_jours&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;poste&quot;</span><span class="p">:</span> <span class="n">employe</span><span class="p">[</span><span class="s2">&quot;poste&quot;</span><span class="p">]</span>
+    <span class="p">})</span>
+
+<span class="k">assert</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;get_solde_conges&quot;</span>
+<span class="k">assert</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;input_schema&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;employe_id&quot;</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span>
+<span class="k">assert</span> <span class="s2">&quot;employe_id&quot;</span> <span class="ow">in</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;input_schema&quot;</span><span class="p">][</span><span class="s2">&quot;required&quot;</span><span class="p">]</span>
+
+<span class="n">result_e101</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_solde_conges</span><span class="p">(</span><span class="s2">&quot;E101&quot;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">result_e101</span><span class="p">[</span><span class="s2">&quot;solde_jours&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">12</span>
+<span class="k">assert</span> <span class="n">result_e101</span><span class="p">[</span><span class="s2">&quot;nom&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Leroy Thomas&quot;</span>
+
+<span class="n">result_inconnu</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_solde_conges</span><span class="p">(</span><span class="s2">&quot;E999&quot;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="s2">&quot;erreur&quot;</span> <span class="ow">in</span> <span class="n">result_inconnu</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outil défini :&quot;</span><span class="p">,</span> <span class="n">outil_conges</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test E101 :&quot;</span><span class="p">,</span> <span class="n">result_e101</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test E999 :&quot;</span><span class="p">,</span> <span class="n">result_inconnu</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tous les tests passent.&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-protéger-la-boucle-agentique-contre-les-boucles-infinies">Exercice 3 — Protéger la boucle agentique contre les boucles infinies</h3>
+
+<p>L'équipe data de La Redoute déploie un agent de recommandation produit. Lors des tests, l'agent boucle indéfiniment quand l'outil retourne une erreur : il redemande le même outil sans jamais atteindre <code>end_turn</code>. Votre tâche : ajouter un mécanisme de protection par nombre maximum d'itérations.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Simuler un LLM qui demande toujours le même outil (cas de boucle infinie)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeLLMResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="n">iteration</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_reason</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Simuler : après 5 appels d&#39;outil, le LLM répond normalement</span>
+        <span class="k">return</span> <span class="s2">&quot;tool_use&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">&quot;end_turn&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">FakeToolUse</span><span class="p">(</span><span class="n">tool_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;tu_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">FakeText</span><span class="p">(</span><span class="s2">&quot;Voici mes recommandations produit.&quot;</span><span class="p">)]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeToolUse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;tool_use&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">tool_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;chercher_produit&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;manteau&quot;</span><span class="p">}</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeText</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_api_call</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule un appel LLM.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">FakeLLMResponse</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tool_input</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;produits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;manteau laine&quot;</span><span class="p">,</span> <span class="s2">&quot;parka&quot;</span><span class="p">,</span> <span class="s2">&quot;duffle-coat&quot;</span><span class="p">]})</span>
+
+<span class="c1"># Compléter la boucle avec protection anti-boucle infinie</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_agent_safe</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">}]</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">___</span><span class="p">:</span>  <span class="c1"># condition : continuer tant que sous la limite d&#39;itérations</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">fake_api_call</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+        <span class="n">iteration</span> <span class="n">___</span>  <span class="c1"># incrémenter le compteur</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;end_turn&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2"> itérations] </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+            <span class="n">tool_results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">execute_tool</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+                    <span class="n">tool_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tool_use_id&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">result</span>
+                    <span class="p">})</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">tool_results</span><span class="p">})</span>
+
+    <span class="c1"># Sortie de secours si max_iterations atteint</span>
+    <span class="k">return</span> <span class="n">___</span>  <span class="c1"># retourner le message d&#39;erreur ci-dessous</span>
+
+<span class="c1"># Tests</span>
+<span class="c1"># Cas 1 : max_iterations suffisant (l&#39;agent termine en 5 itérations)</span>
+<span class="n">result_ok</span> <span class="o">=</span> <span class="n">run_agent_safe</span><span class="p">(</span><span class="s2">&quot;Recommande-moi un manteau chaud.&quot;</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s2">&quot;5 itérations&quot;</span> <span class="ow">in</span> <span class="n">result_ok</span>
+<span class="k">assert</span> <span class="s2">&quot;recommandations&quot;</span> <span class="ow">in</span> <span class="n">result_ok</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cas OK :&quot;</span><span class="p">,</span> <span class="n">result_ok</span><span class="p">)</span>
+
+<span class="c1"># Cas 2 : max_iterations trop bas → protection déclenchée</span>
+<span class="n">result_limite</span> <span class="o">=</span> <span class="n">run_agent_safe</span><span class="p">(</span><span class="s2">&quot;Recommande-moi un manteau chaud.&quot;</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s2">&quot;limite&quot;</span> <span class="ow">in</span> <span class="n">result_limite</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;itérations&quot;</span> <span class="ow">in</span> <span class="n">result_limite</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cas limite :&quot;</span><span class="p">,</span> <span class="n">result_limite</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu :</strong></p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Cas OK : [5 itérations] Voici mes recommandations produit.
+Cas limite : [Limite atteinte] Agent arrêté après 3 itérations sans réponse finale.
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeLLMResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="n">iteration</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_reason</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;tool_use&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">&quot;end_turn&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">FakeToolUse</span><span class="p">(</span><span class="n">tool_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;tu_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">FakeText</span><span class="p">(</span><span class="s2">&quot;Voici mes recommandations produit.&quot;</span><span class="p">)]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeToolUse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;tool_use&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">tool_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;chercher_produit&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;categorie&quot;</span><span class="p">:</span> <span class="s2">&quot;manteau&quot;</span><span class="p">}</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FakeText</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_api_call</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">FakeLLMResponse</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_tool</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tool_input</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;produits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;manteau laine&quot;</span><span class="p">,</span> <span class="s2">&quot;parka&quot;</span><span class="p">,</span> <span class="s2">&quot;duffle-coat&quot;</span><span class="p">]})</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_agent_safe</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">}]</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iterations</span><span class="p">:</span>  <span class="c1"># &lt;-- solution</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">fake_api_call</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># &lt;-- solution</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;end_turn&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2"> itérations] </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">stop_reason</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+            <span class="n">tool_results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">execute_tool</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+                    <span class="n">tool_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tool_use_id&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">result</span>
+                    <span class="p">})</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">tool_results</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[Limite atteinte] Agent arrêté après </span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2"> itérations sans réponse finale.&quot;</span>  <span class="c1"># &lt;-- solution</span>
+
+<span class="n">result_ok</span> <span class="o">=</span> <span class="n">run_agent_safe</span><span class="p">(</span><span class="s2">&quot;Recommande-moi un manteau chaud.&quot;</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s2">&quot;5 itérations&quot;</span> <span class="ow">in</span> <span class="n">result_ok</span>
+<span class="k">assert</span> <span class="s2">&quot;recommandations&quot;</span> <span class="ow">in</span> <span class="n">result_ok</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cas OK :&quot;</span><span class="p">,</span> <span class="n">result_ok</span><span class="p">)</span>
+
+<span class="n">result_limite</span> <span class="o">=</span> <span class="n">run_agent_safe</span><span class="p">(</span><span class="s2">&quot;Recommande-moi un manteau chaud.&quot;</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s2">&quot;limite&quot;</span> <span class="ow">in</span> <span class="n">result_limite</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;itérations&quot;</span> <span class="ow">in</span> <span class="n">result_limite</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cas limite :&quot;</span><span class="p">,</span> <span class="n">result_limite</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>

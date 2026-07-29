@@ -318,5 +318,259 @@ en Production    + garder ancien
 
 <div class="fc" onclick="this.classList.toggle('flipped')"><div class="fc-inner"><div class="fc-front"><p class="fc-q">Pourquoi ne pas simplement utiliser un cron job plutôt qu'Airflow ou Prefect ?</p><span class="fc-hint">Voir la réponse</span></div><div class="fc-back"><div class="fc-label">Réponse</div><p class="fc-a">Un cron job lance un script — si ça échoue, personne ne le sait, pas de retry automatique, pas de visualisation des étapes, pas de gestion des dépendances. Airflow/Prefect ajoute : <strong>observabilité</strong> (voir quelle étape a échoué), <strong>retries</strong> (réessayer automatiquement), <strong>alertes</strong>, et <strong>dépendances</strong> (étape B ne démarre que si étape A a réussi).</p></div></div></div></div></div>
 
+<p>:::callout-insight
+<strong>Essentiels :</strong>
+- Un DAG garantit qu'une tâche ne démarre jamais avant que ses prédécesseurs aient réussi.
+- Prefect est plus rapide à mettre en place ; Airflow reste le standard dans les grandes organisations.
+- Le seuil de déploiement (<code>threshold</code>) est le seul garde-fou entre un mauvais modèle et la production.
+:::</p>
+
 <hr />
+
+<h2 id="exercices">Exercices</h2>
+
+<h3 id="exercice-1-construire-un-flow-prefect-simple">Exercice 1 — Construire un flow Prefect simple</h3>
+
+<p><strong>Contexte</strong> : La SNCF veut automatiser chaque matin l'extraction de données de retards et le calcul d'un indicateur de ponctualité. Vous devez créer un flow Prefect minimal avec deux tâches enchaînées.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_delays</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule l&#39;extraction des retards du jour.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;TGV_001&quot;</span><span class="p">,</span> <span class="s2">&quot;TER_042&quot;</span><span class="p">,</span> <span class="s2">&quot;TGV_017&quot;</span><span class="p">,</span> <span class="s2">&quot;IC_088&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;delay_min&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">35</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_punctuality</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calcule le taux de ponctualité (trains à l&#39;heure = retard &lt; 5 min).&quot;&quot;&quot;</span>
+    <span class="n">on_time</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;delay_min&quot;</span><span class="p">]</span> <span class="n">___</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">on_time</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ponctualité : </span><span class="si">{</span><span class="n">rate</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% (</span><span class="si">{</span><span class="n">on_time</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> trains)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rate</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sncf-punctuality&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">punctuality_flow</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">___</span><span class="p">()</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">___</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rate</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">punctuality_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu</strong> :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Ponctualité : 50.0% (2/4 trains)
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_delays</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule l&#39;extraction des retards du jour.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;TGV_001&quot;</span><span class="p">,</span> <span class="s2">&quot;TER_042&quot;</span><span class="p">,</span> <span class="s2">&quot;TGV_017&quot;</span><span class="p">,</span> <span class="s2">&quot;IC_088&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;delay_min&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">35</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_punctuality</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calcule le taux de ponctualité (trains à l&#39;heure = retard &lt; 5 min).&quot;&quot;&quot;</span>
+    <span class="n">on_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;delay_min&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">on_time</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ponctualité : </span><span class="si">{</span><span class="n">rate</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% (</span><span class="si">{</span><span class="n">on_time</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> trains)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rate</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sncf-punctuality&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">punctuality_flow</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">extract_delays</span><span class="p">()</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">compute_punctuality</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rate</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">punctuality_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-2-déploiement-conditionnel-avec-seuil-de-métrique">Exercice 2 — Déploiement conditionnel avec seuil de métrique</h3>
+
+<p><strong>Contexte</strong> : BlaBlaCar entraîne chaque semaine un modèle de prédiction de remplissage des trajets. La mise en production n'est autorisée que si l'accuracy dépasse 0.80. Complétez la tâche de décision de déploiement.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_and_evaluate</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule l&#39;entraînement et retourne un score.&quot;&quot;&quot;</span>
+    <span class="c1"># En pratique : vrai entraînement sklearn/xgboost</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="mf">0.783</span>  <span class="c1"># score obtenu cette semaine</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="s2">&quot;blablacar_run_42&quot;</span>
+    <span class="k">return</span> <span class="n">score</span><span class="p">,</span> <span class="n">run_id</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">conditional_deploy</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.80</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Déploie si score &gt;= threshold, alerte sinon.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="n">___</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Déploiement approuvé : run </span><span class="si">{</span><span class="n">run_id</span><span class="si">}</span><span class="s2"> (score=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;deployed&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Score insuffisant : </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &lt; </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2"> — modèle précédent conservé&quot;</span>
+        <span class="n">___</span>
+        <span class="k">return</span> <span class="s2">&quot;rejected&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_alert</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ALERTE] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;blablacar-weekly-train&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weekly_training_flow</span><span class="p">():</span>
+    <span class="n">score</span><span class="p">,</span> <span class="n">run_id</span> <span class="o">=</span> <span class="n">train_and_evaluate</span><span class="p">()</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">conditional_deploy</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">run_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Statut final : </span><span class="si">{</span><span class="n">___</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">status</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">weekly_training_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu</strong> :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">[ALERTE] Score insuffisant : 0.783 &lt; 0.800 — modèle précédent conservé
+Statut final : rejected
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_and_evaluate</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule l&#39;entraînement et retourne un score.&quot;&quot;&quot;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="mf">0.783</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="s2">&quot;blablacar_run_42&quot;</span>
+    <span class="k">return</span> <span class="n">score</span><span class="p">,</span> <span class="n">run_id</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">conditional_deploy</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.80</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Déploie si score &gt;= threshold, alerte sinon.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Déploiement approuvé : run </span><span class="si">{</span><span class="n">run_id</span><span class="si">}</span><span class="s2"> (score=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;deployed&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Score insuffisant : </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &lt; </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2"> — modèle précédent conservé&quot;</span>
+        <span class="n">send_alert</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;rejected&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_alert</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ALERTE] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;blablacar-weekly-train&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weekly_training_flow</span><span class="p">():</span>
+    <span class="n">score</span><span class="p">,</span> <span class="n">run_id</span> <span class="o">=</span> <span class="n">train_and_evaluate</span><span class="p">()</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">conditional_deploy</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">run_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Statut final : </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">status</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">weekly_training_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p></details></p>
+
+<hr />
+
+<h3 id="exercice-3-dag-avec-retries-et-tâches-parallèles">Exercice 3 — DAG avec retries et tâches parallèles</h3>
+
+<p><strong>Contexte</strong> : Decathlon collecte chaque nuit les stocks de deux entrepôts (nord et sud) puis consolide les données. La tâche d'extraction peut échouer ponctuellement (réseau instable) — elle doit se relancer automatiquement jusqu'à 2 fois.</p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">retry_delay_seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_warehouse</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule une extraction avec risque d&#39;échec.&quot;&quot;&quot;</span>
+    <span class="c1"># Simuler une réussite déterministe pour les tests</span>
+    <span class="n">stock</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nord&quot;</span><span class="p">:</span> <span class="mi">1450</span><span class="p">,</span> <span class="s2">&quot;sud&quot;</span><span class="p">:</span> <span class="mi">2310</span><span class="p">}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extraction </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">stock</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2"> articles&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stock</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">consolidate</span><span class="p">(</span><span class="n">stock_nord</span><span class="p">,</span> <span class="n">stock_sud</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Additionne les stocks des deux entrepôts.&quot;&quot;&quot;</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">___</span> <span class="o">+</span> <span class="n">___</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stock total Decathlon : </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> articles&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;decathlon-nightly-stock&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stock_flow</span><span class="p">():</span>
+    <span class="n">nord</span> <span class="o">=</span> <span class="n">extract_warehouse</span><span class="p">(</span><span class="s2">&quot;nord&quot;</span><span class="p">)</span>
+    <span class="n">sud</span> <span class="o">=</span> <span class="n">extract_warehouse</span><span class="p">(</span><span class="s2">&quot;sud&quot;</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">consolidate</span><span class="p">(</span><span class="n">___</span><span class="p">,</span> <span class="n">___</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">stock_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p><strong>Résultat attendu</strong> :</p>
+
+<div class="code-wrap"><span class="code-label example">{ } Code</span><pre class="example"><code class="language-plaintext">Extraction nord : 1450 articles
+Extraction sud : 2310 articles
+Stock total Decathlon : 3760 articles
+</code></pre></div>
+
+<p><details><summary>Solution</summary></p>
+
+<div class="codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">prefect</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span>
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">retries</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">retry_delay_seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_warehouse</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simule une extraction avec risque d&#39;échec.&quot;&quot;&quot;</span>
+    <span class="n">stock</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nord&quot;</span><span class="p">:</span> <span class="mi">1450</span><span class="p">,</span> <span class="s2">&quot;sud&quot;</span><span class="p">:</span> <span class="mi">2310</span><span class="p">}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extraction </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">stock</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2"> articles&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stock</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+<span class="nd">@task</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">consolidate</span><span class="p">(</span><span class="n">stock_nord</span><span class="p">,</span> <span class="n">stock_sud</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Additionne les stocks des deux entrepôts.&quot;&quot;&quot;</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">stock_nord</span> <span class="o">+</span> <span class="n">stock_sud</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stock total Decathlon : </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> articles&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+<span class="nd">@flow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;decathlon-nightly-stock&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stock_flow</span><span class="p">():</span>
+    <span class="n">nord</span> <span class="o">=</span> <span class="n">extract_warehouse</span><span class="p">(</span><span class="s2">&quot;nord&quot;</span><span class="p">)</span>
+    <span class="n">sud</span> <span class="o">=</span> <span class="n">extract_warehouse</span><span class="p">(</span><span class="s2">&quot;sud&quot;</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">consolidate</span><span class="p">(</span><span class="n">nord</span><span class="p">,</span> <span class="n">sud</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">stock_flow</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p></details></p>
 </main></div><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script>document.querySelectorAll("pre code").forEach(el=>{if(!el.className)el.className="language-python";hljs.highlightElement(el)});document.querySelectorAll("summary").forEach(s=>{const a=document.createElement("span");a.className="arrow";a.textContent="\u25b6";s.prepend(a)});document.querySelectorAll(".fc").forEach(fc=>{const front=fc.querySelector(".fc-front"),back=fc.querySelector(".fc-back"),inner=fc.querySelector(".fc-inner");back.style.transform="none";back.style.position="static";const h=Math.max(front.offsetHeight,back.offsetHeight);back.style.position="";back.style.transform="";inner.style.height=h+"px";});function fixMindmap(svg){const PAD=14;const nodes=Array.from(svg.querySelectorAll("rect")).map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y"),w=+r.getAttribute("width"),h=+r.getAttribute("height");return{el:r,x,y,w,h,cx:x+w/2,cy:y+h/2,texts:[]}});if(nodes.length<2)return;Array.from(svg.querySelectorAll("text")).forEach(t=>{const tx=+t.getAttribute("x"),ty=+t.getAttribute("y");let best=null,bd=1e9;nodes.forEach(n=>{const d=Math.hypot(tx-n.cx,ty-n.cy);if(d<bd){bd=d;best=n;}});if(best)best.texts.push({el:t,ox:tx-best.cx,oy:ty-best.cy});});const paths=Array.from(svg.querySelectorAll("path")).map(p=>{const d=p.getAttribute("d"),pts=[...d.matchAll(/[ML]\s*([\d.]+)[,\s]+([\d.]+)/g)].map(m=>{return{x:+m[1],y:+m[2]}});if(pts.length<2)return null;const fn=pt=>nodes.reduce((b,n)=>{const dd=Math.hypot(pt.x-n.cx,pt.y-n.cy);return dd<b.d?{n,d:dd}:b;},{n:null,d:1e9}).n;return{el:p,from:fn(pts[0]),to:fn(pts[pts.length-1])}}).filter(Boolean);for(let it=0;it<120;it++){let mv=false;for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];const sameRow=Math.abs(a.cy-b.cy)<Math.max(a.h,b.h)*1.1;if(!sameRow)continue;const need=a.w/2+b.w/2+PAD,dx=b.cx-a.cx;if(Math.abs(dx)<need){const push=(need-Math.abs(dx))/2+1;if(dx>=0){a.cx-=push;b.cx+=push;}else{a.cx+=push;b.cx-=push;}mv=true;}}}if(!mv)break;}nodes.forEach(n=>{n.el.setAttribute("x",n.cx-n.w/2);n.el.setAttribute("y",n.cy-n.h/2);n.texts.forEach(t=>{t.el.setAttribute("x",n.cx+t.ox);});});paths.forEach(e=>{if(!e.from||!e.to)return;const x1=e.from.cx,y1=e.from.cy+e.from.h/2,x2=e.to.cx,y2=e.to.cy-e.to.h/2,my=(y1+y2)/2;e.el.setAttribute("d","M"+x1+","+y1+" C"+x1+","+my+" "+x2+","+my+" "+x2+","+y2);});const xs=nodes.flatMap(n=>[n.cx-n.w/2-10,n.cx+n.w/2+10]),ys=nodes.flatMap(n=>[n.cy-n.h/2-10,n.cy+n.h/2+10]);svg.setAttribute("viewBox",[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)].join(" "));}document.querySelectorAll(".mindmap-svg svg").forEach(fixMindmap);function toggleMindmapFS(btn){const d=btn.parentElement;const isFS=d.classList.toggle("mindmap-fullscreen");btn.textContent=isFS?"\u2715":"\u26F6";if(isFS){document.addEventListener("keydown",function esc(e){if(e.key==="Escape"){d.classList.remove("mindmap-fullscreen");btn.textContent="\u26F6";document.removeEventListener("keydown",esc);}});}}function closeSidebar(){document.getElementById("layout").classList.add("toc-closed");localStorage.setItem("tocCollapsed","1");}function openSidebar(){document.getElementById("layout").classList.remove("toc-closed");localStorage.setItem("tocCollapsed","0");}(function(){if(localStorage.getItem("tocCollapsed")==="1")document.getElementById("layout").classList.add("toc-closed");})();(function(){const links=document.querySelectorAll(".toc a");const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+id);});}});},{rootMargin:"-20% 0px -70% 0px"});document.querySelectorAll("h2[id],h3[id]").forEach(h=>obs.observe(h));})();(function(){if(!window.location.pathname.includes("exercice"))return;const cells=[];document.querySelectorAll("tbody td").forEach(function(td,i){if(td.textContent.trim()===""){td.setAttribute("contenteditable","true");td.style.outline="none";td.style.borderColor="rgba(45,184,122,.4)";td.style.minWidth="80px";const key=window.location.pathname+"_c"+i;const sv=localStorage.getItem(key);if(sv)td.textContent=sv;td.addEventListener("input",function(){localStorage.setItem(key,td.textContent);});cells.push(1);}});if(cells.length){const h=document.createElement("div");h.style.cssText="position:fixed;bottom:20px;right:20px;background:#162019;border:1px solid rgba(45,184,122,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2db87a;z-index:1000;transition:opacity 1s";h.textContent="✎ Réponses sauvegardées automatiquement";document.body.appendChild(h);setTimeout(function(){h.style.opacity="0";},4000);}})();</script></body></html>
